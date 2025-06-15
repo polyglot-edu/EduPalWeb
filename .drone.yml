@@ -13,9 +13,9 @@ globals:
     AUTH0_ISSUER_BASE_URL: url
     AUTH0_CLIENT_ID: client_id
     AUTH0_CLIENT_SECRET: client_secret
-    AUTH0_AUDIENCE: https://api.polyglot-edu.com
+    AUTH0_AUDIENCE: https://api.polyglot-edu.com #TO BE CHANGED
     AUTH0_SCOPE: 'openid profile email read:products'
-    DEPLOY_URL: polyglot-edu.com
+    DEPLOY_URL: polyglot-edu.com  #TO BE CHANGED
     BACK_URL: https://polyglot-api.polyglot-edu.com
     TEST_MODE: true
   - &condition
@@ -26,12 +26,12 @@ steps:
   - name: Build and push image to Docker # building the encore docker image
     image: plugins/docker
     settings:
-      repo: docker.polyglot-edu.com/polyglot-edu/node-editor # must be lowercase
-      registry: docker.polyglot-edu.com
+      repo: docker.polyglot-edu.com/polyglot-edu/node-editor # must be lowercase #TO BE CHANGED
+      registry: docker.polyglot-edu.com #TO BE CHANGED
       dockerfile: ./Dockerfile
       tags: ['${DRONE_BRANCH}']
       build_args:
-        - 'DEPLOY_URL=polyglot-edu.com'
+        - 'DEPLOY_URL=polyglot-edu.com' #TO BE CHANGED
         - 'BACK_URL=https://polyglot-api.polyglot-edu.com'
         - 'TEST_MODE=true'
       <<: *docker_creds
@@ -52,14 +52,14 @@ steps:
       namespace: node-editor-${DRONE_BRANCH}
       debug: true
       kube_service_account: admin-user
-      kube_api_server: 'https://131.114.23.149:6443'
+      kube_api_server: 'https://131.114.23.149:6443'  #TO BE CHANGED
       kube_token:
         from_secret: kube_token
       values:
-        - 'url=polyglot-edu.com'
+        - 'url=polyglot-edu.com'  #TO BE CHANGED
         - 'cfOriginKey=$CFORIGIN'
         - 'dockerconfigjson=$DOCKERCONFIG'
-        - 'image.repository=docker.polyglot-edu.com/polyglot-edu/node-editor'
+        - 'image.repository=docker.polyglot-edu.com/polyglot-edu/node-editor' #TO BE CHANGED
         - 'image.tag=${DRONE_BRANCH}'
         - 'env.authSecret=$AUTH0_SECRET'
         - 'env.authIssuerUrl=$AUTH0_ISSUER_BASE_URL'
@@ -96,14 +96,14 @@ steps:
       namespace: node-editor-${DRONE_BRANCH}
       debug: true
       kube_service_account: admin-user
-      kube_api_server: 'https://131.114.23.149:6443'
+      kube_api_server: 'https://131.114.23.149:6443' #TO BE CHANGED
       kube_token:
         from_secret: kube_token
       values:
-        - 'url=${DRONE_BRANCH}-dashboard.polyglot-edu.com'
+        - 'url=${DRONE_BRANCH}-dashboard.polyglot-edu.com' #TO BE CHANGED
         - 'cfOriginKey=$CFORIGIN'
         - 'dockerconfigjson=$DOCKERCONFIG'
-        - 'image.repository=docker.polyglot-edu.com/polyglot-edu/node-editor'
+        - 'image.repository=docker.polyglot-edu.com/polyglot-edu/node-editor' #TO BE CHANGED
         - 'image.tag=${DRONE_BRANCH}'
         - 'env.authSecret=$AUTH0_SECRET'
         - 'env.authIssuerUrl=$AUTH0_ISSUER_BASE_URL'

@@ -33,6 +33,7 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          #TO BE CHANGED
           build-args: |
             "DEPLOY_URL=https://${{ steps.meta.outputs.version }}.polyglot-edu.com"
             "BACK_URL=https://polyglot-api-staging.polyglot-edu.com"
@@ -62,6 +63,7 @@ jobs:
           namespace: node-editor-${{ steps.meta.outputs.version }}
           chart: 'charts'
           token: '${{ github.token }}'
+          #TO BE CHANGED
           values: |
             url: ${{ steps.meta.outputs.version }}.polyglot-edu.com
             cfOriginKey: ${{ secrets.CFORIGIN }}

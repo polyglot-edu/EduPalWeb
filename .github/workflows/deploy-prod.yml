@@ -34,6 +34,7 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          #TO BE CHANGED
           build-args: |
             'DEPLOY_URL=polyglot-edu.com'
             'BACK_URL=https://polyglot-api.polyglot-edu.com'
@@ -53,6 +54,7 @@ jobs:
           namespace: 'node-editor-prod'
           chart: 'charts'
           token: '${{ github.token }}'
+          #TO BE CHANGED
           values: |
             url: polyglot-edu.com
             cfOriginKey: ${{ secrets.CFORIGIN }}

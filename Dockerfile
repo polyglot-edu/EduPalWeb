@@ -1,7 +1,8 @@
 FROM node:21-alpine
 
 ARG TEST_MODE=false
-ARG DEPLOY_URL=https://staging.polyglot-edu.com
+#TO BE CHANGED
+ARG DEPLOY_URL=https://staging.polyglot-edu.com 
 ARG BACK_URL=https://polyglot-api-staging.polyglot-edu.com
 ARG AUTH0_SECRET
 ARG AUTH0_AUDIENCE

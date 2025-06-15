@@ -39,6 +39,7 @@ jobs:
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          #TO BE CHANGED
           build-args: |
             "DEPLOY_URL=https://staging.polyglot-edu.com"
             "BACK_URL=https://polyglot-api-staging.polyglot-edu.com"
@@ -72,6 +73,7 @@ jobs:
           wait: true
           atomic: true
           timeout: 900s
+          #TO BE CHANGED
           values: |
             url: staging.polyglot-edu.com
             cfOriginKey: ${{ secrets.CFORIGIN }}
