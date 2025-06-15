@@ -1,10 +1,5 @@
-import {
-  EducationLevel,
-  LearningOutcome,
-  PolyglotEdge,
-  PolyglotNode,
-  Topic,
-} from '..';
+import { EducationLevel, LearningOutcome, Topic } from '..';
+import { PolyglotEdge, PolyglotNode } from '../node';
 
 export type PolyglotFlowInfo = {
   _id?: string;

@@ -31,7 +31,7 @@ import {
   LearningOutcome,
   QuestionTypeMap,
   Topic,
-} from '../../types/polyglotElements/AIGenerativeTypes/AIGenerativeTypes';
+} from '../../types/polyglotElements';
 import InfoButton from '../UtilityComponents/InfoButton';
 
 export type ModaTemplateProps = {

@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MarkerType } from 'reactflow';
 import { v4 as UUIDv4 } from 'uuid';
-import {
-  PolyglotEdge,
-  PolyglotFlow,
-  polyglotNodeComponentMapping,
-} from '../types/polyglotElements';
+import { PolyglotEdge, PolyglotFlow } from '../types/polyglotElements';
 
 // fix zust persist issue https://github.com/pmndrs/zustand/issues/324
 // if an error like Extra attributes from the server appear use this hook
@@ -79,8 +75,8 @@ export const createNewDefaultPolyglotNode: (
     title: 'New Node',
     description: '',
     difficulty: 1,
-    platform: polyglotNodeComponentMapping.defaultPlatformMapping[nodeType],
-    data: polyglotNodeComponentMapping.defaultDataMapping[nodeType],
+    platform: '', //polyglotNodeComponentMapping.defaultPlatformMapping[nodeType], //removed to fast fix the code
+    data: {}, //polyglotNodeComponentMapping.defaultDataMapping[nodeType],//removed to fast fix the code
     reactFlow: {
       id: id,
       type: nodeType,

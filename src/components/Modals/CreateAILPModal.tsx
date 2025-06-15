@@ -32,11 +32,6 @@ import { MarkerType } from 'reactflow';
 import { v4 as UUIDv4 } from 'uuid';
 import { API } from '../../data/api';
 import {
-  PolyglotEdge,
-  PolyglotFlow,
-  PolyglotNode,
-} from '../../types/polyglotElements';
-import {
   AIExerciseGenerated,
   AIMaterialGenerated,
   AIPlanLessonResponse,
@@ -45,9 +40,12 @@ import {
   LearningOutcome,
   LessonNodeAI,
   PlanLessonNode,
+  PolyglotEdge,
+  PolyglotFlow,
+  PolyglotNode,
   QuestionTypeMap,
   Topic,
-} from '../../types/polyglotElements/AIGenerativeTypes/AIGenerativeTypes';
+} from '../../types/polyglotElements';
 import PlanLessonCard from '../Card/PlanLessonCard';
 import InfoButton from '../UtilityComponents/InfoButton';
 import ProgressBar from '../UtilityComponents/ProgressBar';

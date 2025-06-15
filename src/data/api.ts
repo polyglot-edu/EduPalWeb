@@ -2,31 +2,24 @@ import axiosCreate, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import Router from 'next/router';
 import { GeneralMetadata, Metadata } from '../types/metadata';
 import {
-  ManualProgressInfo,
-  PolyglotCourse,
-  PolyglotCourseInfo,
-  polyglotEdgeComponentMapping,
-  PolyglotFlow,
-  PolyglotFlowInfo,
-  polyglotNodeComponentMapping,
-  ProgressInfo,
-} from '../types/polyglotElements';
-import {
   AIExerciseType,
   AIPlanLesson,
   AnalyseType,
+  ManualProgressInfo,
   MaterialType,
+  PolyglotCourse,
+  PolyglotCourseInfo,
+  PolyglotFlow,
+  PolyglotFlowInfo,
+  ProgressInfo,
   SummerizerBody,
-} from '../types/polyglotElements/AIGenerativeTypes/AIGenerativeTypes';
-import { ConceptMap } from '../types/polyglotElements/concept/Conceptmap';
+} from '../types/polyglotElements';
 import {
   PapyAssignmentAPI,
   PapyProject,
 } from '../types/polyglotElements/PapyrusTypes/PapyrusTypes';
 import { User } from '../types/user';
 import { createNewDefaultPolyglotFlow } from '../utils/utils';
-import abstractFlows from './abstractExample';
-import exampleFlows from './exampleData';
 
 export type aiAPIResponse = {
   Date: string;
@@ -114,35 +107,9 @@ export class APIV2 {
   logout(): Promise<AxiosResponse> {
     return this.axios.post('/api/auth/logout');
   }
-  loadExampleFlowElementsAsync(flowId: string): any {
-    const flow = exampleFlows.get(flowId);
-    return Promise.resolve({
-      data: flow!,
-      status: flow ? 200 : 404,
-      statusText: flow ? 'OK' : 'Not Found',
-      headers: {},
-      config: {
-        headers: {},
-      },
-    });
-  }
 
   deleteFlow(flowId: string): Promise<AxiosResponse> {
     return this.axios.delete('/api/flows/' + flowId);
-  }
-
-  loadAbstractExampleFlowElementsAsync(
-    currentState: string,
-    goal: string
-  ): any {
-    const flow = abstractFlows.get(`${currentState}, ${goal}`); // TODO: fix this, it's a hack but we need deep equality for the map keys
-    return Promise.resolve({
-      data: flow!,
-      status: flow ? 200 : 404,
-      statusText: flow ? 'OK' : 'Not Found',
-      headers: {},
-      config: {},
-    });
   }
 
   loadFlowElementsAsync(flowId: string): Promise<AxiosResponse<PolyglotFlow>> {
@@ -157,7 +124,7 @@ export class APIV2 {
       createNewDefaultPolyglotFlow()
     );
   }
-  saveFlowAsync(flow: PolyglotFlow): Promise<AxiosResponse> {
+  /*saveFlowAsync(flow: PolyglotFlow): Promise<AxiosResponse> {
     flow.nodes = flow.nodes?.map((e) =>
       polyglotNodeComponentMapping.applyTransformFunction(e)
     );
@@ -176,21 +143,12 @@ export class APIV2 {
       `/api/flows/${flow._id}`,
       flow
     );
-  }
+  }*/
   createNewFlow(flow: PolyglotFlowInfo): Promise<AxiosResponse> {
     return this.axios.post<{}, AxiosResponse, {}>(`/api/flows`, flow);
   }
   createNewFlowJson(flow: PolyglotFlow): Promise<AxiosResponse> {
     return this.axios.post<{}, AxiosResponse, {}>(`/api/flows/json`, flow);
-  }
-  getConceptGraph(
-    topic: string,
-    depth: number
-  ): Promise<AxiosResponse<ConceptMap>> {
-    return this.axios.post('/api/openai/genGraph', {
-      topic: topic,
-      depth: depth,
-    });
   }
 
   loadCourses(query?: string): Promise<AxiosResponse<PolyglotCourse[]>> {
@@ -227,29 +185,6 @@ export const API = {
   getUserInfo: (): Promise<AxiosResponse<User>> => {
     return axios.get('/api/user/me');
   },
-  loadExampleFlowElementsAsync: (flowId: string): any => {
-    const flow = exampleFlows.get(flowId);
-    return Promise.resolve({
-      data: flow!,
-      status: flow ? 200 : 404,
-      statusText: flow ? 'OK' : 'Not Found',
-      headers: {},
-      config: {},
-    });
-  },
-  loadAbstractExampleFlowElementsAsync: (
-    currentState: string,
-    goal: string
-  ): any => {
-    const flow = abstractFlows.get(`${currentState}, ${goal}`); // TODO: fix this, it's a hack but we need deep equality for the map keys
-    return Promise.resolve({
-      data: flow!,
-      status: flow ? 200 : 404,
-      statusText: flow ? 'OK' : 'Not Found',
-      headers: {},
-      config: {},
-    });
-  },
 
   loadFlowElementsAsync: (
     flowId: string
@@ -269,7 +204,7 @@ export const API = {
   createNewFlowJson(flow: PolyglotFlow): Promise<AxiosResponse> {
     return axios.post<{}, AxiosResponse, {}>(`/api/flows/json`, flow);
   },
-  saveFlowAsync: (flow: PolyglotFlow): Promise<AxiosResponse> => {
+  /*saveFlowAsync: (flow: PolyglotFlow): Promise<AxiosResponse> => {
     flow.nodes = flow.nodes?.map((e) =>
       polyglotNodeComponentMapping.applyTransformFunction(e)
     );
@@ -280,7 +215,7 @@ export const API = {
       `/api/flows/${flow._id}`,
       flow
     );
-  },
+  },*/
   createNewFlow: (flow: PolyglotFlow): Promise<AxiosResponse> => {
     return axios.post<{}, AxiosResponse, {}>(`/api/flows`, flow);
   },

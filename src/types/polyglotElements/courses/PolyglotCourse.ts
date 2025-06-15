@@ -1,4 +1,4 @@
-import { PolyglotFlow } from '../flow';
+import { PolyglotFlow } from '../';
 
 export type PolyglotCourseInfo = {
   _id?: string;
