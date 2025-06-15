@@ -71,33 +71,6 @@ export class APIV2 {
     });
   }
 
-  setRedirect401(check: boolean, redirect_url?: string) {
-    this.redirect401 = check;
-    this.redirect401URL = redirect_url;
-    return this;
-  }
-
-  disable401() {
-    this.error401 = false;
-    return this;
-  }
-
-  async handleGet(path: string) {
-    try {
-      const resp = await this.axios.get(path);
-      return resp;
-    } catch (err) {
-      if ((err as AxiosError)?.response?.status === 401) {
-        const BACK_URL = process.env.BACK_URL;
-        const LOGIN_URL =
-          BACK_URL + '/api/auth/google?returnUrl=' + Router.asPath;
-        if (this.redirect401) await Router.push(LOGIN_URL);
-        if (this.error401) throw err;
-        return;
-      }
-      throw err;
-    }
-  }
   autocomplete(query?: string): Promise<AxiosResponse<AutocompleteOutput>> {
     return this.axios.get('/api/search/autocomplete' + query);
   }
@@ -165,18 +138,6 @@ export class APIV2 {
 }
 
 export const API = {
-  edgeMetadata: (type: string): Promise<AxiosResponse<Metadata>> => {
-    return axios.get('/api/metadata/edge/' + type);
-  },
-  nodeMetadata: (type: string): Promise<AxiosResponse<Metadata>> => {
-    return axios.get('/api/metadata/node/' + type);
-  },
-  generalNodeMetadata: (): Promise<AxiosResponse<GeneralMetadata>> => {
-    return axios.get('/api/metadata/node');
-  },
-  generalEdgeMetadata: (): Promise<AxiosResponse<GeneralMetadata>> => {
-    return axios.get('/api/metadata/edge');
-  },
   autocomplete: (
     query?: string
   ): Promise<AxiosResponse<AutocompleteOutput>> => {
