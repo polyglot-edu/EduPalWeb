@@ -1,0 +1,62 @@
+/* https://developer.microsoft.com/en-us/fluentui#/controls/web/stack */
+/* Card component comes from inspecting Microsoft FluentUI website  */
+
+@font-face {
+  font-family: Roboto;
+  src: url(../public/Roboto-Regular.ttf);
+}
+
+@font-face {
+  font-family: Inter;
+  src: url(../public/Inter-Regular.ttf);
+}
+
+@font-face {
+  font-family: Inter-semi_bold;
+  src: url(../public/Inter-SemiBold.ttf);
+}
+
+.Card {
+  font-family: Inter;
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 2px;
+  background-clip: padding-box;
+  margin: 2px;
+  -webkit-box-shadow: 0 1.6px 3.6px 0 rgb(0 0 0 / 13%),
+    0 0.3px 0.9px 0 rgb(0 0 0 / 11%);
+  box-shadow: 0 1.6px 3.6px 0 rgb(0 0 0 / 13%), 0 0.3px 0.9px 0 rgb(0 0 0 / 11%);
+}
+
+.Card-react-flow {
+  font-family: Inter;
+  border: 1px solid #81868c;
+  margin: 0;
+  border-radius: 10px;
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+.label {
+  font-family: Inter-semi_bold;
+  font-size: 14px;
+  height: 30px;
+  padding-left: 5px;
+  padding-top: 5px;
+  width: 100%;
+}
+.nodeSubmenu {
+  font-family: Inter;
+  font-size: 14px;
+  height: 30px;
+  padding-left: 5px;
+  padding-top: 5px;
+  width: 100%;
+}
+
+.nodeItem {
+  padding-left: 15px;
+  padding-top: 5px;
+  font-family: Inter;
+  border-width: 0px;
+}

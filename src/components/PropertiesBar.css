@@ -1,0 +1,12 @@
+:root {
+  --properties-bar-width: 500px;
+  --properties-bar-padding-x: 0.75rem;
+}
+
+#PropertiesBar {
+  width: calc(
+    var(--properties-bar-width) - (2 * var(--properties-bar-padding-x))
+  );
+  padding-left: var(--properties-bar-padding-x);
+  padding-right: var(--properties-bar-padding-x);
+}

@@ -1,0 +1,32 @@
+name: Force Unlock Helm Deployment
+
+on:
+  workflow_dispatch:  # manually from github UI
+
+jobs:
+  unlock:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+
+      - name: Set KUBECONFIG
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yml
+          chmod 600 kubeconfig.yml
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KUBECONFIG }}
+
+      - name: Export KUBECONFIG
+        run: echo "KUBECONFIG=$GITHUB_WORKSPACE/kubeconfig.yml" >> $GITHUB_ENV
+
+      - name: Check current Helm operations
+        run: helm list -n node-editor-staging
+
+      - name: Force unlock by deleting Helm lock secret
+        run: |
+          kubectl delete secret -n node-editor-staging -l "owner=helm"
