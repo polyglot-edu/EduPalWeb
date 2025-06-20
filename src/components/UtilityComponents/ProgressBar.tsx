@@ -1,60 +1,73 @@
-import { CheckCircleIcon } from '@chakra-ui/icons';
-import { Box, Progress, Text, useToast } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { CalendarIcon, CheckCircleIcon } from '@chakra-ui/icons';
+import { Box, Flex, Progress, Text } from '@chakra-ui/react';
+import { IconType } from 'react-icons';
 
 interface ProgressBarProps {
   currentStep: number;
   totalSteps: number;
-  isHidden: boolean;
   label?: string;
-  description?: string;
+  date?: Date;
+  elementsName?: string;
+  elementsIcon?: IconType;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
   currentStep,
   totalSteps,
-  isHidden,
-  label,
-  description,
+  label = 'Student Progress',
+  date,
+  elementsName,
+  elementsIcon: ElementIcon,
 }) => {
-  const toast = useToast();
   const progress =
     totalSteps > 0
       ? Math.min(Math.round((currentStep / totalSteps) * 100), 100)
       : 0;
 
-  useEffect(() => {
-    if (progress == 100 && description && label)
-      toast({
-        title: label,
-        description: description,
-        status: 'success',
-        duration: 2000,
-        position: 'bottom-left',
-        isClosable: false,
-      });
-  }, [progress]);
+  const formattedDate = date?.toLocaleDateString(undefined, {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
 
   return (
-    <Box w="100%" p={4} hidden={isHidden}>
-      <Text mb={2}>
-        {label ?? 'Progress'}: {progress}%{' '}
-        {progress == 100 && (
-          <>
-            <CheckCircleIcon color="green.400" />
-            <Text color="green.500" fontWeight="medium">
-              Completed
-            </Text>
-          </>
-        )}
+    <Box w="100%" px={4} pt={3}>
+      <Text mb={2} fontWeight="medium">
+        {label}: {progress}%{' '}
+        {progress === 100 && <CheckCircleIcon color="green.400" ml={1} />}
       </Text>
+
       <Progress
-        colorScheme="teal"
-        size="md"
+        colorScheme="purple"
+        size="sm"
         value={progress}
         hasStripe
         isAnimated={progress < 100}
+        borderRadius="md"
       />
+
+      <Flex
+        mt={2}
+        justify="space-between"
+        align="center"
+        fontSize="sm"
+        color="gray.600"
+      >
+        {(ElementIcon || elementsName) && (
+          <Flex align="center" gap={1}>
+            {ElementIcon && <ElementIcon />}
+            <Text>
+              {totalSteps} {elementsName}
+            </Text>
+          </Flex>
+        )}
+        {date && (
+          <Flex align="center" gap={1}>
+            <CalendarIcon />
+            <Text>{formattedDate}</Text>
+          </Flex>
+        )}
+      </Flex>
     </Box>
   );
 };

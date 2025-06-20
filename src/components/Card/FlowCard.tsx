@@ -20,7 +20,7 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import cardImage from '../../public/test_card.png';
+import cardImage from '../../public/exampleFlow.png';
 import { PolyglotFlow } from '../../types/polyglotElements';
 
 type FlowCardProps = {

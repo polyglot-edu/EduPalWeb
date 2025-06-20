@@ -28,7 +28,7 @@ module.exports = {
     return [
       {
         source: '/',
-        destination: '/flows',
+        destination: '/dashboard',
         permanent: true,
       },
     ];

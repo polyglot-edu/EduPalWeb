@@ -1,6 +1,7 @@
 import { PolyglotFlow } from '../';
 
 export type PolyglotCourseInfo = {
+  img?: string;
   _id?: string;
   title: string;
   description: string;
@@ -10,6 +11,10 @@ export type PolyglotCourseInfo = {
     _id?: string;
     username?: string;
   };
+  published: boolean;
+  lastUpdate: Date;
+  nSubscribed?: number;
+  nCompleted?: number;
 };
 
 export type PolyglotCourse = PolyglotCourseInfo & {
