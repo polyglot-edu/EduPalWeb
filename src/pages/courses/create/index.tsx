@@ -35,11 +35,7 @@ export default function CourseCreatePage() {
           isOpen={isOpen}
           onToggle={onToggle}
         />
-        <Box
-          ml={isOpen ? '250px' : '60px'}
-          flex="1"
-          overflow="auto"
-        >
+        <Box ml={isOpen ? '250px' : '60px'} flex="1" overflow="auto">
           <CourseCreationStepper />
         </Box>
       </Flex>

@@ -31,11 +31,7 @@ export default function NavBar({ user, onAccessibilityClick }: NavBarProps) {
         height="60px"
       >
         <HStack spacing={3}>
-          <Image
-            src={brandLogo.src}
-            width="30px"
-            alt="EduCreate Logo"
-          />
+          <Image src={brandLogo.src} width="30px" alt="EduCreate Logo" />
           {!isMobile && (
             <Text fontWeight="bold" fontSize="xl" color="gray.700">
               EduCreate
@@ -66,7 +62,9 @@ export default function NavBar({ user, onAccessibilityClick }: NavBarProps) {
                 {user.name}
               </Text>
               <Link
-                href={process.env.TEST_MODE === 'true' ? {} : '/api/auth/logout'}
+                href={
+                  process.env.TEST_MODE === 'true' ? {} : '/api/auth/logout'
+                }
                 style={{ textDecoration: 'none' }}
               >
                 <Button colorScheme="red" size="sm">

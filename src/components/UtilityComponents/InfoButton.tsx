@@ -43,16 +43,15 @@ const InfoButton = ({
           icon={<InfoIcon />}
           isRound
           variant="outline"
-          color="blue.600"
+          color="purple.500"
           boxSize={iconSize}
           padding="2px"
           minW="auto"
           minH="auto"
-          transform="translateY(-50%)"
         />
       </PopoverTrigger>
       <PopoverContent
-        bg="rgba(66, 153, 225, 0.2)"
+        bg="purple.100"
         color="black"
         backdropFilter="blur(5px)"
         boxShadow="lg"

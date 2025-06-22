@@ -1,5 +1,3 @@
-// components/StepProgressBar.tsx
-import { CalendarIcon, CheckCircleIcon } from '@chakra-ui/icons';
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
 
@@ -11,18 +9,31 @@ interface ProgressBarProps {
   }[];
 }
 
+//to be fixed AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
 const StepProgressBar: React.FC<ProgressBarProps> = ({
   currentStep,
   steps,
 }) => {
   const progress =
-    steps.length > 0
-      ? Math.min(Math.round((currentStep / (steps.length - 1)) * 100), 100)
+    steps.length + 1 > 0
+      ? Math.min(Math.round((currentStep / (steps.length + 1)) * 100), 100)
       : 0;
-
+  console.log('progress', progress);
   return (
     <Box w="100%" px={4} pt={3}>
-      <Flex justify="space-between" align="center" mb={2}>
+      <Box textAlign="right" color={'purple.500'}>
+        Step {currentStep} of {steps.length + 1}
+      </Box>
+      <Progress
+        colorScheme="purple"
+        size="sm"
+        value={progress}
+        hasStripe
+        isAnimated={progress < 100}
+        borderRadius="md"
+      />
+      <Flex justify="space-between" align="center" mb={2} pt={2}>
         {steps.map((step, idx) => (
           <Flex
             key={step.name}
@@ -34,7 +45,13 @@ const StepProgressBar: React.FC<ProgressBarProps> = ({
             <Box
               as={step.icon}
               boxSize={6}
-              color={idx === currentStep ? 'purple.500' : idx < currentStep ? 'green.400' : 'gray.400'}
+              color={
+                idx === currentStep
+                  ? 'purple.500'
+                  : idx < currentStep
+                  ? 'green.400'
+                  : 'gray.400'
+              }
             />
             <Text fontSize="xs" mt={1} textAlign="center">
               {step.name}
@@ -42,14 +59,6 @@ const StepProgressBar: React.FC<ProgressBarProps> = ({
           </Flex>
         ))}
       </Flex>
-      <Progress
-        colorScheme="purple"
-        size="sm"
-        value={progress}
-        hasStripe
-        isAnimated={progress < 100}
-        borderRadius="md"
-      />
     </Box>
   );
 };

@@ -1,14 +1,63 @@
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, VStack } from '@chakra-ui/react';
+import { FiUpload, FiZap } from 'react-icons/fi';
+import StepHeading from '../../UtilityComponents/StepHeading';
 
-const StepContentUpload = () => {
-return (
-<Box p={6}>
-<Heading size="md" mb={4}>
-Upload Content
-</Heading>
-{/* TODO: Upload file PDF, drag & drop, anteprima */}
-</Box>
-);
+interface StepContentUploadProps {
+  selection: [string, React.Dispatch<React.SetStateAction<string>>];
+}
+
+const StepContentUpload = ({ selection }: StepContentUploadProps) => {
+  const [selected, setSelected] = selection;
+
+  return (
+    <Box>
+      <StepHeading
+        title="Content Upload"
+        subtitle="Do you have existing resources?"
+      />
+
+      <Flex gap={6} direction={{ base: 'column', md: 'row' }}>
+        <Box
+          p={6}
+          border="2px dashed"
+          borderColor={selected === 'upload' ? 'purple.500' : 'gray.200'}
+          bgColor={selected === 'upload' ? 'purple.50' : 'white'}
+          borderRadius="xl"
+          cursor="pointer"
+          onClick={() => setSelected('upload')}
+          flex="1"
+          _hover={{ bg: 'purple.50' }}
+        >
+          <VStack spacing={4}>
+            <Icon as={FiUpload} boxSize={6} />
+            <Text fontWeight="bold">I have resources</Text>
+            <Text fontSize="sm" color="gray.600">
+              Upload PDFs, documents, presentations, or other materials
+            </Text>
+          </VStack>
+        </Box>
+
+        <Box
+          p={6}
+          border="2px dashed"
+          borderColor={selected === 'ai' ? 'purple.500' : 'gray.200'}
+          bgColor={selected === 'upload' ? 'purple.50' : 'white'}
+          borderRadius="xl"
+          cursor="pointer"
+          onClick={() => setSelected('ai')}
+          flex="1"
+          _hover={{ bg: 'purple.50' }}
+        >
+          <VStack spacing={4}>
+            <Icon as={FiZap} boxSize={6} />
+            <Text fontWeight="bold">Generate with AI</Text>
+            <Text fontSize="sm" color="gray.600">
+              Let AI create course content based on your specifications
+            </Text>
+          </VStack>
+        </Box>
+      </Flex>
+    </Box>
+  );
 };
-
 export default StepContentUpload;

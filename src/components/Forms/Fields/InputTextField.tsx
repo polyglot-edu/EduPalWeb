@@ -1,36 +1,33 @@
-import { Box, FormControl, FormLabel, Select } from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import InfoButton from '../../UtilityComponents/InfoButton';
 
-export type EnumFieldOption = {
-  label: string;
-  value: string | number;
-};
-
-export type EnumFieldProps = {
+type TextFieldProps = {
   label: string;
   value: string;
   setValue: (value: string) => void;
-  options: EnumFieldOption[];
   width?: string;
-  hidden?: boolean;
+  placeholder?: string;
+  isDisabled?: boolean;
+  isReadOnly?: boolean;
   infoTitle?: string;
   infoDescription?: string;
   infoPlacement?: 'top' | 'right' | 'bottom' | 'left';
 };
 
-const EnumField = ({
-  hidden,
+const InputTextField = ({
   label,
   value,
   setValue,
-  options,
   width,
+  placeholder,
+  isDisabled,
+  isReadOnly,
   infoTitle,
   infoDescription,
   infoPlacement = 'right',
-}: EnumFieldProps) => {
+}: TextFieldProps) => {
   return (
-    <Box p={2} width={width} hidden={hidden}>
+    <Box p={2} width={width}>
       <FormControl>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <FormLabel m={0}>{label}</FormLabel>
@@ -42,20 +39,17 @@ const EnumField = ({
             />
           )}
         </Box>
-        <Select
-          borderColor="grey"
+        <Input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Select>
+          placeholder={placeholder}
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+          borderColor="grey"
+        />
       </FormControl>
     </Box>
   );
 };
 
-export default EnumField;
+export default InputTextField;

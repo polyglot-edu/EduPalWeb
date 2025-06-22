@@ -74,7 +74,6 @@ const sections: Section[] = [
 ];
 
 export const MainSideBar = ({ onNavigate, isOpen, onToggle }: SidebarProps) => {
-
   return (
     <Box
       position="fixed"

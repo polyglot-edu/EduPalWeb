@@ -15,7 +15,10 @@ import NavBar from '../../components/NavBars/NavBar';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import MainSideBar from '../../components/Sidebar/MainSidebar';
 import { APIV2 } from '../../data/api';
-import { PolyglotCourse, PolyglotCourseInfo } from '../../types/polyglotElements';
+import {
+  PolyglotCourse,
+  PolyglotCourseInfo,
+} from '../../types/polyglotElements';
 
 const fakeCourses: PolyglotCourse[] = [
   {
@@ -33,7 +36,7 @@ const fakeCourses: PolyglotCourse[] = [
     lastUpdate: new Date('2025-06-03'),
     nSubscribed: 28,
     nCompleted: 13,
-    flows:[]
+    flows: [],
   },
   {
     _id: '2',
@@ -46,7 +49,7 @@ const fakeCourses: PolyglotCourse[] = [
     author: { username: 'anna.smith' },
     published: false,
     lastUpdate: new Date('2025-06-19'),
-    flows:[]
+    flows: [],
   },
 ];
 
@@ -63,7 +66,7 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
   const { user } = useUser();
 
   const API = useMemo(() => new APIV2(accessToken), [accessToken]);
-  
+
   const analytics = {
     totalStudents: { nTotal: 180, monthDifference: 12 },
     activeCourses: { nTotal: 2, monthDifference: 2 },

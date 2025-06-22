@@ -15,7 +15,7 @@ globals:
     AUTH0_CLIENT_SECRET: client_secret
     AUTH0_AUDIENCE: https://api.polyglot-edu.com #TO BE CHANGED
     AUTH0_SCOPE: 'openid profile email read:products'
-    DEPLOY_URL: polyglot-edu.com  #TO BE CHANGED
+    DEPLOY_URL: polyglot-edu.com #TO BE CHANGED
     BACK_URL: https://polyglot-api.polyglot-edu.com
     TEST_MODE: true
   - &condition
@@ -52,11 +52,11 @@ steps:
       namespace: node-editor-${DRONE_BRANCH}
       debug: true
       kube_service_account: admin-user
-      kube_api_server: 'https://131.114.23.149:6443'  #TO BE CHANGED
+      kube_api_server: 'https://131.114.23.149:6443' #TO BE CHANGED
       kube_token:
         from_secret: kube_token
       values:
-        - 'url=polyglot-edu.com'  #TO BE CHANGED
+        - 'url=polyglot-edu.com' #TO BE CHANGED
         - 'cfOriginKey=$CFORIGIN'
         - 'dockerconfigjson=$DOCKERCONFIG'
         - 'image.repository=docker.polyglot-edu.com/polyglot-edu/node-editor' #TO BE CHANGED

@@ -1,4 +1,13 @@
-import { Box, Flex, Text, Icon, Stat, StatLabel, StatNumber, StatHelpText } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Icon,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  Text,
+} from '@chakra-ui/react';
 import { IconType } from 'react-icons';
 
 interface AnalyticsCardProps {
@@ -9,16 +18,15 @@ interface AnalyticsCardProps {
   colorScheme: string;
 }
 
-const AnalyticsCard = ({ title, value, icon, difference, colorScheme }: AnalyticsCardProps) => {
+const AnalyticsCard = ({
+  title,
+  value,
+  icon,
+  difference,
+  colorScheme,
+}: AnalyticsCardProps) => {
   return (
-    <Box
-      bg="white"
-      p={4}
-      rounded="lg"
-      boxShadow="md"
-      flex="1"
-      minW="200px"
-    >
+    <Box bg="white" p={4} rounded="lg" boxShadow="md" flex="1" minW="200px">
       <Flex align="center" mb={2}>
         <Icon as={icon} boxSize={6} mr={2} color={`${colorScheme}.500`} />
         <Text fontWeight="bold">{title}</Text>
