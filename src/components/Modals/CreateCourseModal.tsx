@@ -173,6 +173,8 @@ const CreateCourseModal = ({
         description: description,
         tags: tags,
         flowsId: flowsList,
+        published: false,
+        lastUpdate: new Date()
       };
 
       const response: AxiosResponse = await API.createNewCourse(base_course);

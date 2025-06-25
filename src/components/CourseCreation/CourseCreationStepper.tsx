@@ -18,8 +18,11 @@ import StepCourseContent from './steps/StepCourseContent';
 import StepCourseDetails from './steps/StepCourseDetails';
 import StepGamification from './steps/StepGamification';
 import StepPublishing from './steps/StepPublishing';
+import { useRouter } from 'next/router';
 
 const CourseCreationStepper = () => {
+  const router = useRouter();
+
   const [step, setStep] = useState(0);
   const [progressStep, setProgressStep] = useState(0);
   //values for the steps
@@ -136,7 +139,7 @@ const CourseCreationStepper = () => {
         <Flex mt={8} justify="space-between" py={2}>
           <Box flex="1" display="flex" justifyContent="center">
             <Button
-              onClick={() => (step === 0 ? console.log('cancel') : prevStep())}
+              onClick={() => (step === 0 ? router.back() : prevStep())}
             >
               {step === 0 ? 'Cancel' : 'Back'}
             </Button>

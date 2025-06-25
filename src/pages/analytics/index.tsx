@@ -24,7 +24,7 @@ import CourseCardSemplified from '../../components/Card/CourseCardSimplified';
 import CreateCourseModal from '../../components/Modals/CreateCourseModal';
 import { API, APIV2 } from '../../data/api';
 import cardImage from '../../public/collaborative_icon.png';
-import flowImage from '../../public/test_card.png';
+import flowImage from '../../public/exampleFlow.png';
 import {
   PolyglotCourse,
   PolyglotFlow,

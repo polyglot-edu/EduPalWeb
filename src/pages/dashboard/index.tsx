@@ -7,6 +7,7 @@ import {
   SimpleGrid,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { MdCheckCircle, MdGroup, MdSchool, MdStar } from 'react-icons/md';
 import AnalyticsCard from '../../components/Card/AnalyticsCard';
@@ -58,6 +59,7 @@ type DashboardIndexPageProps = {
 };
 
 const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
+  const router = useRouter();
   const { isOpen, onToggle } = useDisclosure({ defaultIsOpen: true });
   const [currentTab, setCurrentTab] = useState(0);
   const [courses, setCourses] = useState<PolyglotCourse[]>([]);
@@ -162,7 +164,12 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
           <Heading size="md">My Courses</Heading>
           <Flex gap={2}>
             <Button variant="outline">Course Templates</Button>
-            <Button colorScheme="purple">Create New Course</Button>
+            <Button
+              colorScheme="purple"
+              onClick={() => router.push('/courses/create')}
+            >
+              Create New Course
+            </Button>
           </Flex>
         </Flex>
 
