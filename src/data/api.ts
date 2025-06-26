@@ -1,8 +1,7 @@
-import axiosCreate, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import Router from 'next/router';
-import { GeneralMetadata, Metadata } from '../types/metadata';
+import axiosCreate, { AxiosInstance, AxiosResponse } from 'axios';
 import {
   AIExerciseType,
+  AIPlanCourse,
   AIPlanLesson,
   AnalyseType,
   ManualProgressInfo,
@@ -257,6 +256,10 @@ export const API = {
 
   planLesson: (body: AIPlanLesson): Promise<AxiosResponse> => {
     return axios.post<{}, AxiosResponse, {}>(`/api/openai/PlanLesson`, body);
+  },
+
+  planCourse: (body: AIPlanCourse): Promise<AxiosResponse> => {
+    return axios.post<{}, AxiosResponse, {}>(`/api/openai/PlanCourse`, body);
   },
 
   getAssignmentProjects: (): Promise<AxiosResponse> => {

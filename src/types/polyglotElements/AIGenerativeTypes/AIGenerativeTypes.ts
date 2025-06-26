@@ -145,7 +145,17 @@ export enum SummarizeStyle {
   StructuredInformative = 'structured and informative',
 }
 
-export type Topic = { topic: string; explanation: string };
+export type LearningObjectives = {
+  knowledge: string;
+  skills: string;
+  attitude: string;
+};
+
+export type Topic = {
+  topic: string;
+  explanation: string;
+  learning_outcome?: LearningOutcome;
+};
 
 export type LessonNodeAI = {
   title: string;
@@ -244,6 +254,17 @@ export type AIPlanLesson = {
   model: string;
 };
 
+export type AIPlanCourse = {
+  title: string;
+  macro_subject: string;
+  education_level: EducationLevel;
+  learning_objectives: LearningObjectives;
+  number_of_lessons: number;
+  duration_of_lesson: number;
+  language: string;
+  model?: string; // opzionale, default "Gemini"
+};
+
 export type PlanLessonNode = {
   type: string;
   topic: string;
@@ -262,4 +283,16 @@ export type AIPlanLessonResponse = {
   nodes: PlanLessonNode[];
   context: string;
   language: string;
+};
+
+export type AIPlanCourseResponse = {
+  title: string;
+  macro_subject: string;
+  education_level: EducationLevel;
+  learning_objectives: LearningObjectives;
+  number_of_lessons: number;
+  duration_of_lesson: number;
+  prerequisites: string[];
+  nodes: LessonNodeAI[];
+  language?: string; // default to "English"
 };

@@ -33,6 +33,7 @@ import {
   PolyglotCourse,
   PolyglotCourseInfo,
 } from '../../types/polyglotElements';
+import { v4 as uuid4 } from 'uuid';
 
 type CreateCourseModalProps = {
   isOpen: boolean;
@@ -174,7 +175,8 @@ const CreateCourseModal = ({
         tags: tags,
         flowsId: flowsList,
         published: false,
-        lastUpdate: new Date()
+        lastUpdate: new Date(),
+        _id: uuid4()
       };
 
       const response: AxiosResponse = await API.createNewCourse(base_course);

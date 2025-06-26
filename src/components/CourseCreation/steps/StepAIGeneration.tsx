@@ -1,14 +1,280 @@
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Button, SimpleGrid, useToast, VStack } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { API } from '../../../data/api';
+import {
+  AIPlanCourse,
+  AIPlanCourseResponse,
+  AIPlanLesson,
+  AnalyzedMaterial,
+  EducationLevel,
+  LearningOutcome,
+  LessonNodeAI,
+  Topic,
+} from '../../../types/polyglotElements';
+import PlanLessonCard from '../../Card/PlanLessonCard';
+import EnumField from '../../Forms/Fields/EnumField';
+import InputTextField from '../../Forms/Fields/InputTextField';
+import NumberField from '../../Forms/Fields/NumberField';
+import StepHeading from '../../UtilityComponents/StepHeading';
 
-const StepAIGeneration = () => {
+type StepCoursePlannerProps = {
+  language: string;
+  material: string;
+  analysedMaterialProp: [
+    AnalyzedMaterial | undefined,
+    React.Dispatch<React.SetStateAction<AnalyzedMaterial | undefined>>
+  ];
+  plannedCourseProp: [
+    AIPlanCourseResponse | undefined,
+    React.Dispatch<React.SetStateAction<AIPlanCourseResponse | undefined>>
+  ];
+};
+
+const StepAIGeneration = ({
+  material,
+  analysedMaterialProp,
+  plannedCourseProp,
+  language,
+}: StepCoursePlannerProps) => {
+  const [currentStep, setCurrentStep] = useState<'course' | 'lessons'>(
+    'course'
+  );
+  const [analysedMaterial] = analysedMaterialProp;
+  const [plannedCourse, setPlannedCourse] = plannedCourseProp;
+  const [isPlanCourseLoading, setIsPlanCourseLoading] = useState(false);
+  const toast = useToast();
+
+  // Stato per il corso
+  const [title, setTitle] = useState(analysedMaterial?.title || '');
+  const [macroSubject, setMacroSubject] = useState(
+    analysedMaterial?.macro_subject || ''
+  );
+  const [eduLevel, setEduLevel] = useState<EducationLevel>(
+    analysedMaterial?.education_level || EducationLevel.HighSchool
+  );
+  const [objectives, setObjectives] = useState<string[]>([]);
+  const [numLessons, setNumberOfLessons] = useState<number>(6);
+  const [lessonDuration, setLessonDuration] = useState<number>(60);
+  const [model, setModel] = useState<string>('Gemini');
+
+  const [lessons, setLessons] = useState<LessonNodeAI[]>([]);
+
+  const [topics, setTopics] = useState<Topic[]>(
+    Array.from({ length: numLessons }, () => ({
+      topic: '',
+      explanation: '',
+      learning_outcome: undefined,
+    }))
+  );
+
+  const updateLesson = (index: number, updatedLesson: LessonNodeAI) => {
+    setLessons((prevLessons) => {
+      const newLessons = [...prevLessons];
+      newLessons[index] = updatedLesson;
+      return newLessons;
+    });
+  };
+  const handleDeleteLesson = (index: number) => {
+    setLessons((prevLessons) => prevLessons.filter((_, i) => i !== index));
+  };
+
+  const educationOptions = Object.entries(EducationLevel).map(
+    ([key, value]) => ({
+      label: key.replace(/([A-Z])/g, ' $1').trim(),
+      value,
+    })
+  );
+
+  const handlePlanCourse = async () => {
+    setIsPlanCourseLoading(true);
+    setLessons([]);
+    setPlannedCourse(undefined);
+    try {
+      const response = await API.planCourse({
+        title,
+        macro_subject: macroSubject,
+        education_level: eduLevel,
+        learning_objectives: {
+          knowledge: '',
+          skills: '',
+          attitude: '',
+        },
+        number_of_lessons: numLessons,
+        duration_of_lesson: lessonDuration,
+        language: language || analysedMaterial?.language || 'English',
+        model: model || 'Gemini',
+      } as AIPlanCourse);
+      setPlannedCourse(response.data as AIPlanCourseResponse);
+      setLessons(response.data.nodes as LessonNodeAI[]);
+      setCurrentStep('lessons');
+      toast({
+        title: 'Course planned successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error planning course.',
+        description: 'Please try again.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsPlanCourseLoading(false);
+    }
+  };
+
+  const handleSaveLessonPlan = () => {
+    const lessonPlan: AIPlanLesson = {
+      title,
+      macro_subject: macroSubject,
+      education_level: eduLevel,
+      topics,
+      learning_outcome:
+        topics[0]?.learning_outcome ?? LearningOutcome.ApplyKnowledge,
+      context: material,
+      language,
+      model,
+    };
+
+    console.log('Lesson Plan Generated:', lessonPlan);
+
+    toast({
+      title: 'Lessons saved successfully!',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
   return (
-    <Box p={6}>
-      <Heading size="md" mb={4}>
-        AI Exercise Generation
-      </Heading>
-      {/* TODO: Trigger generazione AI, visualizza esercizi generati */}
-      Discutere cosa fare in questa schermata, la versione in figma è troppo
-      generale, bisogna capire con Filippo cosa bisogna fare
+    <Box>
+      <Box textAlign="right" color={'purple.500'}>
+        Step{' '}
+        {currentStep === 'course' ? '1' : currentStep === 'lessons' ? '2' : '3'}{' '}
+        of 3
+      </Box>
+      {currentStep === 'course' && (
+        <>
+          <StepHeading
+            title="Plan Your Course"
+            subtitle="Review the material and define the course structure."
+          />
+
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+            <InputTextField
+              label="Suggested Course Title"
+              placeholder="Enter course title"
+              value={title}
+              setValue={setTitle}
+            />
+
+            <InputTextField
+              label="Macro Subject"
+              placeholder="e.g., Computer Science"
+              value={macroSubject}
+              setValue={setMacroSubject}
+            />
+
+            <EnumField
+              label="Educational Level"
+              value={eduLevel}
+              setValue={(val) => setEduLevel(val as EducationLevel)}
+              options={educationOptions}
+            />
+
+            <NumberField
+              label="Number of Lessons"
+              value={numLessons}
+              setValue={(val) => {
+                const num = parseInt(val.toString(), 10);
+                setNumberOfLessons(num);
+                setLessons((prev) =>
+                  Array.from(
+                    { length: num },
+                    (_, i) =>
+                      prev[i] || {
+                        topic: '',
+                        explanation: '',
+                        learning_outcome: undefined,
+                      }
+                  )
+                );
+              }}
+              min={1}
+              max={50}
+            />
+
+            <InputTextField
+              label="Lesson Duration (minutes)"
+              value={lessonDuration.toString()}
+              setValue={(val) => setLessonDuration(parseInt(val))}
+              placeholder="e.g., 45"
+            />
+
+            <InputTextField
+              label="Model (optional)"
+              value={model}
+              setValue={setModel}
+              placeholder="e.g., Gemini"
+            />
+          </SimpleGrid>
+
+          <Box mt={4}>
+            <InputTextField
+              label="Learning Objectives (comma-separated)"
+              value={objectives.join(', ')}
+              setValue={(val) =>
+                setObjectives(val.split(',').map((s) => s.trim()))
+              }
+              placeholder="e.g., Understand recursion, Apply sorting algorithms"
+            />
+          </Box>
+
+          <Box mt={6}>
+            <Button
+              colorScheme="teal"
+              onClick={handlePlanCourse}
+              isLoading={isPlanCourseLoading}
+              isDisabled={!analysedMaterial}
+            >
+              Next: Plan Lessons
+            </Button>
+          </Box>
+        </>
+      )}
+
+      {currentStep === 'lessons' && (
+        <>
+          <StepHeading
+            title="Plan Your Lessons"
+            subtitle="Edit each topic's details and learning outcomes."
+          />
+
+          <VStack spacing={6} mt={4}>
+            {lessons.map((lesson, i) => (
+              <PlanLessonCard
+                key={i}
+                lesson={lesson}
+                index={i}
+                updateLesson={updateLesson}
+                onDelete={handleDeleteLesson}
+              />
+            ))}
+          </VStack>
+
+          <Box mt={6} display="flex" justifyContent="space-between">
+            <Button variant="outline" onClick={() => setCurrentStep('course')}>
+              ← Back to Course
+            </Button>
+            <Button colorScheme="teal" onClick={handleSaveLessonPlan}>
+              Save Lesson Plan
+            </Button>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };

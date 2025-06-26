@@ -1,54 +1,75 @@
 import {
   Box,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
+  FormControl,
+  FormLabel,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from '@chakra-ui/react';
-import { useFormContext } from 'react-hook-form';
-export type NumberFieldProps = {
+import InfoButton from '../../UtilityComponents/InfoButton';
+
+type NumberFieldProps = {
   label: string;
-  name: string;
-  defaultValue: number;
-  min: number;
-  max: number;
+  value: number;
+  setValue: (value: number) => void;
+  min?: number;
+  max?: number;
   width?: string;
+  placeholder?: string;
+  isDisabled?: boolean;
+  isReadOnly?: boolean;
+  infoTitle?: string;
+  infoDescription?: string;
+  infoPlacement?: 'top' | 'right' | 'bottom' | 'left';
 };
 
 const NumberField = ({
   label,
-  name,
-  defaultValue,
+  value,
+  setValue,
   min,
   max,
   width,
+  placeholder,
+  isDisabled,
+  isReadOnly,
+  infoTitle,
+  infoDescription,
+  infoPlacement = 'right',
 }: NumberFieldProps) => {
-  const { register, getFieldState, setValue, getValues } = useFormContext();
-  const { error } = getFieldState(name);
-
   return (
     <Box p={2} width={width}>
-      {label}
-      <NumberInput defaultValue={defaultValue} min={min} max={max}>
-        <NumberInputField {...register(name)} name={name} />
-        <NumberInputStepper>
-          <NumberIncrementStepper
-            onClick={() => {
-              let c = getValues(name);
-              c++;
-              setValue(name, c);
-            }}
-          />
-          <NumberDecrementStepper
-            onClick={() => {
-              let c = getValues(name);
-              c--;
-              setValue(name, c);
-            }}
-          />
-        </NumberInputStepper>
-      </NumberInput>
+      <FormControl>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <FormLabel m={0}>{label}</FormLabel>
+          {infoTitle && infoDescription && (
+            <InfoButton
+              title={infoTitle}
+              description={infoDescription}
+              placement={infoPlacement}
+            />
+          )}
+        </Box>
+        <NumberInput
+          value={value}
+          min={min}
+          max={max}
+          onChange={(val) => {
+            const parsed = parseInt(val);
+            setValue(isNaN(parsed) ? 0 : parsed);
+          }}
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+        >
+          <NumberInputField placeholder={placeholder} borderColor="grey" />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+      </FormControl>
     </Box>
   );
 };

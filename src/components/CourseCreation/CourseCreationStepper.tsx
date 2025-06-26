@@ -10,7 +10,12 @@ import { TbLock } from 'react-icons/tb';
 import StepProgressBar from '../UtilityComponents/StepProgressBar';
 
 import { useRouter } from 'next/router';
-import { EducationLevel } from '../../types/polyglotElements';
+import { API } from '../../data/api';
+import {
+  AIPlanCourseResponse,
+  AnalyzedMaterial,
+  EducationLevel,
+} from '../../types/polyglotElements';
 import StepAIGeneration from './steps/StepAIGeneration';
 import StepComplete from './steps/StepComplete';
 import StepContentForm from './steps/StepContentForm';
@@ -41,32 +46,27 @@ const CourseCreationStepper = () => {
   const [uploadMethod, setUploadMethod] = useState('');
   const [publishMethod, setPublishMethod] = useState('');
   const [accessCode, setAccessCode] = useState('');
-  const [analysedMaterial, setAnalysedMaterial] = useState<any>();
+  const [analysedMaterial, setAnalysedMaterial] = useState<AnalyzedMaterial>();
+  const [plannedCourse, setPlannedCourse] = useState<AIPlanCourseResponse>();
+  const [material, setMaterial] = useState<string>('');
   const [img, setImg] = useState('');
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
 
   const nextStep = () => {
-    if (step === 0 || (step === 2 && uploadMethod === 'ai')) {
-      setProgressStep((p) => Math.min(p + 0.5, stepComponents.length - 1));
-    } else if (step === 2 && uploadMethod === 'selected') {
+    if (step === 2 && uploadMethod === 'selected') {
       setProgressStep(() => Math.min(step + 2.5, stepComponents.length - 1));
     } else {
       setProgressStep(() => Math.min(step + 1, stepComponents.length - 1));
     }
 
-    if (step === 2 && uploadMethod === 'ai') {
-      setStep((s) => Math.min(s + 2, stepComponents.length - 1));
-    } else if (step === 2 && uploadMethod === 'selected') {
+    if (step === 2 && uploadMethod === 'selected') {
       setStep((s) => Math.min(s + 3, stepComponents.length - 1));
     } else {
       setStep((s) => Math.min(s + 1, stepComponents.length - 1));
     }
   };
   const prevStep = () => {
-    if (step === 4 && uploadMethod === 'ai') {
-      setStep((s) => Math.max(s - 2, 0));
-      setProgressStep((p) => Math.max(p - 1, 0));
-    } else if (step === 5 && uploadMethod === 'selected') {
+    if (step === 5 && uploadMethod === 'selected') {
       setStep((s) => Math.min(s - 3, stepComponents.length - 1));
       setProgressStep(() => Math.min(step - 2.5, stepComponents.length - 1));
     } else {
@@ -101,9 +101,17 @@ const CourseCreationStepper = () => {
     />, // 2
     <StepContentForm
       key={'content-form'}
-      analysedMaterial={[analysedMaterial, setAnalysedMaterial]}
+      materialProp={[material, setMaterial]}
+      setAnalysedMaterial={setAnalysedMaterial}
+      method={uploadMethod}
     />, // 3 (intermedio)
-    <StepAIGeneration key={'ai-generation'} />, // 4
+    <StepAIGeneration
+      key={'ai-generation'}
+      language={language}
+      material={material}
+      analysedMaterialProp={[analysedMaterial, setAnalysedMaterial]}
+      plannedCourseProp={[plannedCourse, setPlannedCourse]}
+    />, // 4
     <StepGamification key={'gamification'} />, // 5
     <StepPublishing
       key={'publishing'}
