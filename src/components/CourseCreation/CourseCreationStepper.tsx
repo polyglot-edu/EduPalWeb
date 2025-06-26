@@ -9,6 +9,7 @@ import { TbLock } from 'react-icons/tb';
 
 import StepProgressBar from '../UtilityComponents/StepProgressBar';
 
+import { useRouter } from 'next/router';
 import { EducationLevel } from '../../types/polyglotElements';
 import StepAIGeneration from './steps/StepAIGeneration';
 import StepComplete from './steps/StepComplete';
@@ -18,7 +19,6 @@ import StepCourseContent from './steps/StepCourseContent';
 import StepCourseDetails from './steps/StepCourseDetails';
 import StepGamification from './steps/StepGamification';
 import StepPublishing from './steps/StepPublishing';
-import { useRouter } from 'next/router';
 
 const CourseCreationStepper = () => {
   const router = useRouter();
@@ -42,24 +42,33 @@ const CourseCreationStepper = () => {
   const [publishMethod, setPublishMethod] = useState('');
   const [accessCode, setAccessCode] = useState('');
   const [analysedMaterial, setAnalysedMaterial] = useState<any>();
+  const [img, setImg] = useState('');
+  const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
 
   const nextStep = () => {
     if (step === 0 || (step === 2 && uploadMethod === 'ai')) {
       setProgressStep((p) => Math.min(p + 0.5, stepComponents.length - 1));
+    } else if (step === 2 && uploadMethod === 'selected') {
+      setProgressStep(() => Math.min(step + 2.5, stepComponents.length - 1));
     } else {
       setProgressStep(() => Math.min(step + 1, stepComponents.length - 1));
     }
 
     if (step === 2 && uploadMethod === 'ai') {
       setStep((s) => Math.min(s + 2, stepComponents.length - 1));
+    } else if (step === 2 && uploadMethod === 'selected') {
+      setStep((s) => Math.min(s + 3, stepComponents.length - 1));
     } else {
       setStep((s) => Math.min(s + 1, stepComponents.length - 1));
     }
   };
   const prevStep = () => {
-    if (step === 2 && uploadMethod === 'ai') {
+    if (step === 4 && uploadMethod === 'ai') {
       setStep((s) => Math.max(s - 2, 0));
       setProgressStep((p) => Math.max(p - 1, 0));
+    } else if (step === 5 && uploadMethod === 'selected') {
+      setStep((s) => Math.min(s - 3, stepComponents.length - 1));
+      setProgressStep(() => Math.min(step - 2.5, stepComponents.length - 1));
     } else {
       setStep((s) => Math.max(s - 1, 0));
       setProgressStep((p) =>
@@ -76,6 +85,8 @@ const CourseCreationStepper = () => {
       eduLevelState={[eduLevel, setEduLevel]}
       languageState={[language, setLanguage]}
       descriptionState={[description, setDescription]}
+      imgState={[img, setImg]}
+      tagsState={[tags, setTags]}
     />, // 0
     <StepCourseContent
       key={'course-content'}
@@ -98,6 +109,7 @@ const CourseCreationStepper = () => {
       key={'publishing'}
       publishMethod={[publishMethod, setPublishMethod]}
       accessCode={[accessCode, setAccessCode]}
+      materialMethod={uploadMethod}
     />, // 6
     <StepComplete key={'complete'} />, // 7
   ];
@@ -138,9 +150,7 @@ const CourseCreationStepper = () => {
 
         <Flex mt={8} justify="space-between" py={2}>
           <Box flex="1" display="flex" justifyContent="center">
-            <Button
-              onClick={() => (step === 0 ? router.back() : prevStep())}
-            >
+            <Button onClick={() => (step === 0 ? router.back() : prevStep())}>
               {step === 0 ? 'Cancel' : 'Back'}
             </Button>
           </Box>
