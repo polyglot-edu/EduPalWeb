@@ -2,7 +2,7 @@ import { EducationLevel, LearningOutcome, Topic } from '..';
 import { PolyglotEdge, PolyglotNode } from '../node';
 
 export type PolyglotFlowInfo = {
-  _id?: string;
+  _id: string;
   title: string;
   author?: {
     _id?: string;
