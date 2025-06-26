@@ -1,5 +1,5 @@
 import { Box, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import { FiUpload, FiZap } from 'react-icons/fi';
+import { FiGrid, FiUpload, FiZap } from 'react-icons/fi';
 import StepHeading from '../../UtilityComponents/StepHeading';
 
 interface StepContentUploadProps {
@@ -17,6 +17,25 @@ const StepContentUpload = ({ selection }: StepContentUploadProps) => {
       />
 
       <Flex gap={6} direction={{ base: 'column', md: 'row' }}>
+        <Box
+          p={6}
+          border="2px dashed"
+          borderColor={selected === 'selected' ? 'purple.500' : 'gray.200'}
+          bgColor={selected === 'selected' ? 'purple.50' : 'white'}
+          borderRadius="xl"
+          cursor="pointer"
+          onClick={() => setSelected('selected')}
+          flex="1"
+          _hover={{ bg: 'purple.50' }}
+        >
+          <VStack spacing={4}>
+            <Icon as={FiGrid} boxSize={6} />
+            <Text fontWeight="bold">Use pregenerated learning paths</Text>
+            <Text fontSize="sm" color="gray.600">
+              Select from existing learning paths the material.
+            </Text>
+          </VStack>
+        </Box>
         <Box
           p={6}
           border="2px dashed"
@@ -41,7 +60,7 @@ const StepContentUpload = ({ selection }: StepContentUploadProps) => {
           p={6}
           border="2px dashed"
           borderColor={selected === 'ai' ? 'purple.500' : 'gray.200'}
-          bgColor={selected === 'upload' ? 'purple.50' : 'white'}
+          bgColor={selected === 'ai' ? 'purple.50' : 'white'}
           borderRadius="xl"
           cursor="pointer"
           onClick={() => setSelected('ai')}

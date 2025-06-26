@@ -8,11 +8,16 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { API } from '../../../data/api';
+import { PolyglotFlow } from '../../../types/polyglotElements';
+import FlowCarousel from '../../Carousel/FlowCarousel';
 import StepHeading from '../../UtilityComponents/StepHeading';
 
 interface StepPublishingProps {
   publishMethod: [string, React.Dispatch<React.SetStateAction<string>>];
   accessCode: [string, React.Dispatch<React.SetStateAction<string>>];
+  materialMethod: string;
 }
 
 function makeCode(length: number) {
@@ -26,16 +31,38 @@ function makeCode(length: number) {
   return result;
 }
 
-const StepPublishing = ({ publishMethod, accessCode }: StepPublishingProps) => {
+const StepPublishing = ({
+  publishMethod,
+  accessCode,
+  materialMethod,
+}: StepPublishingProps) => {
   const [visibility, setVisibility] = publishMethod;
   const [code, setAccessCode] = accessCode;
 
+  const [selectedFlows, setSelectedFlows] = useState<string[]>([]);
+  const [flows, setFlows] = useState<PolyglotFlow[]>([]);
+  useEffect(() => {
+    API.loadFlowList().then((resp) => {
+      setFlows(resp.data);
+    });
+  }, []);
   return (
     <Box p={8}>
       <StepHeading
         title="Publishing"
         subtitle="Choose how to share your course"
       />
+      <Box mb={6} hidden={materialMethod === 'selected' ? false : true}>
+        <Text mb={2} fontSize="sm" color="gray.600">
+          {selectedFlows.length} learning path{selectedFlows.length !== 1 && 's'}{' '}
+          selected
+        </Text>
+        <FlowCarousel
+          flows={flows}
+          selectedFlows={selectedFlows}
+          setSelectedFlows={setSelectedFlows}
+        />
+      </Box>
       <RadioGroup onChange={setVisibility} value={visibility}>
         <Stack spacing={4} direction="row" flexWrap="wrap">
           <Box
