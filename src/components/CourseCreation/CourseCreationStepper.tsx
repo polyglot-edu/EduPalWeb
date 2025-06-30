@@ -10,9 +10,9 @@ import { TbLock } from 'react-icons/tb';
 import StepProgressBar from '../UtilityComponents/StepProgressBar';
 
 import { useRouter } from 'next/router';
-import { API } from '../../data/api';
 import {
   AIPlanCourseResponse,
+  AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
 } from '../../types/polyglotElements';
@@ -30,7 +30,6 @@ const CourseCreationStepper = () => {
 
   const [step, setStep] = useState(0);
   const [progressStep, setProgressStep] = useState(0);
-  //values for the steps
 
   const [title, setTitle] = useState('');
   const [subjectArea, setSubjectArea] = useState('');
@@ -43,11 +42,13 @@ const CourseCreationStepper = () => {
   const [duration, setDuration] = useState('');
   const [prerequisites, setPrerequisites] = useState('');
   const [targetAudience, setTargetAudience] = useState('');
+  const [classContext, setClassContext] = useState('');
   const [uploadMethod, setUploadMethod] = useState('');
   const [publishMethod, setPublishMethod] = useState('');
   const [accessCode, setAccessCode] = useState('');
   const [analysedMaterial, setAnalysedMaterial] = useState<AnalyzedMaterial>();
   const [plannedCourse, setPlannedCourse] = useState<AIPlanCourseResponse>();
+  const [generatedLessons, setGeneratedLessons]= useState<AIPlanLessonResponse[]>([]);
   const [material, setMaterial] = useState<string>('');
   const [img, setImg] = useState('');
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
@@ -90,6 +91,7 @@ const CourseCreationStepper = () => {
     />, // 0
     <StepCourseContent
       key={'course-content'}
+      classContextState={[classContext, setClassContext]}
       learningObjectivesState={[learningObjectives, setObjectives]}
       durationState={[duration, setDuration]}
       prerequisitesState={[prerequisites, setPrerequisites]}
@@ -109,8 +111,11 @@ const CourseCreationStepper = () => {
       key={'ai-generation'}
       language={language}
       material={material}
+      context={classContext}
+      GeneratedLessonsProp={[generatedLessons, setGeneratedLessons]}
       analysedMaterialProp={[analysedMaterial, setAnalysedMaterial]}
       plannedCourseProp={[plannedCourse, setPlannedCourse]}
+      title={title}
     />, // 4
     <StepGamification key={'gamification'} />, // 5
     <StepPublishing

@@ -22,116 +22,163 @@ export const QuestionTypeMap = [
     text: 'Open Question',
     nodeType: 'OpenQuestionNode',
     integrated: true,
+    defaultData: {
+      solutions_number: 1,
+      distractors_number: 2,
+      easily_discardable_distractors_number: 1,
+    },
   },
   {
     key: 'short answer question',
     text: 'Short Answer Question',
     nodeType: 'closeEndedQuestionNode',
     integrated: true,
+    defaultData: {
+      solutions_number: 1,
+      distractors_number: 2,
+      easily_discardable_distractors_number: 1,
+    },
   },
   {
     key: 'true or false',
     text: 'True or False',
     nodeType: 'TrueFalseNode',
     integrated: true,
+    defaultData: {
+      solutions_number: 1,
+      distractors_number: 2,
+      easily_discardable_distractors_number: 1,
+    },
   },
   {
     key: 'fill in the blanks',
     text: 'Fill in the Blanks',
     nodeType: 'activity',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'matching',
     text: 'Matching',
     nodeType: 'activity',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'ordering',
     text: 'Ordering',
     nodeType: 'activity',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'multiple choice',
     text: 'Multiple Choice',
     nodeType: 'multipleChoiceQuestionNode',
     integrated: true,
+    defaultData: {
+      solutions_number: 1,
+      distractors_number: 2,
+      easily_discardable_distractors_number: 1,
+    },
   },
   {
     key: 'multiple select',
     text: 'Multiple Select',
     nodeType: 'multipleChoiceQuestionNode',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'coding',
     text: 'Coding',
     nodeType: 'codingQuestionNode', //da capire se si può usare per il tool che ha fatto riccardo
     integrated: false,
+    defaultData: {},
   },
-  { key: 'essay', text: 'Essay', nodeType: 'activity', integrated: false },
+  {
+    key: 'essay',
+    text: 'Essay',
+    nodeType: 'activity',
+    integrated: false,
+    defaultData: {},
+  },
   {
     key: 'knowledge exposition',
     text: 'Knowledge Exposition',
     nodeType: 'InnovationPitchNode', //forse si può cambiare in un generale "PitchNode"
     integrated: false,
+    defaultData: {},
   },
-  { key: 'debate', text: 'Debate', nodeType: 'activity', integrated: false },
+  {
+    key: 'debate',
+    text: 'Debate',
+    nodeType: 'activity',
+    integrated: false,
+    defaultData: {},
+  },
   {
     key: 'brainstorming',
     text: 'Brainstorming',
     nodeType: 'BrainstormingNode',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'group discussion',
     text: 'Group Discussion',
     nodeType: 'activity',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'simulation',
     text: 'Simulation',
     nodeType: 'SimulationNode',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'inquiry based learning',
     text: 'Inquiry-Based Learning',
     nodeType: 'activity',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'non written material analysis',
     text: 'Non-Written Material Analysis',
     nodeType: 'activity',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'non written material production',
     text: 'Non-Written Material Production',
     nodeType: 'ImageEvaluationNode', //oppure c'è anche AnalyzingPlottingDataNode
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'case study analysis',
     text: 'Case Study Analysis',
     nodeType: 'CasesEvaluationNode',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'project based learning',
     text: 'Project-Based Learning',
     nodeType: 'activity',
     integrated: false,
+    defaultData: {},
   },
   {
     key: 'problem solving activity',
     text: 'Problem Solving Activity',
     nodeType: 'ProblemSolvingNode', //oppure c'è anche FindSolutionNode
     integrated: false,
+    defaultData: {},
   },
 ];
 
@@ -150,11 +197,17 @@ export type LearningObjectives = {
   skills: string;
   attitude: string;
 };
+export type Assignment = {
+  learning_outcome: LearningOutcome;
+  type: string;
+  data: any;
+};
 
 export type Topic = {
   topic: string;
   explanation: string;
   learning_outcome?: LearningOutcome;
+  assignments?: Assignment[];
 };
 
 export type LessonNodeAI = {
@@ -283,6 +336,7 @@ export type AIPlanLessonResponse = {
   nodes: PlanLessonNode[];
   context: string;
   language: string;
+  data?: any
 };
 
 export type AIPlanCourseResponse = {

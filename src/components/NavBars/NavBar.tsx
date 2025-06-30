@@ -34,7 +34,7 @@ export default function NavBar({ user, onAccessibilityClick }: NavBarProps) {
           <Image src={brandLogo.src} width="30px" alt="EduCreate Logo" />
           {!isMobile && (
             <Text fontWeight="bold" fontSize="xl" color="gray.700">
-              EduCreate
+              EduPal
             </Text>
           )}
         </HStack>

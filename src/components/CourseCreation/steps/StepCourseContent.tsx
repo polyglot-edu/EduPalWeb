@@ -11,6 +11,7 @@ type StepCourseContentProps = {
   durationState: [string, React.Dispatch<React.SetStateAction<string>>];
   prerequisitesState: [string, React.Dispatch<React.SetStateAction<string>>];
   targetAudienceState: [string, React.Dispatch<React.SetStateAction<string>>];
+  classContextState: [string, React.Dispatch<React.SetStateAction<string>>];
 };
 
 const StepCourseContent = ({
@@ -18,9 +19,11 @@ const StepCourseContent = ({
   durationState,
   prerequisitesState,
   targetAudienceState,
+  classContextState,
 }: StepCourseContentProps) => {
   const [learningObjectives, setObjectives] = learningObjectivesState;
   const [duration, setDuration] = durationState;
+  const [classContext, setClassContext] = classContextState;
   const [prerequisites, setPrerequisites] = prerequisitesState;
   const [targetAudience, setTargetAudience] = targetAudienceState;
 
@@ -77,6 +80,16 @@ const StepCourseContent = ({
           infoPlacement="right"
         />
       </SimpleGrid>
+      <InputTextField
+        label="Class Context"
+        placeholder="Describe the context of the class"
+        value={classContext}
+        setValue={setClassContext}
+        infoTitle="Class Context"
+        infoDescription="Provide details about the class environment, such as class size or any specific characteristics of the student group that may influence the course design."
+        infoPlacement="right"
+        height="100px"
+      />
       <InputTextField
         label="Prerequisites"
         placeholder="Enter prerequisites (if any)"

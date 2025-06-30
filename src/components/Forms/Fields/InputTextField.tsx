@@ -1,4 +1,10 @@
-import { Box, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Textarea,
+} from '@chakra-ui/react';
 import InfoButton from '../../UtilityComponents/InfoButton';
 
 type TextFieldProps = {
@@ -6,12 +12,14 @@ type TextFieldProps = {
   value: string;
   setValue: (value: string) => void;
   width?: string;
+  height?: string;
   placeholder?: string;
   isDisabled?: boolean;
   isReadOnly?: boolean;
   infoTitle?: string;
   infoDescription?: string;
   infoPlacement?: 'top' | 'right' | 'bottom' | 'left';
+  suggestion?: string;
 };
 
 const InputTextField = ({
@@ -19,12 +27,14 @@ const InputTextField = ({
   value,
   setValue,
   width,
+  height = '2.5rem',
   placeholder,
   isDisabled,
   isReadOnly,
   infoTitle,
   infoDescription,
   infoPlacement = 'right',
+  suggestion,
 }: TextFieldProps) => {
   return (
     <Box p={2} width={width}>
@@ -39,14 +49,23 @@ const InputTextField = ({
             />
           )}
         </Box>
-        <Input
+        <Textarea
           value={value}
+          height={height}
+          minHeight="2.5rem"
+          padding="0.375rem 0.75rem"
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
           borderColor="grey"
         />
+        <Button
+          hidden={!suggestion}
+          onClick={() => setValue(suggestion || value)}
+        >
+          Suggestion
+        </Button>
       </FormControl>
     </Box>
   );

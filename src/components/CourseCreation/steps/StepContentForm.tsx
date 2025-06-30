@@ -53,7 +53,7 @@ const StepContentForm = ({
         subtitle="Upload and organize your materials"
       />
 
-      {method === 'selected' ? (
+      {method === 'upload' ? (
         <>
           <Box
             border="2px dashed"

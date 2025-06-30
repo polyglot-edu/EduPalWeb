@@ -1,17 +1,27 @@
-import { Box, Button, SimpleGrid, useToast, VStack } from '@chakra-ui/react';
+import { CheckCircleIcon, RepeatIcon, TimeIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Flex,
+  SimpleGrid,
+  Text,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { API } from '../../../data/api';
 import {
   AIPlanCourse,
   AIPlanCourseResponse,
-  AIPlanLesson,
+  AIPlanLessonResponse,
   AnalyzedMaterial,
+  Assignment,
   EducationLevel,
   LearningOutcome,
   LessonNodeAI,
-  Topic,
 } from '../../../types/polyglotElements';
 import PlanLessonCard from '../../Card/PlanLessonCard';
+import ReviewLessonCard from '../../Card/ReviewLessonCard';
 import EnumField from '../../Forms/Fields/EnumField';
 import InputTextField from '../../Forms/Fields/InputTextField';
 import NumberField from '../../Forms/Fields/NumberField';
@@ -28,6 +38,12 @@ type StepCoursePlannerProps = {
     AIPlanCourseResponse | undefined,
     React.Dispatch<React.SetStateAction<AIPlanCourseResponse | undefined>>
   ];
+  GeneratedLessonsProp: [
+    AIPlanLessonResponse[],
+    React.Dispatch<React.SetStateAction<AIPlanLessonResponse[]>>
+  ];
+  context: string;
+  title: string;
 };
 
 const StepAIGeneration = ({
@@ -35,17 +51,18 @@ const StepAIGeneration = ({
   analysedMaterialProp,
   plannedCourseProp,
   language,
+  context,
+  GeneratedLessonsProp,
+  title,
 }: StepCoursePlannerProps) => {
-  const [currentStep, setCurrentStep] = useState<'course' | 'lessons'>(
-    'course'
-  );
+  const [currentStep, setCurrentStep] = useState<
+    'course' | 'lessons' | 'generating' | 'check'
+  >('course');
   const [analysedMaterial] = analysedMaterialProp;
   const [plannedCourse, setPlannedCourse] = plannedCourseProp;
   const [isPlanCourseLoading, setIsPlanCourseLoading] = useState(false);
   const toast = useToast();
-
-  // Stato per il corso
-  const [title, setTitle] = useState(analysedMaterial?.title || '');
+  const [generatedLessons, setGeneratedLessons] = GeneratedLessonsProp;
   const [macroSubject, setMacroSubject] = useState(
     analysedMaterial?.macro_subject || ''
   );
@@ -59,14 +76,43 @@ const StepAIGeneration = ({
 
   const [lessons, setLessons] = useState<LessonNodeAI[]>([]);
 
-  const [topics, setTopics] = useState<Topic[]>(
-    Array.from({ length: numLessons }, () => ({
-      topic: '',
-      explanation: '',
-      learning_outcome: undefined,
-    }))
-  );
+  const extractAssignmentsWithTopicInfo = (lesson: LessonNodeAI) => { 
+    const all: {
+      assignment: Assignment;
+      topic: {
+        topic: string;
+        explanation: string;
+        learning_outcome?: LearningOutcome;
+      };
+    }[] = [];
 
+    lesson.topics?.forEach((topic) => {
+      if (topic.assignments && Array.isArray(topic.assignments)) {
+        topic.assignments.forEach((assignment) => {
+          all.push({
+            assignment,
+            topic: {
+              topic: topic.topic,
+              explanation: topic.explanation,
+              learning_outcome: topic.learning_outcome,
+            },
+          });
+        });
+      }
+    });
+
+    return all;
+  };
+  const updateGeneratedLesson = (
+    index: number,
+    updated: AIPlanLessonResponse
+  ) => {
+    setGeneratedLessons((prev) => {
+      const newLessons = [...prev];
+      newLessons[index] = updated;
+      return newLessons;
+    });
+  };
   const updateLesson = (index: number, updatedLesson: LessonNodeAI) => {
     setLessons((prevLessons) => {
       const newLessons = [...prevLessons];
@@ -126,20 +172,28 @@ const StepAIGeneration = ({
     }
   };
 
-  const handleSaveLessonPlan = () => {
-    const lessonPlan: AIPlanLesson = {
-      title,
-      macro_subject: macroSubject,
-      education_level: eduLevel,
-      topics,
-      learning_outcome:
-        topics[0]?.learning_outcome ?? LearningOutcome.ApplyKnowledge,
-      context: material,
-      language,
-      model,
-    };
-
-    console.log('Lesson Plan Generated:', lessonPlan);
+  const handlePlanLesson = () => {
+    setCurrentStep('generating');
+    generatedLessons.length = 0;
+    lessons.forEach(async (lesson, index) => {
+      const response = await API.planLesson({
+        topics: lesson.topics,
+        learning_outcome: lesson.learning_outcome,
+        language: language || analysedMaterial?.language || 'English',
+        macro_subject: macroSubject,
+        title: lesson.title,
+        education_level: eduLevel,
+        context: context,
+        model: model || 'Gemini',
+      });
+      setGeneratedLessons((prev) => [
+        ...prev,
+        {
+          ...(response.data as AIPlanLessonResponse),
+          data: extractAssignmentsWithTopicInfo(lesson),
+        },
+      ]);
+    });
 
     toast({
       title: 'Lessons saved successfully!',
@@ -164,13 +218,6 @@ const StepAIGeneration = ({
           />
 
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-            <InputTextField
-              label="Suggested Course Title"
-              placeholder="Enter course title"
-              value={title}
-              setValue={setTitle}
-            />
-
             <InputTextField
               label="Macro Subject"
               placeholder="e.g., Computer Science"
@@ -213,13 +260,6 @@ const StepAIGeneration = ({
               setValue={(val) => setLessonDuration(parseInt(val))}
               placeholder="e.g., 45"
             />
-
-            <InputTextField
-              label="Model (optional)"
-              value={model}
-              setValue={setModel}
-              placeholder="e.g., Gemini"
-            />
           </SimpleGrid>
 
           <Box mt={4}>
@@ -245,8 +285,7 @@ const StepAIGeneration = ({
           </Box>
         </>
       )}
-
-      {currentStep === 'lessons' && (
+      {currentStep === 'lessons'  && (
         <>
           <StepHeading
             title="Plan Your Lessons"
@@ -269,10 +308,59 @@ const StepAIGeneration = ({
             <Button variant="outline" onClick={() => setCurrentStep('course')}>
               ← Back to Course
             </Button>
-            <Button colorScheme="teal" onClick={handleSaveLessonPlan}>
+            <Button colorScheme="teal" onClick={handlePlanLesson}>
               Save Lesson Plan
             </Button>
           </Box>
+        </>
+      )}
+      {currentStep === 'generating' && generatedLessons.length != lessons.length && (
+        <>
+          <StepHeading
+            title="Your Lessons are generating"
+            subtitle="Please wait while the AI generates your lessons. You can continue to edit the course details or wait for the generation to complete."
+          />
+          <VStack align="start" spacing={3}>
+            {lessons.map((lesson, i) => {
+              let status: 'generated' | 'generating' | 'waiting';
+
+              if (i < generatedLessons.length) status = 'generated';
+              else if (i === generatedLessons.length) status = 'generating';
+              else status = 'waiting';
+
+              const iconByStatus = {
+                generated: <CheckCircleIcon color="green.500" />,
+                generating: <RepeatIcon color="blue.500" />,
+                waiting: <TimeIcon color="orange.500" />,
+              };
+
+              return (
+                <Flex key={i} align="center" gap={3}>
+                  {iconByStatus[status]}
+                  <Text fontWeight="medium">{lesson.title}</Text>
+                </Flex>
+              );
+            })}
+          </VStack>
+        </>
+      )}
+      {currentStep === 'generating' && generatedLessons.length == lessons.length && (
+        <>
+          <StepHeading
+            title="Review Your Lessons"
+            subtitle="Make final edits to your lesson content, topics, and assignments."
+          />
+          <VStack spacing={6} mt={4}>
+            {generatedLessons.map((lesson, i) => (
+              <ReviewLessonCard
+                key={i}
+                lesson={lesson}
+                index={i}
+                updateLesson={updateGeneratedLesson}
+                onDelete={handleDeleteLesson}
+              />
+            ))}
+          </VStack>
         </>
       )}
     </Box>

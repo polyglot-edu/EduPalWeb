@@ -1,9 +1,4 @@
-import {
-  AddIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  DeleteIcon,
-} from '@chakra-ui/icons';
+import { CheckIcon, ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -24,94 +19,92 @@ import {
   MenuList,
   Select,
   Text,
-  Textarea,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { useRef } from 'react';
 import {
+  AIPlanLessonResponse,
   Assignment,
   LearningOutcome,
-  LessonNodeAI,
   QuestionTypeMap,
-  Topic,
 } from '../../types/polyglotElements';
 import InfoButton from '../UtilityComponents/InfoButton';
 
-type PlanLessonCardProps = {
-  lesson: LessonNodeAI;
+type ReviewLessonCardProps = {
+  lesson: AIPlanLessonResponse;
   index: number;
-  updateLesson: (index: number, updated: LessonNodeAI) => void;
+  updateLesson: (index: number, updated: AIPlanLessonResponse) => void;
   onDelete: (index: number) => void;
 };
 
-const PlanLessonCard = ({
+const ReviewLessonCard = ({
   lesson,
   index,
   updateLesson,
   onDelete,
-}: PlanLessonCardProps) => {
+}: ReviewLessonCardProps) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const updateField = (field: keyof LessonNodeAI, value: string) => {
+  const updateField = (field: keyof AIPlanLessonResponse, value: string) => {
     updateLesson(index, { ...lesson, [field]: value });
   };
 
-  const updateTopic = (tIndex: number, updated: Topic) => {
-    const newTopics = [...lesson.topics];
-    newTopics[tIndex] = updated;
-    updateLesson(index, { ...lesson, topics: newTopics });
-  };
-
-  const deleteTopic = (tIndex: number) => {
-    const newTopics = lesson.topics.filter((_, i) => i !== tIndex);
-    updateLesson(index, { ...lesson, topics: newTopics });
-  };
-
-  const addTopic = () => {
-    const newTopic: Topic = {
-      topic: '',
-      explanation: '',
-      learning_outcome: lesson.learning_outcome,
-      assignments: [],
-    };
-    updateLesson(index, { ...lesson, topics: [...lesson.topics, newTopic] });
-  };
-
-  const addAssignment = (tIndex: number) => {
-    const topic = lesson.topics[tIndex];
-    const newAssign: Assignment = {
-      type: '',
-      learning_outcome: topic.learning_outcome || lesson.learning_outcome,
-      data: undefined,
-    };
-    const updated = {
-      ...topic,
-      assignments: [...(topic.assignments || []), newAssign],
-    };
-    updateTopic(tIndex, updated);
-  };
+  // Qui i topic NON sono modificabili, quindi NON usiamo updateTopic, addTopic o deleteTopic
 
   const updateAssignment = (
     tIndex: number,
     aIndex: number,
     updated: Partial<Assignment>
   ) => {
-    const topic = lesson.topics[tIndex];
+    const topic = lesson.data?.topic[tIndex];
+    if (!topic) return;
     const assigns = topic.assignments || [];
-    const newAssigns = assigns.map((a, i) =>
-      i === aIndex ? { ...a, ...updated } : a
-    );
-    updateTopic(tIndex, { ...topic, assignments: newAssigns });
+    const prevAssignment = assigns[aIndex];
+
+    const newAssign = { ...prevAssignment, ...updated };
+
+    if (updated.type) {
+      const typeConfig = QuestionTypeMap.find((q) => q.key === updated.type);
+      if (typeConfig?.defaultData) {
+        newAssign.data = typeConfig.defaultData;
+      }
+    }
+
+    const newAssigns = assigns.map((a: any, i: number) => (i === aIndex ? newAssign : a));
+    const newTopics = [...lesson.data.topic];
+    newTopics[tIndex] = { ...topic, assignments: newAssigns };
+
+    updateLesson(index, {
+      ...lesson,
+      data: {
+        ...lesson.data,
+        topic: newTopics,
+      },
+    });
   };
 
   const deleteAssignment = (tIndex: number, aIndex: number) => {
-    const topic = lesson.topics[tIndex];
-    const newAssigns = (topic.assignments || []).filter((_, i) => i !== aIndex);
-    updateTopic(tIndex, { ...topic, assignments: newAssigns });
+    const topic = lesson.data?.topic[tIndex];
+    if (!topic) return;
+    const newAssigns = (topic.assignments || []).filter((_: any, i: number) => i !== aIndex);
+    const newTopics = [...lesson.data.topic];
+    newTopics[tIndex] = { ...topic, assignments: newAssigns };
+
+    updateLesson(index, {
+      ...lesson,
+      data: {
+        ...lesson.data,
+        topic: newTopics,
+      },
+    });
   };
 
+  const assignments = lesson.data || [];
+  console.log('Lesson topics:', assignments);
+  console.log('Lesson data:');
+  console.log(lesson.data);
   const handleConfirmDelete = () => {
     onDelete(index);
     onClose();
@@ -171,9 +164,8 @@ const PlanLessonCard = ({
         </Select>
       </FormControl>
 
-      {/* Topics + Assignments */}
       <VStack align="stretch" spacing={5}>
-        {lesson.topics.map((topic, tIndex) => (
+        {assignments.map((assignment: any, tIndex: number) => (
           <Box
             key={tIndex}
             borderWidth="1px"
@@ -186,71 +178,60 @@ const PlanLessonCard = ({
             _hover={{ bg: 'gray.100' }}
             boxShadow="sm"
           >
-            <Flex justify="space-between" align="center" mb={2}>
-              <FormLabel fontWeight="semibold" fontSize="sm" mb={0}>
-                🧩 Topic #{tIndex + 1}
-              </FormLabel>
-              <IconButton
-                aria-label="Delete topic"
-                icon={<DeleteIcon />}
-                size="sm"
-                colorScheme="red"
-                variant="ghost"
-                onClick={() => deleteTopic(tIndex)}
-              />
-            </Flex>
+            <Text fontWeight="semibold" fontSize="md" mb={3}>
+              🧩 Topic #{tIndex + 1}
+            </Text>
 
             <FormControl mb={2}>
               <FormLabel fontSize="sm" mb={1}>
                 Title
               </FormLabel>
-              <Input
-                size="sm"
-                value={topic.topic}
-                onChange={(e) =>
-                  updateTopic(tIndex, { ...topic, topic: e.target.value })
-                }
-              />
+              <Text
+                fontSize="sm"
+                px={2}
+                py={1}
+                bg="gray.100"
+                borderRadius="md"
+                userSelect="text"
+              >
+                {assignment.topic.topic}
+              </Text>
             </FormControl>
 
             <FormControl mb={2}>
               <FormLabel fontSize="sm" mb={1}>
                 Explanation
               </FormLabel>
-              <Textarea
-                size="sm"
-                value={topic.explanation}
-                onChange={(e) =>
-                  updateTopic(tIndex, { ...topic, explanation: e.target.value })
-                }
-              />
+              <Text
+                fontSize="sm"
+                px={2}
+                py={1}
+                bg="gray.100"
+                borderRadius="md"
+                whiteSpace="pre-wrap"
+                userSelect="text"
+              >
+                {assignment.topic.explanation}
+              </Text>
             </FormControl>
 
             <FormControl mb={4}>
               <FormLabel fontSize="sm" mb={1}>
                 Learning Outcome
               </FormLabel>
-              <Select
-                size="sm"
-                placeholder="Select outcome"
-                value={topic.learning_outcome || ''}
-                onChange={(e) =>
-                  updateTopic(tIndex, {
-                    ...topic,
-                    learning_outcome: e.target.value as LearningOutcome,
-                  })
-                }
+              <Text
+                fontSize="sm"
+                px={2}
+                py={1}
+                bg="gray.100"
+                borderRadius="md"
+                userSelect="text"
               >
-                {Object.values(LearningOutcome).map((outcome) => (
-                  <option key={outcome} value={outcome}>
-                    {outcome}
-                  </option>
-                ))}
-              </Select>
+                {assignment.topic.learning_outcome || ''}
+              </Text>
             </FormControl>
 
-            {/* Assignments */}
-            {(topic.assignments || []).map((assign, aIndex) => (
+            {(assignments).map((assign: any, aIndex: any) => (
               <Box
                 key={aIndex}
                 mt={3}
@@ -311,10 +292,7 @@ const PlanLessonCard = ({
                         <MenuItem
                           key={q.key}
                           onClick={() =>
-                            updateAssignment(tIndex, aIndex, {
-                              type: q.key,
-                              data: q.defaultData,
-                            })
+                            updateAssignment(tIndex, aIndex, { type: q.key })
                           }
                         >
                           <Flex justify="space-between" align="center" w="full">
@@ -330,30 +308,10 @@ const PlanLessonCard = ({
                 </FormControl>
               </Box>
             ))}
-
-            <Button
-              leftIcon={<AddIcon />}
-              size="sm"
-              mt={4}
-              variant="outline"
-              colorScheme="teal"
-              onClick={() => addAssignment(tIndex)}
-            >
-              Add New Assignment
-            </Button>
+            {/* Nota: nessun bottone Add Topic, Delete Topic o modifica Topic */}
           </Box>
         ))}
       </VStack>
-
-      <Button
-        leftIcon={<AddIcon />}
-        mt={4}
-        onClick={addTopic}
-        variant="outline"
-        colorScheme="teal"
-      >
-        Add Topic
-      </Button>
 
       <AlertDialog
         isOpen={isOpen}
@@ -387,4 +345,4 @@ const PlanLessonCard = ({
   );
 };
 
-export default PlanLessonCard;
+export default ReviewLessonCard;

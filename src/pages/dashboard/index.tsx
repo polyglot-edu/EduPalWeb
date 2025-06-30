@@ -16,10 +16,7 @@ import NavBar from '../../components/NavBars/NavBar';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import MainSideBar from '../../components/Sidebar/MainSidebar';
 import { APIV2 } from '../../data/api';
-import {
-  PolyglotCourse,
-  PolyglotCourseInfo,
-} from '../../types/polyglotElements';
+import { PolyglotCourse } from '../../types/polyglotElements';
 
 const fakeCourses: PolyglotCourse[] = [
   {
@@ -85,13 +82,15 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
       let queryparams = '';
       if (currentTab === 0) queryparams = '?me=true&';
       if (searchValue) queryparams += 'q=' + searchValue;
-
+      setCourses(fakeCourses);
+      setSuggestions(fakeCourses.map((c) => c.title));
       API.loadCourses(queryparams)
         .then((resp) => {
-          setCourses(resp.data);
-          setSuggestions([
-            ...new Set(resp.data.map((c: PolyglotCourseInfo) => c.title)),
-          ]);
+          return;
+          //setCourses(resp.data);
+          //setSuggestions([
+          //  ...new Set(resp.data.map((c: PolyglotCourseInfo) => c.title)),
+          //]);
         })
         .catch((err) => {
           console.error('Backend fetch failed, using mock data:', err.message);
