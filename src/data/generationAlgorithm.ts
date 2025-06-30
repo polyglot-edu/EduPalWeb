@@ -1,6 +1,10 @@
-import { AIExerciseGenerated, AIMaterialGenerated, Assignment, EducationLevel, LearningOutcome, PlanLessonNode, PolyglotNode, QuestionTypeMap } from "../types/polyglotElements";
-import { API } from "./api";
-import { v4 as UUIDv4 } from "uuid";
+import {
+  AIExerciseGenerated,
+  Assignment,
+  EducationLevel,
+  LearningOutcome,
+  PlanLessonNode,
+} from '../types/polyglotElements';
 
 function shuffleArray<T>(array: T[]) {
   const arr = [...array];
@@ -89,7 +93,7 @@ export const generateLessonFlow = async ({
     };
   };
 }) => {
-const handleResponseNewExercise = (response: any, x: number, y: number) => {
+  /*const handleResponseNewExercise = (response: any, x: number, y: number) => {
     const exerciseResponse: AIExerciseGenerated = response.data;
     const _id = UUIDv4();
     const typeNode =
@@ -228,7 +232,8 @@ const handleResponseNewExercise = (response: any, x: number, y: number) => {
       x = -195;
       y += 195;
     }
-  }
+  }*/
 
-  return generatedNodes;
+  //return generatedNodes;
+  return;
 };

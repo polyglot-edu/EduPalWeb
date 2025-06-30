@@ -8,7 +8,7 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { API } from '../../../data/api';
 import {
   AIPlanCourse,
@@ -19,6 +19,7 @@ import {
   EducationLevel,
   LearningOutcome,
   LessonNodeAI,
+  PlanLessonNode,
 } from '../../../types/polyglotElements';
 import PlanLessonCard from '../../Card/PlanLessonCard';
 import ReviewLessonCard from '../../Card/ReviewLessonCard';
@@ -69,6 +70,7 @@ const StepAIGeneration = ({
   const [eduLevel, setEduLevel] = useState<EducationLevel>(
     analysedMaterial?.education_level || EducationLevel.HighSchool
   );
+  const [courseNodes, setCourseNodes]=useState<PlanLessonNode[][]>([])
   const [objectives, setObjectives] = useState<string[]>([]);
   const [numLessons, setNumberOfLessons] = useState<number>(6);
   const [lessonDuration, setLessonDuration] = useState<number>(60);
@@ -76,7 +78,7 @@ const StepAIGeneration = ({
 
   const [lessons, setLessons] = useState<LessonNodeAI[]>([]);
 
-  const extractAssignmentsWithTopicInfo = (lesson: LessonNodeAI) => { 
+  const extractAssignmentsWithTopicInfo = (lesson: LessonNodeAI) => {
     const all: {
       assignment: Assignment;
       topic: {
@@ -203,6 +205,11 @@ const StepAIGeneration = ({
     });
   };
 
+  useEffect(() => {
+    console.log('lesson change');
+    console.log(lessons);
+  }, [lessons]);
+
   return (
     <Box>
       <Box textAlign="right" color={'purple.500'}>
@@ -285,7 +292,7 @@ const StepAIGeneration = ({
           </Box>
         </>
       )}
-      {currentStep === 'lessons'  && (
+      {currentStep === 'lessons' && (
         <>
           <StepHeading
             title="Plan Your Lessons"
@@ -314,55 +321,58 @@ const StepAIGeneration = ({
           </Box>
         </>
       )}
-      {currentStep === 'generating' && generatedLessons.length != lessons.length && (
-        <>
-          <StepHeading
-            title="Your Lessons are generating"
-            subtitle="Please wait while the AI generates your lessons. You can continue to edit the course details or wait for the generation to complete."
-          />
-          <VStack align="start" spacing={3}>
-            {lessons.map((lesson, i) => {
-              let status: 'generated' | 'generating' | 'waiting';
+      {currentStep === 'generating' &&
+        generatedLessons.length != lessons.length && (
+          <>
+            <StepHeading
+              title="Your Lessons are generating"
+              subtitle="Please wait while the AI generates your lessons. You can continue to edit the course details or wait for the generation to complete."
+            />
+            <VStack align="start" spacing={3}>
+              {lessons.map((lesson, i) => {
+                let status: 'generated' | 'generating' | 'waiting';
 
-              if (i < generatedLessons.length) status = 'generated';
-              else if (i === generatedLessons.length) status = 'generating';
-              else status = 'waiting';
+                if (i < generatedLessons.length) status = 'generated';
+                else if (i === generatedLessons.length) status = 'generating';
+                else status = 'waiting';
 
-              const iconByStatus = {
-                generated: <CheckCircleIcon color="green.500" />,
-                generating: <RepeatIcon color="blue.500" />,
-                waiting: <TimeIcon color="orange.500" />,
-              };
+                const iconByStatus = {
+                  generated: <CheckCircleIcon color="green.500" />,
+                  generating: <RepeatIcon color="blue.500" />,
+                  waiting: <TimeIcon color="orange.500" />,
+                };
 
-              return (
-                <Flex key={i} align="center" gap={3}>
-                  {iconByStatus[status]}
-                  <Text fontWeight="medium">{lesson.title}</Text>
-                </Flex>
-              );
-            })}
-          </VStack>
-        </>
-      )}
-      {currentStep === 'generating' && generatedLessons.length == lessons.length && (
-        <>
-          <StepHeading
-            title="Review Your Lessons"
-            subtitle="Make final edits to your lesson content, topics, and assignments."
-          />
-          <VStack spacing={6} mt={4}>
-            {generatedLessons.map((lesson, i) => (
-              <ReviewLessonCard
-                key={i}
-                lesson={lesson}
-                index={i}
-                updateLesson={updateGeneratedLesson}
-                onDelete={handleDeleteLesson}
-              />
-            ))}
-          </VStack>
-        </>
-      )}
+                return (
+                  <Flex key={i} align="center" gap={3}>
+                    {iconByStatus[status]}
+                    <Text fontWeight="medium">{lesson.title}</Text>
+                  </Flex>
+                );
+              })}
+            </VStack>
+          </>
+        )}
+      {currentStep === 'generating' &&
+        generatedLessons.length == lessons.length && (
+          <>
+            <StepHeading
+              title="Review Your Lessons"
+              subtitle="Make final edits to your lesson content, topics, and assignments."
+            />
+            <VStack spacing={6} mt={4}>
+              {generatedLessons.map((lesson, i) => (
+                <ReviewLessonCard
+                  key={i}
+                  lesson={lesson}
+                  index={i}
+                  updateLesson={updateGeneratedLesson}
+                  onDelete={handleDeleteLesson}
+                  CourseNodesProp={[courseNodes, setCourseNodes]}
+                />
+              ))}
+            </VStack>
+          </>
+        )}
     </Box>
   );
 };

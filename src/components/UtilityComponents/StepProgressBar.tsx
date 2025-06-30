@@ -19,7 +19,6 @@ const StepProgressBar: React.FC<ProgressBarProps> = ({
     steps.length + 1 > 0
       ? Math.min(Math.round((currentStep / (steps.length + 1)) * 100), 100)
       : 0;
-  console.log('progress', progress);
   return (
     <Box w="100%" px={4} pt={3}>
       <Box textAlign="right" color={'purple.500'}>

@@ -1,4 +1,9 @@
-import { CheckIcon, ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
+import {
+  AddIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  DeleteIcon,
+} from '@chakra-ui/icons';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -17,16 +22,24 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Select,
+  SimpleGrid,
   Text,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   AIPlanLessonResponse,
-  Assignment,
   LearningOutcome,
+  PlanLessonNode,
   QuestionTypeMap,
 } from '../../types/polyglotElements';
 import InfoButton from '../UtilityComponents/InfoButton';
@@ -36,69 +49,109 @@ type ReviewLessonCardProps = {
   index: number;
   updateLesson: (index: number, updated: AIPlanLessonResponse) => void;
   onDelete: (index: number) => void;
+  CourseNodesProp: [
+    PlanLessonNode[][],
+    React.Dispatch<React.SetStateAction<PlanLessonNode[][]>>
+  ];
 };
+function initializeCourseNodesFromLesson(
+  lesson: AIPlanLessonResponse
+): PlanLessonNode[] {
+  if (
+    !Array.isArray(lesson.data) ||
+    !lesson.data.every(
+      (item) =>
+        item &&
+        typeof item.assignment?.type === 'string' &&
+        'data' in item.assignment &&
+        'learning_outcome' in item.assignment &&
+        typeof item.topic?.topic === 'string' &&
+        typeof item.topic?.explanation === 'string'
+    )
+  ) {
+    return [];
+  }
+
+  return lesson.data.map(({ assignment, topic }) => ({
+    type: assignment.type,
+    topic: topic.topic,
+    details: topic.explanation,
+    learning_outcome:
+      assignment.learning_outcome ?? topic.learning_outcome ?? 'UNKNOWN',
+    duration: 15, // puoi cambiare il valore predefinito o calcolarlo in base ai dati
+    data: assignment.data,
+  }));
+}
 
 const ReviewLessonCard = ({
   lesson,
   index,
   updateLesson,
   onDelete,
+  CourseNodesProp,
 }: ReviewLessonCardProps) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const {
+    isOpen: isOpenNAss,
+    onOpen: onOpenNAss,
+    onClose: onCloseNAss,
+  }: {
+    isOpen: boolean;
+    onOpen: () => void;
+    onClose: () => void;
+  } = useDisclosure();
+  const [courseNodes, setCourseNodes] = CourseNodesProp;
   const updateField = (field: keyof AIPlanLessonResponse, value: string) => {
     updateLesson(index, { ...lesson, [field]: value });
   };
 
-  // Qui i topic NON sono modificabili, quindi NON usiamo updateTopic, addTopic o deleteTopic
-
   const updateAssignment = (
-    tIndex: number,
     aIndex: number,
-    updated: Partial<Assignment>
+    updatedFields: Partial<PlanLessonNode>
   ) => {
-    const topic = lesson.data?.topic[tIndex];
-    if (!topic) return;
-    const assigns = topic.assignments || [];
-    const prevAssignment = assigns[aIndex];
-
-    const newAssign = { ...prevAssignment, ...updated };
-
-    if (updated.type) {
-      const typeConfig = QuestionTypeMap.find((q) => q.key === updated.type);
-      if (typeConfig?.defaultData) {
-        newAssign.data = typeConfig.defaultData;
-      }
-    }
-
-    const newAssigns = assigns.map((a: any, i: number) => (i === aIndex ? newAssign : a));
-    const newTopics = [...lesson.data.topic];
-    newTopics[tIndex] = { ...topic, assignments: newAssigns };
-
-    updateLesson(index, {
-      ...lesson,
-      data: {
-        ...lesson.data,
-        topic: newTopics,
-      },
+    setCourseNodes((prev) => {
+      const updated = [...prev];
+      const lessonAssignments = [...(updated[index] || [])];
+      lessonAssignments[aIndex] = {
+        ...lessonAssignments[aIndex],
+        ...updatedFields,
+      };
+      updated[index] = lessonAssignments;
+      return updated;
     });
   };
 
-  const deleteAssignment = (tIndex: number, aIndex: number) => {
-    const topic = lesson.data?.topic[tIndex];
-    if (!topic) return;
-    const newAssigns = (topic.assignments || []).filter((_: any, i: number) => i !== aIndex);
-    const newTopics = [...lesson.data.topic];
-    newTopics[tIndex] = { ...topic, assignments: newAssigns };
-
-    updateLesson(index, {
-      ...lesson,
-      data: {
-        ...lesson.data,
-        topic: newTopics,
-      },
+  const deleteAssignment = (aIndex: number) => {
+    setCourseNodes((prev) => {
+      const updated = [...prev];
+      const lessonAssignments = [...(updated[index] || [])];
+      lessonAssignments.splice(aIndex, 1);
+      updated[index] = lessonAssignments;
+      return updated;
     });
+  };
+  const addAssignmentFromNode = (node: PlanLessonNode) => {
+    const match =
+      QuestionTypeMap.find((q) => q.key === node.type && q.integrated) ||
+      QuestionTypeMap.find((q) => q.key === 'open question');
+
+    if (!match) return;
+
+    const newAssignment = {
+      type: match.key,
+      topic: node.topic || '',
+      details: node.details || '',
+      learning_outcome: node.learning_outcome,
+      duration: 10,
+      data: match.defaultData,
+    };
+
+    const updatedAssignments = [...(courseNodes[index] || []), newAssignment];
+    const updatedCourseNodes = [...courseNodes];
+    updatedCourseNodes[index] = updatedAssignments;
+    setCourseNodes(updatedCourseNodes);
+    onCloseNAss();
   };
 
   const assignments = lesson.data || [];
@@ -109,10 +162,16 @@ const ReviewLessonCard = ({
     onDelete(index);
     onClose();
   };
-
+  useEffect(() => {
+    const initialCourseNodes = initializeCourseNodesFromLesson(lesson);
+    setCourseNodes((prev) => {
+      const updated = [...prev];
+      updated[index] = initialCourseNodes;
+      return updated;
+    });
+  }, []);
   return (
-    <Box borderWidth="1px" borderRadius="xl" p={4} mb={6} boxShadow="md">
-      {/* Lesson Title */}
+    <Box borderWidth="1px" borderRadius="xl" p={4} mb={6} boxShadow="md" bg='purple.50'>
       <FormControl mb={4}>
         <FormLabel>
           <Flex justify="space-between" align="center">
@@ -163,156 +222,179 @@ const ReviewLessonCard = ({
           ))}
         </Select>
       </FormControl>
-
       <VStack align="stretch" spacing={5}>
-        {assignments.map((assignment: any, tIndex: number) => (
+        <Box>Lesson&apos;s Assignments</Box>
+        {courseNodes[index]?.map((assign, aIndex) => (
           <Box
-            key={tIndex}
-            borderWidth="1px"
-            borderLeftWidth="6px"
-            borderLeftColor="teal.400"
-            borderRadius="lg"
+            key={aIndex}
+            mt={3}
             p={3}
-            mb={3}
-            bg="gray.50"
-            _hover={{ bg: 'gray.100' }}
+            borderWidth="1px"
+            borderRadius="md"
+            bg="white"
             boxShadow="sm"
+            
           >
-            <Text fontWeight="semibold" fontSize="md" mb={3}>
-              🧩 Topic #{tIndex + 1}
-            </Text>
+            <Flex justify="space-between" align="center" mb={2}>
+              <Text fontWeight="medium">Assignment #{aIndex + 1}</Text>
+              <IconButton
+                aria-label="Remove assignment"
+                icon={<DeleteIcon />}
+                size="xs"
+                colorScheme="red"
+                onClick={() => deleteAssignment(aIndex)}
+              />
+            </Flex>
 
+            {/* Select topic */}
             <FormControl mb={2}>
               <FormLabel fontSize="sm" mb={1}>
-                Title
+                🧩 Topic
               </FormLabel>
-              <Text
-                fontSize="sm"
-                px={2}
-                py={1}
-                bg="gray.100"
-                borderRadius="md"
-                userSelect="text"
+              <Select
+                size="sm"
+                value={assign.topic || ''}
+                onChange={(e) =>
+                  updateAssignment(aIndex, {
+                    topic: e.target.value,
+                  })
+                }
               >
-                {assignment.topic.topic}
-              </Text>
+                {(lesson.nodes || [])
+                  .flatMap((node) => node.topic || [])
+                  .map((topic, i) => (
+                    <option key={i} value={topic}>
+                      {topic}
+                    </option>
+                  ))}
+              </Select>
             </FormControl>
-
+            {
+              (lesson.nodes[0].topic,
+              lesson.nodes[0].learning_outcome,
+              lesson.nodes[0].type)
+            }
             <FormControl mb={2}>
               <FormLabel fontSize="sm" mb={1}>
-                Explanation
+                🧠 Learning Outcome
               </FormLabel>
-              <Text
-                fontSize="sm"
-                px={2}
-                py={1}
-                bg="gray.100"
-                borderRadius="md"
-                whiteSpace="pre-wrap"
-                userSelect="text"
+              <Select
+                size="sm"
+                value={assign.learning_outcome || ''}
+                onChange={(e) =>
+                  updateAssignment(aIndex, {
+                    learning_outcome: e.target.value as LearningOutcome,
+                  })
+                }
               >
-                {assignment.topic.explanation}
-              </Text>
+                {Object.values(LearningOutcome).map((out) => (
+                  <option key={out} value={out}>
+                    {out}
+                  </option>
+                ))}
+              </Select>
             </FormControl>
 
-            <FormControl mb={4}>
+            <FormControl>
               <FormLabel fontSize="sm" mb={1}>
-                Learning Outcome
+                📘 Assignment Type
               </FormLabel>
-              <Text
-                fontSize="sm"
-                px={2}
-                py={1}
-                bg="gray.100"
-                borderRadius="md"
-                userSelect="text"
-              >
-                {assignment.topic.learning_outcome || ''}
-              </Text>
-            </FormControl>
-
-            {(assignments).map((assign: any, aIndex: any) => (
-              <Box
-                key={aIndex}
-                mt={3}
-                p={3}
-                borderWidth="1px"
-                borderRadius="md"
-                bg="white"
-                boxShadow="sm"
-              >
-                <Flex justify="space-between" align="center" mb={2}>
-                  <Text fontWeight="medium">Assignment #{aIndex + 1}</Text>
-                  <IconButton
-                    aria-label="Remove assignment"
-                    icon={<DeleteIcon />}
-                    size="xs"
-                    colorScheme="red"
-                    onClick={() => deleteAssignment(tIndex, aIndex)}
-                  />
-                </Flex>
-
-                <FormControl mb={2}>
-                  <FormLabel fontSize="sm" mb={1}>
-                    🧠 Learning Outcome
-                  </FormLabel>
-                  <Select
-                    size="sm"
-                    value={assign.learning_outcome || ''}
-                    onChange={(e) =>
-                      updateAssignment(tIndex, aIndex, {
-                        learning_outcome: e.target.value as LearningOutcome,
-                      })
-                    }
-                  >
-                    {Object.values(LearningOutcome).map((out) => (
-                      <option key={out} value={out}>
-                        {out}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel fontSize="sm" mb={1}>
-                    📘 Assignment Type
-                  </FormLabel>
-                  <Menu>
-                    <MenuButton
-                      as={Button}
-                      size="sm"
-                      variant="outline"
-                      width="100%"
-                      rightIcon={<ChevronDownIcon />}
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  size="sm"
+                  variant="outline"
+                  width="100%"
+                  rightIcon={<ChevronDownIcon />}
+                >
+                  {assign.type || 'Select type'}
+                </MenuButton>
+                <MenuList maxH="200px" overflowY="auto">
+                  {QuestionTypeMap.filter((q) => q.integrated).map((q) => (
+                    <MenuItem
+                      key={q.key}
+                      onClick={() => updateAssignment(aIndex, { type: q.key })}
                     >
-                      {assign.type || 'Select type'}
-                    </MenuButton>
-                    <MenuList maxH="200px" overflowY="auto">
-                      {QuestionTypeMap.filter((q) => q.integrated).map((q) => (
-                        <MenuItem
-                          key={q.key}
-                          onClick={() =>
-                            updateAssignment(tIndex, aIndex, { type: q.key })
-                          }
-                        >
-                          <Flex justify="space-between" align="center" w="full">
-                            <Box>{q.text}</Box>
-                            {assign.type === q.key && (
-                              <CheckIcon color="green.400" boxSize={3} />
-                            )}
-                          </Flex>
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </Menu>
-                </FormControl>
-              </Box>
-            ))}
-            {/* Nota: nessun bottone Add Topic, Delete Topic o modifica Topic */}
+                      <Flex justify="space-between" align="center" w="full">
+                        <Box>{q.text}</Box>
+                        {assign.type === q.key && (
+                          <CheckIcon color="green.400" boxSize={3} />
+                        )}
+                      </Flex>
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+            </FormControl>
           </Box>
         ))}
+        <Button
+          leftIcon={<AddIcon />}
+          size="sm"
+          mt={4}
+          variant="outline"
+          colorScheme="teal"
+          onClick={onOpenNAss}
+        >
+          Add New Assignment
+        </Button>
       </VStack>
+      <Modal isOpen={isOpenNAss} onClose={onCloseNAss} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Suggested Assignments</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <SimpleGrid columns={[1, 2]} spacing={4}>
+              {lesson.nodes.map((node, idx) => {
+                const match =
+                  QuestionTypeMap.find(
+                    (q) => q.key === node.type && q.integrated
+                  ) || QuestionTypeMap.find((q) => q.key === 'open question');
 
+                return (
+                  <Box
+                    key={idx}
+                    borderWidth="1px"
+                    borderRadius="md"
+                    p={3}
+                    bg="gray.50"
+                    boxShadow="sm"
+                    position="relative"
+                    minH="140px"
+                  >
+                    <Box mb={8}>
+                      <Text fontWeight="bold" mb={1}>
+                        🧩 Topic: {node.topic}
+                      </Text>
+                      <Text fontSize="sm" mb={1}>
+                        🎯 Outcome: {node.learning_outcome}
+                      </Text>
+                      <Text fontSize="sm">
+                        📘 Type: {match?.text || 'Open Question'}
+                      </Text>
+                    </Box>
+                    <Button
+                      position="absolute"
+                      bottom="10px"
+                      left="50%"
+                      transform="translateX(-50%)"
+                      size="sm"
+                      colorScheme="teal"
+                      onClick={() => addAssignmentFromNode(node)}
+                    >
+                      Select
+                    </Button>
+                  </Box>
+                );
+              })}
+            </SimpleGrid>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onCloseNAss}>Close</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
