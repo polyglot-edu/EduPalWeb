@@ -247,6 +247,7 @@ export type AIExerciseType = {
 export type AIExerciseGenerated = {
   macro_subject: string;
   topic: string;
+  topic_explanation: string;
   education_level: EducationLevel;
   learning_outcome: LearningOutcome;
   material: string;
@@ -336,7 +337,7 @@ export type AIPlanLessonResponse = {
   nodes: PlanLessonNode[];
   context: string;
   language: string;
-  data?: any
+  data?: any;
 };
 
 export type AIPlanCourseResponse = {

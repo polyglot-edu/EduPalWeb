@@ -16,9 +16,12 @@ import NavBar from '../../components/NavBars/NavBar';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import MainSideBar from '../../components/Sidebar/MainSidebar';
 import { APIV2 } from '../../data/api';
-import { PolyglotCourse } from '../../types/polyglotElements';
+import {
+  EducationLevel,
+  PolyglotCourseWithFlows,
+} from '../../types/polyglotElements';
 
-const fakeCourses: PolyglotCourse[] = [
+const fakeCourses: PolyglotCourseWithFlows[] = [
   {
     _id: '1',
     title: 'The Roman Empire in Europe',
@@ -35,11 +38,21 @@ const fakeCourses: PolyglotCourse[] = [
     nSubscribed: 28,
     nCompleted: 13,
     flows: [],
+    subjectArea: 'History',
+    macro_subject: 'Humanities',
+    education_level: EducationLevel.College,
+    language: 'English',
+    duration: '10',
+    topics: [],
+    topicsAI: [],
+    learningContext: '',
+    flowsId: [],
   },
   {
     _id: '2',
     title: 'Renaissance Art Interactive Tour',
     description: 'Museum exhibition guide for Renaissance masterpieces.',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/800px-Colosseo_2020.jpg',
     tags: [
       { name: 'Art History', color: 'orange' },
       { name: 'General', color: 'blue' },
@@ -47,7 +60,18 @@ const fakeCourses: PolyglotCourse[] = [
     author: { username: 'anna.smith' },
     published: false,
     lastUpdate: new Date('2025-06-19'),
+    nSubscribed: 10,
+    nCompleted: 2,
     flows: [],
+    subjectArea: 'Art History',
+    macro_subject: 'Arts',
+    education_level: EducationLevel.HighSchool,
+    language: 'English',
+    duration: '5',
+    topics: [],
+    topicsAI: [],
+    learningContext: '',
+    flowsId: [],
   },
 ];
 
@@ -59,7 +83,7 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure({ defaultIsOpen: true });
   const [currentTab, setCurrentTab] = useState(0);
-  const [courses, setCourses] = useState<PolyglotCourse[]>([]);
+  const [courses, setCourses] = useState<PolyglotCourseWithFlows[]>([]);
   const [searchValue, setSearchValue] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { user } = useUser();

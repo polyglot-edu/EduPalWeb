@@ -2,11 +2,11 @@ import { EditIcon, InfoIcon, ViewIcon } from '@chakra-ui/icons';
 import { Badge, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
 import { HiUsers } from 'react-icons/hi';
 import FlowExample from '../../public/exampleFlow.png';
-import { PolyglotCourse } from '../../types/polyglotElements';
+import { PolyglotCourseWithFlows } from '../../types/polyglotElements';
 import ProgressBar from '../UtilityComponents/ProgressBar';
 
 interface CourseCardProps {
-  course: PolyglotCourse;
+  course: PolyglotCourseWithFlows;
 }
 
 const CourseCard = ({ course }: CourseCardProps) => {

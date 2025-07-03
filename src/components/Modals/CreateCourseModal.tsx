@@ -30,8 +30,8 @@ import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 import { APIV2 } from '../../data/api';
 import {
+  EducationLevel,
   PolyglotCourse,
-  PolyglotCourseInfo,
 } from '../../types/polyglotElements';
 import { v4 as uuid4 } from 'uuid';
 
@@ -169,14 +169,28 @@ const CreateCourseModal = ({
     try {
       setLoading(true);
       const flowsList = [...new Set(flowsId.map((flow) => flow.id))];
-      const base_course: PolyglotCourseInfo = {
+      const base_course: PolyglotCourse = {
         title: title,
         description: description,
         tags: tags,
         flowsId: flowsList,
         published: false,
         lastUpdate: new Date(),
-        _id: uuid4()
+        _id: uuid4(),
+        subjectArea: '',
+        macro_subject: '',
+        education_level: EducationLevel.ElementarySchool,
+        language: '',
+        duration: '',
+        topics: [],
+        topicsAI: [],
+        learningContext: '',
+        author: {
+          _id: undefined,
+          username: undefined
+        },
+        nSubscribed: 0,
+        nCompleted: 0
       };
 
       const response: AxiosResponse = await API.createNewCourse(base_course);

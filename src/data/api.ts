@@ -7,7 +7,7 @@ import {
   ManualProgressInfo,
   MaterialType,
   PolyglotCourse,
-  PolyglotCourseInfo,
+  PolyglotCourseWithFlows,
   PolyglotFlow,
   PolyglotFlowInfo,
   ProgressInfo,
@@ -123,12 +123,16 @@ export class APIV2 {
     return this.axios.post<{}, AxiosResponse, {}>(`/api/flows/json`, flow);
   }
 
-  loadCourses(query?: string): Promise<AxiosResponse<PolyglotCourse[]>> {
+  loadCourses(query?: string): Promise<AxiosResponse<PolyglotCourseWithFlows[]>> {
     return this.axios.get('/api/course' + (query ? query : ''));
   }
 
-  createNewCourse(course: PolyglotCourseInfo): Promise<AxiosResponse> {
+  createNewCourse(course: PolyglotCourse): Promise<AxiosResponse> {
     return this.axios.post('/api/course', course);
+  }
+
+  createNewCourseJson(course: PolyglotCourse): Promise<AxiosResponse> {
+    return this.axios.post<{}, AxiosResponse, {}>(`/api/course/json`, course);
   }
 
   deleteCourse(courseId: string): Promise<AxiosResponse> {
@@ -178,6 +182,22 @@ export const API = {
   },*/
   createNewFlow: (flow: PolyglotFlow): Promise<AxiosResponse> => {
     return axios.post<{}, AxiosResponse, {}>(`/api/flows`, flow);
+  },
+
+  loadCourses(query?: string): Promise<AxiosResponse<PolyglotCourse[]>> {
+    return axios.get('/api/course' + (query ? query : ''));
+  },
+
+  createNewCourse(course: PolyglotCourse): Promise<AxiosResponse> {
+    return axios.post('/api/course', course);
+  },
+
+  createNewCourseJson(course: PolyglotCourse): Promise<AxiosResponse> {
+    return axios.post<{}, AxiosResponse, {}>(`/api/course/json`, course);
+  },
+
+  deleteCourse(courseId: string): Promise<AxiosResponse> {
+    return axios.delete('/api/course/' + courseId);
   },
 
   progressInfo: (body: ProgressInfo): Promise<AxiosResponse> => {

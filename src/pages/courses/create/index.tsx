@@ -20,7 +20,6 @@ export default function CourseCreatePage() {
 
   return (
     <Box h="100vh" overflow="hidden" bg="gray.50">
-      {/* Navbar fissa in alto */}
       <Box h="64px">
         <NavBar
           user={user}
@@ -28,7 +27,6 @@ export default function CourseCreatePage() {
         />
       </Box>
 
-      {/* Corpo con sidebar + main content */}
       <Flex h="calc(100vh - 64px)">
         <MainSideBar
           onNavigate={handleNavigate}

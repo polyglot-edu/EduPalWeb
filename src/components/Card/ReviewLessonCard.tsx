@@ -49,7 +49,7 @@ type ReviewLessonCardProps = {
   index: number;
   updateLesson: (index: number, updated: AIPlanLessonResponse) => void;
   onDelete: (index: number) => void;
-  CourseNodesProp: [
+  CoursesNodesProp: [
     PlanLessonNode[][],
     React.Dispatch<React.SetStateAction<PlanLessonNode[][]>>
   ];
@@ -88,7 +88,7 @@ const ReviewLessonCard = ({
   index,
   updateLesson,
   onDelete,
-  CourseNodesProp,
+  CoursesNodesProp,
 }: ReviewLessonCardProps) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -101,7 +101,7 @@ const ReviewLessonCard = ({
     onOpen: () => void;
     onClose: () => void;
   } = useDisclosure();
-  const [courseNodes, setCourseNodes] = CourseNodesProp;
+  const [coursesNodes, setCoursesNodes] = CoursesNodesProp;
   const updateField = (field: keyof AIPlanLessonResponse, value: string) => {
     updateLesson(index, { ...lesson, [field]: value });
   };
@@ -110,7 +110,7 @@ const ReviewLessonCard = ({
     aIndex: number,
     updatedFields: Partial<PlanLessonNode>
   ) => {
-    setCourseNodes((prev) => {
+    setCoursesNodes((prev) => {
       const updated = [...prev];
       const lessonAssignments = [...(updated[index] || [])];
       lessonAssignments[aIndex] = {
@@ -123,7 +123,7 @@ const ReviewLessonCard = ({
   };
 
   const deleteAssignment = (aIndex: number) => {
-    setCourseNodes((prev) => {
+    setCoursesNodes((prev) => {
       const updated = [...prev];
       const lessonAssignments = [...(updated[index] || [])];
       lessonAssignments.splice(aIndex, 1);
@@ -147,10 +147,10 @@ const ReviewLessonCard = ({
       data: match.defaultData,
     };
 
-    const updatedAssignments = [...(courseNodes[index] || []), newAssignment];
-    const updatedCourseNodes = [...courseNodes];
+    const updatedAssignments = [...(coursesNodes[index] || []), newAssignment];
+    const updatedCourseNodes = [...coursesNodes];
     updatedCourseNodes[index] = updatedAssignments;
-    setCourseNodes(updatedCourseNodes);
+    setCoursesNodes(updatedCourseNodes);
     onCloseNAss();
   };
 
@@ -164,14 +164,21 @@ const ReviewLessonCard = ({
   };
   useEffect(() => {
     const initialCourseNodes = initializeCourseNodesFromLesson(lesson);
-    setCourseNodes((prev) => {
+    setCoursesNodes((prev) => {
       const updated = [...prev];
       updated[index] = initialCourseNodes;
       return updated;
     });
   }, []);
   return (
-    <Box borderWidth="1px" borderRadius="xl" p={4} mb={6} boxShadow="md" bg='purple.50'>
+    <Box
+      borderWidth="1px"
+      borderRadius="xl"
+      p={4}
+      mb={6}
+      boxShadow="md"
+      bg="purple.50"
+    >
       <FormControl mb={4}>
         <FormLabel>
           <Flex justify="space-between" align="center">
@@ -224,7 +231,7 @@ const ReviewLessonCard = ({
       </FormControl>
       <VStack align="stretch" spacing={5}>
         <Box>Lesson&apos;s Assignments</Box>
-        {courseNodes[index]?.map((assign, aIndex) => (
+        {coursesNodes[index]?.map((assign, aIndex) => (
           <Box
             key={aIndex}
             mt={3}
@@ -233,7 +240,6 @@ const ReviewLessonCard = ({
             borderRadius="md"
             bg="white"
             boxShadow="sm"
-            
           >
             <Flex justify="space-between" align="center" mb={2}>
               <Text fontWeight="medium">Assignment #{aIndex + 1}</Text>

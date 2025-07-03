@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineFolderOpen } from 'react-icons/ai';
 import { BsStars } from 'react-icons/bs';
 import { FaRegCheckCircle } from 'react-icons/fa';
@@ -15,6 +15,7 @@ import {
   AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
+  PlanLessonNode,
 } from '../../types/polyglotElements';
 import StepAIGeneration from './steps/StepAIGeneration';
 import StepComplete from './steps/StepComplete';
@@ -36,7 +37,7 @@ const CourseCreationStepper = () => {
   const [eduLevel, setEduLevel] = useState<EducationLevel>(
     EducationLevel.HighSchool
   );
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState('english');
   const [description, setDescription] = useState('');
   const [learningObjectives, setObjectives] = useState('');
   const [duration, setDuration] = useState('');
@@ -44,15 +45,25 @@ const CourseCreationStepper = () => {
   const [targetAudience, setTargetAudience] = useState('');
   const [classContext, setClassContext] = useState('');
   const [uploadMethod, setUploadMethod] = useState('');
-  const [publishMethod, setPublishMethod] = useState('');
+  const [publishMethod, setPublishMethod] = useState('public');
   const [accessCode, setAccessCode] = useState('');
   const [analysedMaterial, setAnalysedMaterial] = useState<AnalyzedMaterial>();
   const [plannedCourse, setPlannedCourse] = useState<AIPlanCourseResponse>();
-  const [generatedLessons, setGeneratedLessons]= useState<AIPlanLessonResponse[]>([]);
+  const [generatedLessons, setGeneratedLessons] = useState<
+    AIPlanLessonResponse[]
+  >([]);
   const [material, setMaterial] = useState<string>('');
   const [img, setImg] = useState('');
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
 
+  const [courseNodes, setCourseNodes] = useState<PlanLessonNode[][]>([]);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null;
   const nextStep = () => {
     if (step === 2 && uploadMethod === 'selected') {
       setProgressStep(() => Math.min(step + 2.5, stepComponents.length - 1));
@@ -116,6 +127,7 @@ const CourseCreationStepper = () => {
       analysedMaterialProp={[analysedMaterial, setAnalysedMaterial]}
       plannedCourseProp={[plannedCourse, setPlannedCourse]}
       title={title}
+      CoursesNodesProp={[courseNodes, setCourseNodes]}
     />, // 4
     <StepGamification key={'gamification'} />, // 5
     <StepPublishing
@@ -124,8 +136,41 @@ const CourseCreationStepper = () => {
       accessCode={[accessCode, setAccessCode]}
       materialMethod={uploadMethod}
     />, // 6
-    <StepComplete key={'complete'} />, // 7
+    <StepComplete
+      key={'complete'}
+      title={title}
+      subjectArea={subjectArea}
+      educationLevel={eduLevel}
+      language={language}
+      description={description}
+      learningObjectives={learningObjectives}
+      duration={duration}
+      prerequisites={prerequisites}
+      classContext={classContext}
+      context={targetAudience}
+      accessCode={accessCode}
+      analysedMaterial={analysedMaterial}
+      sourceMaterial={material}
+      img={img}
+      tags={tags}
+      generatedLessons={generatedLessons}
+      coursesNodes={courseNodes}
+    />, // 7
   ];
+
+  function nextDisable(): boolean {
+    if (step === stepComponents.length - 1) return true;
+    else if (step === 0 && title == '') return true;
+    else if (step === 2 && uploadMethod == '') return true;
+    else if (step === 3 && !analysedMaterial) return true;
+    else if (
+      step === 4 &&
+      courseNodes.length == 0 &&
+      generatedLessons.length == 0
+    )
+      return true;
+    return false;
+  }
 
   return (
     <Flex direction="column" w="100%" h="100%" bg="purple.50" p={6}>
@@ -161,7 +206,7 @@ const CourseCreationStepper = () => {
           {stepComponents[step]}
         </Box>
 
-        <Flex mt={8} justify="space-between" py={2}>
+        <Flex mt={8} justify="space-between" py={2} hidden={step === 7}>
           <Box flex="1" display="flex" justifyContent="center">
             <Button onClick={() => (step === 0 ? router.back() : prevStep())}>
               {step === 0 ? 'Cancel' : 'Back'}
@@ -172,7 +217,7 @@ const CourseCreationStepper = () => {
             <Button
               colorScheme="purple"
               onClick={nextStep}
-              isDisabled={step === stepComponents.length - 1}
+              isDisabled={nextDisable()}
             >
               Next
             </Button>

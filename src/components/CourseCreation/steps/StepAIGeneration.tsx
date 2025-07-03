@@ -43,6 +43,10 @@ type StepCoursePlannerProps = {
     AIPlanLessonResponse[],
     React.Dispatch<React.SetStateAction<AIPlanLessonResponse[]>>
   ];
+  CoursesNodesProp: [
+    PlanLessonNode[][],
+    React.Dispatch<React.SetStateAction<PlanLessonNode[][]>>
+  ];
   context: string;
   title: string;
 };
@@ -55,10 +59,8 @@ const StepAIGeneration = ({
   context,
   GeneratedLessonsProp,
   title,
+  CoursesNodesProp,
 }: StepCoursePlannerProps) => {
-  const [currentStep, setCurrentStep] = useState<
-    'course' | 'lessons' | 'generating' | 'check'
-  >('course');
   const [analysedMaterial] = analysedMaterialProp;
   const [plannedCourse, setPlannedCourse] = plannedCourseProp;
   const [isPlanCourseLoading, setIsPlanCourseLoading] = useState(false);
@@ -70,13 +72,17 @@ const StepAIGeneration = ({
   const [eduLevel, setEduLevel] = useState<EducationLevel>(
     analysedMaterial?.education_level || EducationLevel.HighSchool
   );
-  const [courseNodes, setCourseNodes]=useState<PlanLessonNode[][]>([])
+  const [courseNodes, setCourseNodes] = CoursesNodesProp;
   const [objectives, setObjectives] = useState<string[]>([]);
   const [numLessons, setNumberOfLessons] = useState<number>(6);
   const [lessonDuration, setLessonDuration] = useState<number>(60);
   const [model, setModel] = useState<string>('Gemini');
 
   const [lessons, setLessons] = useState<LessonNodeAI[]>([]);
+
+  const [currentStep, setCurrentStep] = useState<
+    'course' | 'lessons' | 'generating' | 'check'
+  >('course');
 
   const extractAssignmentsWithTopicInfo = (lesson: LessonNodeAI) => {
     const all: {
@@ -138,8 +144,9 @@ const StepAIGeneration = ({
     setLessons([]);
     setPlannedCourse(undefined);
     try {
+      if (!analysedMaterial) return;
       const response = await API.planCourse({
-        title,
+        title: analysedMaterial.title,
         macro_subject: macroSubject,
         education_level: eduLevel,
         learning_objectives: {
@@ -367,7 +374,7 @@ const StepAIGeneration = ({
                   index={i}
                   updateLesson={updateGeneratedLesson}
                   onDelete={handleDeleteLesson}
-                  CourseNodesProp={[courseNodes, setCourseNodes]}
+                  CoursesNodesProp={[courseNodes, setCourseNodes]}
                 />
               ))}
             </VStack>

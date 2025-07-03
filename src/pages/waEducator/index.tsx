@@ -26,7 +26,7 @@ import { API, APIV2 } from '../../data/api';
 import cardImage from '../../public/collaborative_icon.png';
 import flowImage from '../../public/exampleFlow.png';
 import {
-  PolyglotCourse,
+  PolyglotCourseWithFlows,
   PolyglotFlow,
   PolyglotNodeValidation,
   UserBaseInfo,
@@ -212,7 +212,7 @@ const FlowsListWorkadventure = ({ accessToken }: FlowIndexProps) => {
   const [users, setUsers] = useState<UserBaseInfo[]>([]);
   const [flowId, setFlowId] = useState('');
   const [flows, setFlows] = useState<PolyglotFlow[]>([]);
-  const [courses, setCourses] = useState<PolyglotCourse[]>([]);
+  const [courses, setCourses] = useState<PolyglotCourseWithFlows[]>([]);
   const [showCourse, setShowCourse] = useState('');
 
   const API = useMemo(() => new APIV2(accessToken), [accessToken]);

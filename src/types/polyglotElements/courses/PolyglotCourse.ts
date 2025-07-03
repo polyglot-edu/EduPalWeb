@@ -1,33 +1,34 @@
-import { EducationLevel, LearningOutcome, PolyglotFlow, Topic } from '../';
+import { EducationLevel, PolyglotFlow, Topic } from '../';
 
-export type PolyglotCourseInfo = {
-  img?: string;
+export type PolyglotCourse = {
   _id: string;
   title: string;
   description: string;
-  flowsId?: string[];
-  tags?: { name: string; color: string }[];
-  author?: {
+  subjectArea: string;
+  macro_subject: string;
+  education_level: EducationLevel;
+  language: string;
+  duration: string;
+  learningObjectives?: string;
+  topics: string[];
+  topicsAI: Topic[];
+  tags: { name: string; color: string }[];
+  img?: string;
+  accessCode?: string;
+  sourceMaterial?: string;
+  context?: string;
+  learningContext: string;
+  flowsId: string[];
+  author: {
     _id?: string;
     username?: string;
   };
   published: boolean;
   lastUpdate: Date;
-  nSubscribed?: number;
-  nCompleted?: number;
-  subjectArea?: string;
-  learningContext?: string;
-  duration?: number;
-  topics?: string[];
-  sourceMaterial?: string;
-  learning_outcome?: LearningOutcome;
-  topicsAI?: Topic[];
-  language?: string;
-  macro_subject?: string;
-  education_level?: EducationLevel;
-  context?: string;
+  nSubscribed: number;
+  nCompleted: number;
 };
 
-export type PolyglotCourse = PolyglotCourseInfo & {
+export type PolyglotCourseWithFlows = PolyglotCourse & {
   flows: PolyglotFlow[];
 };

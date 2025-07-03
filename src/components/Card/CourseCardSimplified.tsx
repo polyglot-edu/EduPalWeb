@@ -16,7 +16,7 @@ import {
 import { useCallback } from 'react';
 import { APIV2 } from '../../data/api';
 import cardImage from '../../public/screenLPs.png';
-import { PolyglotCourse } from '../../types/polyglotElements';
+import { PolyglotCourseWithFlows } from '../../types/polyglotElements';
 import DeleteCourseModal from '../Modals/DeleteCourseModal';
 
 type CourseCardProps = {
@@ -24,7 +24,7 @@ type CourseCardProps = {
   px?: SpaceProps['px'];
   canDelete?: boolean;
   openChildren?: () => void;
-  course: PolyglotCourse;
+  course: PolyglotCourseWithFlows;
   API: APIV2;
   setCourses: any;
 };
