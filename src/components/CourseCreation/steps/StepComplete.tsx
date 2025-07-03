@@ -76,6 +76,7 @@ const StepComplete = ({
   const [isCourseGenerated, setIsCourseGenerated] = useState(false);
 
   useEffect(() => {
+    if (isCourseGenerated) return;
     const generate = async () => {
       const flowsId: string[] = [];
       for (let i = 0; i < generatedLessons.length; i++) {
