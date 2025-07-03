@@ -173,12 +173,15 @@ const StepComplete = ({
                             <Text>Initializing flow generation...</Text>
                           </Flex>
                         ) : (
-                          flowNodes.map((node, idx) => (
-                            <Flex key={idx} align="center" gap={3}>
-                              <CheckCircleIcon color="green.500" />
-                              <Text>{node.type}</Text>
-                            </Flex>
-                          ))
+                          <>
+                            {flowNodes.map((node, idx) => (
+                              <Flex key={idx} align="center" gap={3}>
+                                <CheckCircleIcon color="green.500" />
+                                <Text>{node.type}</Text>
+                              </Flex>
+                            ))}
+                            <Spinner size="sm" />
+                          </>
                         )}
                         <Progress
                           mt={2}
