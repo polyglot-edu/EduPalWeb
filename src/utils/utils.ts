@@ -50,7 +50,7 @@ export const zip = <T, K>(a: T[], b: K[]) =>
 
 export const createNewDefaultPolyglotFlow = (): PolyglotFlow => {
   return {
-    _id: UUIDv4(),
+    id: UUIDv4(),
     title: 'New Flow',
     description: '',
     publish: false,

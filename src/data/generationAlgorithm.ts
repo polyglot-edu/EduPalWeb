@@ -146,7 +146,7 @@ export const generateLessonActivities = async ({
         },
       },
     ]);
-    console.log('exercise generation')
+    console.log('exercise generation');
     console.log({
       _id: _id,
       type: typeNode,
@@ -166,8 +166,8 @@ export const generateLessonActivities = async ({
         positionAbsolute: { x, y },
         data: {},
       },
-    })
-    console.log('________________________')
+    });
+    console.log('________________________');
   };
 
   const generatedNodes: PolyglotNode[] = [];
@@ -274,9 +274,8 @@ export const generateLessonActivities = async ({
         console.error('Error on material generation:', error);
       }
     }
-    console.log('generating')
+    console.log('generating');
     try {
-      
       const typeExercise =
         lNode.type !== 'multiple choice'
           ? lNode.type
@@ -546,7 +545,7 @@ export const generateLessonFlow = async ({
   ];
   const topics = analysedMaterial.topics.map((t) => t.topic);
   const flow: PolyglotFlow = {
-    _id: UUIDv4(),
+    id: UUIDv4(),
     title: generatedLesson.title,
     description: generatedLesson.macro_subject,
     tags: tags,
@@ -563,6 +562,7 @@ export const generateLessonFlow = async ({
     duration: analysedMaterial.estimated_duration.toString(),
   };
   const newFlow = (await API.createNewFlowJson(flow)).data as PolyglotFlow;
+
   return newFlow;
 };
 

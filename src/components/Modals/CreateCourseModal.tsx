@@ -28,12 +28,9 @@ import {
 } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
-import { APIV2 } from '../../data/api';
-import {
-  EducationLevel,
-  PolyglotCourse,
-} from '../../types/polyglotElements';
 import { v4 as uuid4 } from 'uuid';
+import { APIV2 } from '../../data/api';
+import { EducationLevel, PolyglotCourse } from '../../types/polyglotElements';
 
 type CreateCourseModalProps = {
   isOpen: boolean;
@@ -151,7 +148,7 @@ const CreateCourseModal = ({
       setFlows([
         ...new Set(
           resp.data.map((flow) => ({
-            id: flow._id ?? '',
+            id: flow.id ?? '',
             title: flow.title,
           }))
         ),
@@ -187,10 +184,10 @@ const CreateCourseModal = ({
         learningContext: '',
         author: {
           _id: undefined,
-          username: undefined
+          username: undefined,
         },
         nSubscribed: 0,
-        nCompleted: 0
+        nCompleted: 0,
       };
 
       const response: AxiosResponse = await API.createNewCourse(base_course);
