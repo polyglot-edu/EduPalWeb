@@ -20,9 +20,6 @@ module.exports = {
     DEPLOY_URL: DEPLOY_URL,
     BACK_URL: BACK_URL,
     TEST_MODE: process.env.TEST_MODE,
-    APIKEY: process.env.APIKEY,
-    SETUPMODEL: process.env.SETUPMODEL,
-    AIGENERATION: process.env.AIGENERATION_URL,
   },
   async redirects() {
     return [
