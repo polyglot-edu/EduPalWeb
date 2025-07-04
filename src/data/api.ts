@@ -123,7 +123,15 @@ export class APIV2 {
     return this.axios.post<{}, AxiosResponse, {}>(`/api/flows/json`, flow);
   }
 
-  loadCourses(query?: string): Promise<AxiosResponse<PolyglotCourseWithFlows[]>> {
+  loadCourseElement(
+    courseId: string
+  ): Promise<AxiosResponse<PolyglotCourseWithFlows>> {
+    return this.axios.get('/api/course/' + courseId);
+  }
+
+  loadCourses(
+    query?: string
+  ): Promise<AxiosResponse<PolyglotCourseWithFlows[]>> {
     return this.axios.get('/api/course' + (query ? query : ''));
   }
 

@@ -1,5 +1,6 @@
 import { EditIcon, InfoIcon, ViewIcon } from '@chakra-ui/icons';
 import { Badge, Box, Button, Flex, Image, Text } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { HiUsers } from 'react-icons/hi';
 import FlowExample from '../../public/exampleFlow.png';
 import { PolyglotCourseWithFlows } from '../../types/polyglotElements';
@@ -12,6 +13,7 @@ interface CourseCardProps {
 const CourseCard = ({ course }: CourseCardProps) => {
   const image = course.img != undefined ? course.img : FlowExample.src;
 
+  const router = useRouter();
   return (
     <Box
       bg="white"
@@ -98,6 +100,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
               color="white"
               _hover={{ bg: 'purple.700' }}
               size="sm"
+              onClick={() => router.push(`/courses/${course._id}`)}
             >
               View
             </Button>

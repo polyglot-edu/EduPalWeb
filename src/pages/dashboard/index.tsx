@@ -110,11 +110,10 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
       setSuggestions(fakeCourses.map((c) => c.title));
       API.loadCourses(queryparams)
         .then((resp) => {
-          return;
-          //setCourses(resp.data);
-          //setSuggestions([
-          //  ...new Set(resp.data.map((c: PolyglotCourseInfo) => c.title)),
-          //]);
+          setCourses(resp.data);
+          setSuggestions([
+            ...new Set(resp.data.map((c: PolyglotCourseWithFlows) => c.title)),
+          ]);
         })
         .catch((err) => {
           console.error('Backend fetch failed, using mock data:', err.message);
