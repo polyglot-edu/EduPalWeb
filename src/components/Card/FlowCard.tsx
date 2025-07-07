@@ -58,7 +58,7 @@ const FlowCard = ({ flow, px, py, canDelete, setSelected }: FlowCardProps) => {
                 >
                   <Tooltip label="Delete" placement="right">
                     <DeleteIcon
-                      onClick={() => setSelected?.(flow.id!)}
+                      onClick={() => setSelected?.(flow._id!)}
                       w={5}
                       h={5}
                       color="red"
@@ -107,7 +107,7 @@ const FlowCard = ({ flow, px, py, canDelete, setSelected }: FlowCardProps) => {
           </CardFooter>
         </Stack>
       </Card>
-      <LinkOverlay href={`/flows/${flow.id}`} />
+      <LinkOverlay href={`/flows/${flow._id}`} />
     </LinkBox>
   );
 };

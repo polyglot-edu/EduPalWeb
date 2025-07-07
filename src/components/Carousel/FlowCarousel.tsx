@@ -45,11 +45,11 @@ const FlowCarousel: React.FC<FlowCarouselProps> = ({
       />
       <Flex gap={3} overflow="hidden">
         {visibleFlows.map((flow) => {
-          const isSelected = selectedFlows.includes(flow.id);
+          const isSelected = selectedFlows.includes(flow._id);
 
           return (
             <Box
-              key={flow.id}
+              key={flow._id}
               position="relative" // ✅ Per posizionare il pallino in alto a destra
               border="2px"
               borderColor={isSelected ? 'purple.500' : 'gray.200'}
@@ -61,7 +61,7 @@ const FlowCarousel: React.FC<FlowCarouselProps> = ({
               flexShrink={0}
               cursor="pointer"
               _hover={{ bg: 'purple.50' }}
-              onClick={() => toggleFlowSelection(flow.id)}
+              onClick={() => toggleFlowSelection(flow._id)}
               boxShadow={isSelected ? 'md' : 'sm'}
               transition="all 0.2s ease"
             >

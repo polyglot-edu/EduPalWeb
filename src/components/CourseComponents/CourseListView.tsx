@@ -27,7 +27,7 @@ interface CourseCardProps {
 
 export const CourseCardView = ({ course, onEdit, onView }: CourseCardProps) => {
   const {
-    _id,
+    _id: _id,
     title,
     description,
     macro_subject,
@@ -157,7 +157,7 @@ export const CourseCardView = ({ course, onEdit, onView }: CourseCardProps) => {
                 <Button
                   onClick={() =>
                     router.push(
-                      'https://staging.polyglot-edu.com/flows/' + flow.id
+                      'https://staging.polyglot-edu.com/flows/' + flow._id
                     )
                   }
                   size="sm"

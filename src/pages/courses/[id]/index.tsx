@@ -38,8 +38,8 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
     if (user || process.env.TEST_MODE === 'true') {
       API.loadCourseElement(courseId)
         .then((resp) => {
-          console.log(resp.data)
-          setCourse(resp.data);
+          console.log(resp.data);
+          setCourse({ ...resp.data, _id: courseId });
         })
         .catch((err) => {
           console.error('Backend fetch failed, using mock data:', err.message);
@@ -47,7 +47,12 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
     }
   }, [user, API, currentTab]);
 
-  if (!course) return <><Box></Box></>;
+  if (!course)
+    return (
+      <>
+        <Box></Box>
+      </>
+    );
 
   function onEditCourse(id: string): void {
     throw new Error('Function not implemented.');
@@ -79,7 +84,7 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
         <Heading size="lg" mb={4}>
           👋 Welcome, {user?.name || 'Guest'}!
         </Heading>
-        
+
         <Flex justify="space-between" mb={4}>
           <CourseCardView
             key={course._id}

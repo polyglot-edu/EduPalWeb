@@ -545,7 +545,7 @@ export const generateLessonFlow = async ({
   ];
   const topics = analysedMaterial.topics.map((t) => t.topic);
   const flow: PolyglotFlow = {
-    id: UUIDv4(),
+    _id: UUIDv4(),
     title: generatedLesson.title,
     description: generatedLesson.macro_subject,
     tags: tags,

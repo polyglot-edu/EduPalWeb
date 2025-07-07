@@ -174,11 +174,11 @@ const SimpleFlowCard = ({
       py={py}
       onClick={async () => {
         const response = await API.progressInfo({
-          flowId: flow.id ?? '',
+          flowId: flow._id ?? '',
           userId: 'admin',
         });
         setUsers(response.data);
-        setSelected(flow.id ?? '');
+        setSelected(flow._id ?? '');
       }}
     >
       <Image
@@ -226,7 +226,7 @@ const FlowsListWorkadventure = ({ accessToken }: FlowIndexProps) => {
   useEffect(() => {
     API.loadFlowList().then((resp) => {
       setFlows(resp.data);
-      setFlowId(resp.data[0].id ?? '');
+      setFlowId(resp.data[0]._id ?? '');
     });
     API.loadCourses().then((resp) => {
       setCourses(resp.data);
@@ -273,9 +273,9 @@ const FlowsListWorkadventure = ({ accessToken }: FlowIndexProps) => {
                       <Box key={course._id} hidden={course._id != showCourse}>
                         {course.flows.length ? (
                           course.flows.map((flow: PolyglotFlow) => (
-                            <Box key={flow.id} marginTop={'5px'} width={'90%'}>
+                            <Box key={flow._id} marginTop={'5px'} width={'90%'}>
                               <SimpleFlowCard
-                                key={flow.id}
+                                key={flow._id}
                                 flow={flow}
                                 py={1}
                                 setSelected={setFlowId}
@@ -288,7 +288,7 @@ const FlowsListWorkadventure = ({ accessToken }: FlowIndexProps) => {
                                   justifyContent: 'space-evenly',
                                   display: 'flex',
                                 }}
-                                hidden={flowId != flow.id}
+                                hidden={flowId != flow._id}
                               >
                                 {users.length ? (
                                   users.map((user, id) => (

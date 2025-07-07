@@ -92,7 +92,7 @@ const StepComplete = ({
           context,
           language,
         });
-        flowsId.push(flow.id);
+        flowsId.push(flow._id);
         setCompletedLessons((prev) => [...prev, i]);
       }
       const newCourse = await generateCourse({
@@ -113,10 +113,9 @@ const StepComplete = ({
         tags,
         flowsId,
       });
-      console.log(newCourse);
       setGenerating(false);
       setIsCourseGenerated(true);
-      setCourseId(newCourse.id);
+      setCourseId(newCourse._id);
     };
 
     generate();

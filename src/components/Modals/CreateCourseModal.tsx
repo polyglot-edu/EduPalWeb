@@ -148,7 +148,7 @@ const CreateCourseModal = ({
       setFlows([
         ...new Set(
           resp.data.map((flow) => ({
-            id: flow.id ?? '',
+            id: flow._id ?? '',
             title: flow.title,
           }))
         ),
