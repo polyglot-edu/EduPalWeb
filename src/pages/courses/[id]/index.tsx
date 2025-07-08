@@ -45,7 +45,7 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
           console.error('Backend fetch failed, using mock data:', err.message);
         });
     }
-  }, [user, API, currentTab]);
+  }, [user, API, currentTab, courseId]);
 
   if (!course)
     return (
