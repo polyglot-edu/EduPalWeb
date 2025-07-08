@@ -1,5 +1,11 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Button, Center, Heading, Stack, useDisclosure } from '@chakra-ui/react';
+import {
+  Button,
+  Center,
+  Heading,
+  Stack,
+  useDisclosure,
+} from '@chakra-ui/react';
 import Link from 'next/link';
 import Navbar from '../components/NavBars/NavBar';
 import MainSideBar from '../components/Sidebar/MainSidebar';
@@ -17,10 +23,11 @@ const Home = () => {
       <Navbar user={user} />
       <Center h="92vh">
         <Stack align="center">
-          <MainSideBar 
-          onNavigate={handleNavigate}
-          isOpen={isOpen}
-          onToggle={onToggle}/>
+          <MainSideBar
+            onNavigate={handleNavigate}
+            isOpen={isOpen}
+            onToggle={onToggle}
+          />
           <Heading as="b" fontSize="3xl">
             Go to Flow
           </Heading>

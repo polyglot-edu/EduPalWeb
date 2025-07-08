@@ -312,7 +312,7 @@ export type AIPlanCourse = {
   title: string;
   macro_subject: string;
   education_level: EducationLevel;
-  learning_objectives: LearningObjectives;
+  learning_objectives: LearningObjectives;  //to be implemented
   number_of_lessons: number;
   duration_of_lesson: number;
   language: string;

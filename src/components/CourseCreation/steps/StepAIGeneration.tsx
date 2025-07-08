@@ -149,7 +149,7 @@ const StepAIGeneration = ({
         title: analysedMaterial.title,
         macro_subject: macroSubject,
         education_level: eduLevel,
-        learning_objectives: {
+        learning_objectives: {//to be implemented 
           knowledge: '',
           skills: '',
           attitude: '',

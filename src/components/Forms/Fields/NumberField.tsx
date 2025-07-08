@@ -2,11 +2,11 @@ import {
   Box,
   FormControl,
   FormLabel,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
 } from '@chakra-ui/react';
 import InfoButton from '../../UtilityComponents/InfoButton';
 

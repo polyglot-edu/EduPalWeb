@@ -146,6 +146,9 @@ export class APIV2 {
   deleteCourse(courseId: string): Promise<AxiosResponse> {
     return this.axios.delete('/api/course/' + courseId);
   }
+  saveCourse(course: PolyglotCourse): Promise<AxiosResponse> {
+    return this.axios.put<{}, AxiosResponse, {}>(`/api/course`, course);
+  }
 }
 
 export const API = {

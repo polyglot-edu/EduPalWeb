@@ -55,11 +55,11 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
     );
 
   function onEditCourse(id: string): void {
-    throw new Error('Function not implemented.');
+    console.log('Function not implemented.');
   }
 
   function onViewCourse(id: string): void {
-    throw new Error('Function not implemented.');
+    console.log('Function not implemented.');
   }
 
   return (

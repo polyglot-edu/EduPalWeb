@@ -54,8 +54,8 @@ const StepPublishing = ({
       />
       <Box mb={6} hidden={materialMethod === 'selected' ? false : true}>
         <Text mb={2} fontSize="sm" color="gray.600">
-          {selectedFlows.length} learning path{selectedFlows.length !== 1 && 's'}{' '}
-          selected
+          {selectedFlows.length} learning path
+          {selectedFlows.length !== 1 && 's'} selected
         </Text>
         <FlowCarousel
           flows={flows}

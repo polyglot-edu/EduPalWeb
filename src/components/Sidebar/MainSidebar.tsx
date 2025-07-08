@@ -10,15 +10,8 @@ import {
   StarIcon,
   ViewIcon,
 } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  Text,
-  useDisclosure,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Text, VStack } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 
 type SidebarProps = {
   onNavigate?: (route: string) => void;
@@ -30,6 +23,7 @@ type NavItem = {
   label: string;
   icon: React.ReactElement;
   route: string;
+  active: boolean;
 };
 
 type Section = {
@@ -41,16 +35,41 @@ const sections: Section[] = [
   {
     title: 'General',
     items: [
-      { label: 'Dashboard', icon: <ViewIcon />, route: '/dashboard' },
-      { label: 'My Library', icon: <StarIcon />, route: '/library' },
-      { label: 'Worksheet', icon: <EditIcon />, route: '/worksheet' },
+      {
+        label: 'Dashboard',
+        icon: <ViewIcon />,
+        route: '/dashboard',
+        active: true,
+      },
+      {
+        label: 'My Library',
+        icon: <StarIcon />,
+        route: '/library',
+        active: false,
+      },
+      {
+        label: 'Worksheet',
+        icon: <EditIcon />,
+        route: '/worksheet',
+        active: false,
+      },
     ],
   },
   {
     title: 'Course Content',
     items: [
-      { label: 'Lesson Plan', icon: <CalendarIcon />, route: '/lesson-plan' },
-      { label: 'My Courses', icon: <InfoIcon />, route: '/courses' },
+      {
+        label: 'Lesson Plan',
+        icon: <CalendarIcon />,
+        route: '/lesson-plan',
+        active: false,
+      },
+      {
+        label: 'My Courses',
+        icon: <InfoIcon />,
+        route: '/courses',
+        active: false,
+      },
     ],
   },
   {
@@ -60,20 +79,37 @@ const sections: Section[] = [
         label: 'Exam Generate',
         icon: <CheckCircleIcon />,
         route: '/exam-generate',
+        active: false,
       },
-      { label: 'Grading Rubrics', icon: <AtSignIcon />, route: '/rubrics' },
+      {
+        label: 'Grading Rubrics',
+        icon: <AtSignIcon />,
+        route: '/rubrics',
+        active: false,
+      },
     ],
   },
   {
     title: 'Account',
     items: [
-      { label: 'Profile', icon: <ViewIcon />, route: '/profile' },
-      { label: 'Setting', icon: <SettingsIcon />, route: '/settings' },
+      {
+        label: 'Profile',
+        icon: <ViewIcon />,
+        route: '/profile',
+        active: false,
+      },
+      {
+        label: 'Setting',
+        icon: <SettingsIcon />,
+        route: '/settings',
+        active: false,
+      },
     ],
   },
 ];
 
 export const MainSideBar = ({ onNavigate, isOpen, onToggle }: SidebarProps) => {
+  const router = useRouter();
   return (
     <Box
       position="fixed"
@@ -123,7 +159,11 @@ export const MainSideBar = ({ onNavigate, isOpen, onToggle }: SidebarProps) => {
                   variant="ghost"
                   justifyContent={isOpen ? 'flex-start' : 'center'}
                   leftIcon={item.icon}
-                  onClick={() => onNavigate?.(item.route)}
+                  onClick={() =>
+                    item.active
+                      ? router.push(item.route)
+                      : console.log('go to: ' + item.route)
+                  }
                   size="sm"
                   fontWeight="normal"
                   px={isOpen ? 4 : 0}
