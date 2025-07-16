@@ -7,6 +7,7 @@ import {
   AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
+  LearningObjectives,
   LearningOutcome,
   MaterialType,
   PlanLessonNode,
@@ -589,7 +590,7 @@ export const generateCourse = async ({
   educationLevel: EducationLevel;
   language: string;
   description: string;
-  learningObjectives: string;
+  learningObjectives: LearningObjectives;
   duration: string;
   prerequisites: string;
   targetAudience: string;

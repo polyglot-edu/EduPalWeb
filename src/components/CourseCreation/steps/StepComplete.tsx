@@ -24,8 +24,10 @@ import {
   AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
+  LearningObjectives,
   PlanLessonNode,
   PolyglotNode,
+  SyllabusTopic,
 } from '../../../types/polyglotElements';
 
 type StepCompleteProps = {
@@ -39,7 +41,7 @@ type StepCompleteProps = {
   subjectArea: string;
   educationLevel: EducationLevel;
   description: string;
-  learningObjectives: string;
+  learningObjectives: LearningObjectives;
   duration: string;
   prerequisites: string;
   classContext: string;

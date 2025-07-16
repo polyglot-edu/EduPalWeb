@@ -1,4 +1,4 @@
-import { EducationLevel, PolyglotFlow, Topic } from '../';
+import { EducationLevel, LearningObjectives, PolyglotFlow, Topic } from '../';
 
 export type PolyglotCourse = {
   _id: string;
@@ -9,7 +9,7 @@ export type PolyglotCourse = {
   education_level: EducationLevel;
   language: string;
   duration: string;
-  learningObjectives?: string;
+  learningObjectives?: LearningObjectives;
   topics: string[];
   topicsAI: Topic[];
   tags: { name: string; color: string }[];

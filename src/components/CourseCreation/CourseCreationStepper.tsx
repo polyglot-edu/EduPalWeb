@@ -18,6 +18,7 @@ import {
   AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
+  LearningObjectives,
   PlanLessonNode,
 } from '../../types/polyglotElements';
 import StepAIGeneration from './steps/StepAIGeneration';
@@ -47,7 +48,8 @@ const CourseCreationStepper = () => {
   const [generatedLessons, setGeneratedLessons] = useState<
     AIPlanLessonResponse[]
   >([]);
-
+  const [selectedLearningObjectives, setSelectedLearningObjectives] =
+    useState(0);
   const [material, setMaterial] = useState<string>('');
   const [img, setImg] = useState('');
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
@@ -84,6 +86,10 @@ const CourseCreationStepper = () => {
       );
     }
   };
+
+  //manca da integrare Learning objectives di "definedSyllabus.topics[]"
+  //integrare resto tool con le nuove info
+  //aggiornare il courseType backend + frontend
 
   const stepComponents = [
     <StepDefineSyllabus
@@ -211,7 +217,10 @@ const CourseCreationStepper = () => {
       }
       language={definedSyllabus?.language ?? ''}
       description={definedSyllabus?.description ?? ''}
-      learningObjectives={(definedSyllabus?.goals ?? []).join(', ')}
+      learningObjectives={
+        definedSyllabus?.topics[selectedLearningObjectives]
+          .learning_objectives ?? ({} as LearningObjectives)
+      }
       duration={duration}
       prerequisites={(definedSyllabus?.prerequisites ?? []).join(', ')}
       classContext={definedSyllabus?.additional_information ?? ''}
