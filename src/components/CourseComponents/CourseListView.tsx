@@ -21,11 +21,10 @@ import { PolyglotCourseWithFlows } from '../../types/polyglotElements';
 
 interface CourseCardProps {
   course: PolyglotCourseWithFlows;
-  onEdit?: (id: string) => void;
   onView?: (id: string) => void;
 }
 
-export const CourseCardView = ({ course, onEdit, onView }: CourseCardProps) => {
+export const CourseCardView = ({ course, onView }: CourseCardProps) => {
   const {
     _id: _id,
     title,
@@ -195,7 +194,7 @@ export const CourseCardView = ({ course, onEdit, onView }: CourseCardProps) => {
           <Button
             leftIcon={<Icon as={MdEdit} />}
             variant="outline"
-            onClick={() => onEdit?.(_id)}
+            onClick={() => router.push('/courses/' + course._id + '/edit')}
           >
             Edit
           </Button>

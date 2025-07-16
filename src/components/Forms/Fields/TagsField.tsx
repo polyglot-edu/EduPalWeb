@@ -39,14 +39,11 @@ const colors = [
   'telegram',
 ];
 
-type Tag = {
-  name: string;
-  color: string;
-};
-
 type TagsFieldProps = {
-  tags: Tag[];
-  setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
+  tags: { name: string; color: string }[];
+  setTags: React.Dispatch<
+    React.SetStateAction<{ name: string; color: string }[]>
+  >;
 
   tagName: string;
   setTagName: React.Dispatch<React.SetStateAction<string>>;

@@ -4,7 +4,6 @@ import {
   Button,
   Divider,
   Flex,
-  Heading,
   Image,
   SimpleGrid,
   Text,
@@ -32,24 +31,6 @@ type CourseEditorProps = {
 const CourseEditor = ({ courseState }: CourseEditorProps) => {
   const [course, setCourse] = courseState;
 
-  const [title, setTitle] = useState(course?.title ?? '');
-  const [subjectArea, setSubjectArea] = useState(course?.subjectArea ?? '');
-  const [eduLevel, setEduLevel] = useState(
-    course?.education_level ?? EducationLevel.HighSchool
-  );
-  const [language, setLanguage] = useState(course?.language ?? 'english');
-  const [description, setDescription] = useState(course?.description ?? '');
-  const [img, setImg] = useState(course?.img ?? '');
-  const [tags, setTags] = useState(course?.tags ?? []);
-  const [duration, setDuration] = useState(course?.duration ?? '');
-  const [learningObjectives, setObjectives] = useState(
-    course?.learningObjectives ?? ''
-  );
-  const [topics, setTopics] = useState(course?.topics ?? []);
-  const [learningContext, setLearningContext] = useState(
-    course?.learningContext ?? ''
-  );
-  const [flows, setFlows] = useState(course?.flows ?? []);
   const [tagName, setTagName] = useState('');
   const [colorTag, setColorTag] = useState('gray');
   const [imgError, setImgError] = useState(false);
@@ -65,18 +46,6 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
 
   useEffect(() => {
     if (!course) return;
-    setTitle(course.title ?? '');
-    setSubjectArea(course.subjectArea ?? '');
-    setEduLevel(course.education_level ?? EducationLevel.HighSchool);
-    setLanguage(course.language ?? 'english');
-    setDescription(course.description ?? '');
-    setImg(course.img ?? '');
-    setTags(course.tags ?? []);
-    setDuration(course.duration ?? '');
-    setObjectives(course.learningObjectives ?? '');
-    setTopics(course.topics ?? []);
-    setLearningContext(course.learningContext ?? '');
-    setFlows(course.flows ?? []);
   }, [course]);
 
   if (!course) {
@@ -84,24 +53,29 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
   }
   return (
     <Box>
-
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
-        <InputTextField label="Title" value={title} setValue={setTitle} />
+        <InputTextField
+          label="Title"
+          value={course.title}
+          setValue={(val) => setCourse({ ...course, title: val })}
+        />
         <InputTextField
           label="Subject Area"
-          value={subjectArea}
-          setValue={setSubjectArea}
+          value={course.subjectArea}
+          setValue={(val) => setCourse({ ...course, subjectArea: val })}
         />
         <EnumField
           label="Education Level"
-          value={eduLevel}
-          setValue={(val) => setEduLevel(val as EducationLevel)}
+          value={course.education_level}
+          setValue={(val) =>
+            setCourse({ ...course, education_level: val as EducationLevel })
+          }
           options={educationOptions}
         />
         <EnumField
           label="Language"
-          value={language}
-          setValue={setLanguage}
+          value={course.language}
+          setValue={(val) => setCourse({ ...course, language: val })}
           options={[
             { label: 'English', value: 'english' },
             { label: 'Italiano', value: 'italian' },
@@ -112,13 +86,13 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
         />
         <InputTextField
           label="Duration"
-          value={duration}
-          setValue={setDuration}
+          value={course.duration}
+          setValue={(val) => setCourse({ ...course, duration: val })}
         />
         <InputTextField
           label="Learning Context"
-          value={learningContext}
-          setValue={setLearningContext}
+          value={course.learningContext}
+          setValue={(val) => setCourse({ ...course, learningContext: val })}
         />
       </SimpleGrid>
       <Flex flex="1" minW="280px" alignItems="flex-start" gap={4}>
@@ -126,9 +100,9 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
           <InputTextField
             label="Course Image URL"
             placeholder="https://example.com/image.png"
-            value={img}
+            value={course.img || ''}
             setValue={(val) => {
-              setImg(val);
+              setCourse({ ...course, img: val });
               setImgError(false);
             }}
             infoTitle="Image URL"
@@ -148,9 +122,9 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
           alignItems="center"
           justifyContent="center"
         >
-          {img && !imgError ? (
+          {course.img && !imgError ? (
             <Image
-              src={img}
+              src={course.img}
               alt="Course preview"
               objectFit="cover"
               w="100%"
@@ -167,8 +141,17 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
 
       <Box my={4}>
         <TagsField
-          tags={tags}
-          setTags={setTags}
+          tags={course.tags}
+          setTags={(tags) =>
+            setCourse((prev) => {
+              if (!prev) return prev;
+
+              return {
+                ...prev,
+                tags: typeof tags === 'function' ? tags(prev.tags) : tags,
+              };
+            })
+          }
           tagName={tagName}
           setTagName={setTagName}
           colorTag={colorTag}
@@ -181,13 +164,13 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
 
       <MarkDownField
         label="Description"
-        value={description}
-        setValue={setDescription}
+        value={course.description}
+        setValue={(val) => setCourse({ ...course, description: val })}
       />
       <InputTextField
         label="Learning Objectives"
-        value={learningObjectives}
-        setValue={setObjectives}
+        value={course.learningObjectives || ''}
+        setValue={(val) => setCourse({ ...course, learningObjectives: val })}
         placeholder="List key outcomes"
       />
 
@@ -195,13 +178,21 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
 
       <StepHeading title="Learning Flows" subtitle="Reorder and manage flows" />
       <SortableList
-        items={flows}
-        onChange={setFlows}
+        items={course.flows}
+        onChange={(flows) => setCourse({ ...course, flows })}
         onAdd={() => console.log('Add new flow')}
         renderActions={(item) => (
           <Button size="sm" onClick={() => console.log('Edit', item._id)}>
             Edit
           </Button>
+        )}
+        renderItem={(item) => (
+          <Box>
+            <Text fontWeight="bold">{item.title}</Text>
+            <Text fontSize="sm" color="gray.500">
+              {item.description}
+            </Text>
+          </Box>
         )}
       />
 

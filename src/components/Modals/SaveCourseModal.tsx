@@ -14,20 +14,20 @@ export type ModaTemplateProps = {
   isOpen: boolean;
   onClose: () => void;
   courseId: string;
-  deleteFunc: (flowId: string) => Promise<void>;
+  saveFunc: (flowId: string) => Promise<void>;
 };
 
-const DeleteFlowModal = ({
+const SaveFlowModal = ({
   isOpen,
   onClose,
   courseId,
-  deleteFunc,
+  saveFunc: saveFunc,
 }: ModaTemplateProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete Course</ModalHeader>
+        <ModalHeader>Save Course edits</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text>
@@ -37,21 +37,21 @@ const DeleteFlowModal = ({
 
         <ModalFooter>
           <Button
-            colorScheme="blue"
-            onClick={async () => {
-              onClose();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
             colorScheme="red"
             onClick={async () => {
               onClose();
-              await deleteFunc(courseId);
             }}
           >
-            Delete
+            Do not Save
+          </Button>
+          <Button
+            colorScheme="blue"
+            onClick={async () => {
+              onClose();
+              await saveFunc(courseId);
+            }}
+          >
+            Save
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -59,4 +59,4 @@ const DeleteFlowModal = ({
   );
 };
 
-export default DeleteFlowModal;
+export default SaveFlowModal;

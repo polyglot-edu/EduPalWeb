@@ -1,12 +1,4 @@
-import { AddIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  Stack,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import {
   closestCenter,
   DndContext,
@@ -37,15 +29,18 @@ type SortableListProps<T extends SortableBaseItem> = {
   onChange: (updated: T[]) => void;
   onAdd?: () => void;
   renderActions?: (item: T) => React.ReactNode;
+  renderItem?: (item: T) => React.ReactNode;
 };
 
 // Item component inside the list
 function SortableListItem<T extends SortableBaseItem>({
   item,
   renderActions,
+  renderItem,
 }: {
   item: T;
   renderActions?: (item: T) => React.ReactNode;
+  renderItem?: (item: T) => React.ReactNode;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: item._id });
@@ -73,7 +68,14 @@ function SortableListItem<T extends SortableBaseItem>({
       {...listeners}
     >
       <Box flex="1">
-        {item.render ? item.render() : <Text>{item.label}</Text>}
+        {' '}
+        {renderItem ? (
+          renderItem(item)
+        ) : item.render ? (
+          item.render()
+        ) : (
+          <Text>{item.label}</Text>
+        )}
       </Box>
       {renderActions && <Box ml={3}>{renderActions(item)}</Box>}
     </Flex>
@@ -86,6 +88,7 @@ function SortableList<T extends SortableBaseItem>({
   onChange,
   onAdd,
   renderActions,
+  renderItem,
 }: SortableListProps<T>) {
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -117,16 +120,12 @@ function SortableList<T extends SortableBaseItem>({
                 key={item._id}
                 item={item}
                 renderActions={renderActions}
+                renderItem={renderItem}
               />
             ))}
           </Stack>
         </SortableContext>
       </DndContext>
-      {onAdd && (
-        <Button onClick={onAdd} leftIcon={<AddIcon />} mt={4}>
-          Add Item
-        </Button>
-      )}
     </>
   );
 }

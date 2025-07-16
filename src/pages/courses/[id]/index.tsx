@@ -89,7 +89,6 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
           <CourseCardView
             key={course._id}
             course={course}
-            onEdit={onEditCourse}
             onView={onViewCourse}
           />
         </Flex>
