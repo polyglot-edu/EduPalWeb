@@ -9,9 +9,11 @@ import { TbLock } from 'react-icons/tb';
 
 import StepProgressBar from '../UtilityComponents/StepProgressBar';
 
+import { HamburgerIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
+import { IconType } from 'react-icons';
 import {
-  AIPlanCourseResponse,
+  AIDefineSyllabus,
   AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
@@ -22,7 +24,7 @@ import StepComplete from './steps/StepComplete';
 import StepContentForm from './steps/StepContentForm';
 import StepContentUpload from './steps/StepContentUpload';
 import StepCourseContent from './steps/StepCourseContent';
-import StepCourseDetails from './steps/StepCourseDetails';
+import StepDefineSyllabus from './steps/StepDefineSyllabus';
 import StepGamification from './steps/StepGamification';
 import StepPublishing from './steps/StepPublishing';
 
@@ -31,7 +33,8 @@ const CourseCreationStepper = () => {
 
   const [step, setStep] = useState(0);
   const [progressStep, setProgressStep] = useState(0);
-
+  const [generalSubject, setGeneralSubject] = useState('');
+  const [additionalInfo, setAdditionalInfo] = useState('');
   const [title, setTitle] = useState('');
   const [subjectArea, setSubjectArea] = useState('');
   const [eduLevel, setEduLevel] = useState<EducationLevel>(
@@ -48,7 +51,7 @@ const CourseCreationStepper = () => {
   const [publishMethod, setPublishMethod] = useState('public');
   const [accessCode, setAccessCode] = useState('');
   const [analysedMaterial, setAnalysedMaterial] = useState<AnalyzedMaterial>();
-  const [plannedCourse, setPlannedCourse] = useState<AIPlanCourseResponse>();
+  const [plannedCourse, setPlannedCourse] = useState<AIDefineSyllabus>();
   const [generatedLessons, setGeneratedLessons] = useState<
     AIPlanLessonResponse[]
   >([]);
@@ -90,23 +93,24 @@ const CourseCreationStepper = () => {
   };
 
   const stepComponents = [
-    <StepCourseDetails
-      key={'course-details'}
-      titleState={[title, setTitle]}
-      subjectAreaState={[subjectArea, setSubjectArea]}
+    <StepDefineSyllabus
+      additionalInformationState={[additionalInfo, setAdditionalInfo]}
+      generalsSubject={[generalSubject, setGeneralSubject]}
       eduLevelState={[eduLevel, setEduLevel]}
       languageState={[language, setLanguage]}
-      descriptionState={[description, setDescription]}
-      imgState={[img, setImg]}
-      tagsState={[tags, setTags]}
     />, // 0
     <StepCourseContent
-      key={'course-content'}
+      key={'course-details'}
       classContextState={[classContext, setClassContext]}
       learningObjectivesState={[learningObjectives, setObjectives]}
       durationState={[duration, setDuration]}
       prerequisitesState={[prerequisites, setPrerequisites]}
       targetAudienceState={[targetAudience, setTargetAudience]}
+      titleState={[title, setTitle]}
+      subjectAreaState={[subjectArea, setSubjectArea]}
+      descriptionState={[description, setDescription]}
+      imgState={[img, setImg]}
+      tagsState={[tags, setTags]}
     />, // 1 (intermedio)
     <StepContentUpload
       key={'content-upload'}
@@ -184,6 +188,7 @@ const CourseCreationStepper = () => {
       <StepProgressBar
         currentStep={progressStep}
         steps={[
+          { name: 'Syllabus Definition', icon: HamburgerIcon as IconType },
           { name: 'Course Details', icon: GoBook },
           { name: 'Content Upload', icon: IoCloudUploadOutline },
           { name: 'AI Generation', icon: BsStars },

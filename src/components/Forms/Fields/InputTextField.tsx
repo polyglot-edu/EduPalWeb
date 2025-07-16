@@ -51,7 +51,7 @@ const InputTextField = ({
         </Box>
         <Textarea
           value={value}
-          height={height}
+          height={'auto'}
           minHeight="2.5rem"
           padding="0.375rem 0.75rem"
           onChange={(e) => setValue(e.target.value)}

@@ -197,6 +197,7 @@ export type LearningObjectives = {
   skills: string;
   attitude: string;
 };
+
 export type Assignment = {
   learning_outcome: LearningOutcome;
   type: string;
@@ -350,4 +351,30 @@ export type AIPlanCourseResponse = {
   prerequisites: string[];
   nodes: LessonNodeAI[];
   language?: string; // default to "English"
+};
+
+export type SyllabusTopic = {
+  macro_topic: string;
+  details: string;
+  learning_objectives: LearningObjectives;
+};
+
+export type AIDefineSyllabus = {
+  general_subject: string;
+  additional_information: string;
+  education_level: EducationLevel;
+  language?: string; // default to "English"
+  model?: string;
+};
+
+export type AIDefineSyllabusResponse = {
+  general_subject: string;
+  educational_level: EducationLevel;
+  additional_information: string;
+  title: string;
+  description: string;
+  goals: string[];
+  topics: SyllabusTopic[];
+  prerequisites: string[];
+  language: string;
 };

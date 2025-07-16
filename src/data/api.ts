@@ -1,5 +1,6 @@
 import axiosCreate, { AxiosInstance, AxiosResponse } from 'axios';
 import {
+  AIDefineSyllabus,
   AIExerciseType,
   AIPlanCourse,
   AIPlanLesson,
@@ -283,6 +284,10 @@ export const API = {
       `/api/openai/ActivityGenerator`,
       body
     );
+  },
+
+  defineSyllabus: (body: AIDefineSyllabus): Promise<AxiosResponse> => {
+    return axios.post<{}, AxiosResponse, {}>(`/api/openai/DefineSyllabus`, body);
   },
 
   planLesson: (body: AIPlanLesson): Promise<AxiosResponse> => {

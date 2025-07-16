@@ -1,74 +1,92 @@
-import { AddIcon, CloseIcon } from '@chakra-ui/icons';
-import { Button, Flex, FormControl, FormLabel, Input } from '@chakra-ui/react';
-import { useState } from 'react';
+import { AddIcon } from '@chakra-ui/icons';
 import {
-  RegisterOptions,
-  useFieldArray,
-  useFormContext,
-} from 'react-hook-form';
+  Flex,
+  FormControl,
+  FormLabel,
+  IconButton,
+  Input,
+  Tag,
+  TagCloseButton,
+  TagLabel,
+  useColorModeValue,
+  VStack,
+} from '@chakra-ui/react';
+import { useState } from 'react';
+
+interface StringListInputProps {
+  label?: string;
+  value: string[];
+  setValue: (val: string[]) => void;
+  placeholder?: string;
+}
 
 const ArrayField = ({
   label,
-  name,
-  constraints,
-  option,
-}: {
-  label: string;
-  name: string;
-  option?: string;
-  constraints?: RegisterOptions;
-}) => {
+  value,
+  setValue,
+  placeholder,
+}: StringListInputProps) => {
   const [input, setInput] = useState('');
-  const { register } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
-    name: name, // unique name for your Field Array
-  });
+
+  const addItem = () => {
+    const trimmed = input.trim();
+    if (trimmed && !value.includes(trimmed)) {
+      setValue([...value, trimmed]);
+      setInput('');
+    }
+  };
+
+  const removeItem = (index: number) => {
+    const updated = [...value];
+    updated.splice(index, 1);
+    setValue(updated);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addItem();
+    }
+  };
+
+  const borderColor = useColorModeValue('gray.300', 'gray.600');
 
   return (
     <FormControl>
-      <FormLabel htmlFor={name}>{label}</FormLabel>
-      {fields.map((field, index) => (
-        <Flex key={field.id} paddingBottom={'13px'}>
+      {label && <FormLabel fontWeight="semibold">{label}</FormLabel>}
+
+      <VStack align="stretch" spacing={3}>
+        {value.map((item, index) => (
+          <Flex key={index} align="center" gap={2}>
+            <Tag
+              key={index}
+              size="md"
+              variant="solid"
+              bgColor="purple.400"
+              borderRadius="full"
+            >
+              <TagLabel>{item}</TagLabel>
+              <TagCloseButton onClick={() => removeItem(index)} />
+            </Tag>
+          </Flex>
+        ))}
+
+        <Flex gap={2}>
           <Input
-            {...register(`${name}.${index}`, constraints)}
-            borderColor={'grey'}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder={placeholder || 'Aggiungi un elemento...'}
+            borderColor={borderColor}
           />
-          <Button
-            colorScheme={'red'}
-            onClick={() => {
-              remove(index);
-            }}
-          >
-            <CloseIcon boxSize="0.75em" />
-          </Button>
-          <FormLabel
-            htmlFor={name}
-            style={{
-              transform: 'translate(15px, -13px)',
-              position: 'absolute',
-              backgroundColor: 'white',
-            }}
-          >
-            {option} {index + 1}
-          </FormLabel>
+          <IconButton
+            icon={<AddIcon />}
+            aria-label="Aggiungi"
+            colorScheme="purple"
+            onClick={addItem}
+          />
         </Flex>
-      ))}
-      <Flex>
-        <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          borderColor={'grey'}
-        />
-        <Button
-          colorScheme={'green'}
-          onClick={() => {
-            append(input);
-            setInput('');
-          }}
-        >
-          <AddIcon boxSize="0.75em" />
-        </Button>
-      </Flex>
+      </VStack>
     </FormControl>
   );
 };

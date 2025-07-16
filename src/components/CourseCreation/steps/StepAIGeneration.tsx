@@ -11,8 +11,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import { API } from '../../../data/api';
 import {
+  AIDefineSyllabus,
   AIPlanCourse,
-  AIPlanCourseResponse,
   AIPlanLessonResponse,
   AnalyzedMaterial,
   Assignment,
@@ -36,8 +36,8 @@ type StepCoursePlannerProps = {
     React.Dispatch<React.SetStateAction<AnalyzedMaterial | undefined>>
   ];
   plannedCourseProp: [
-    AIPlanCourseResponse | undefined,
-    React.Dispatch<React.SetStateAction<AIPlanCourseResponse | undefined>>
+    AIDefineSyllabus | undefined,
+    React.Dispatch<React.SetStateAction<AIDefineSyllabus | undefined>>
   ];
   GeneratedLessonsProp: [
     AIPlanLessonResponse[],
@@ -160,7 +160,7 @@ const StepAIGeneration = ({
         language: language || analysedMaterial?.language || 'English',
         model: model || 'Gemini',
       } as AIPlanCourse);
-      setPlannedCourse(response.data as AIPlanCourseResponse);
+      setPlannedCourse(response.data as AIDefineSyllabus);
       setLessons(response.data.nodes as LessonNodeAI[]);
       setCurrentStep('lessons');
       toast({
