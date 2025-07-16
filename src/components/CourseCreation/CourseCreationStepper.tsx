@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
 import {
   AIDefineSyllabus,
+  AIDefineSyllabusResponse,
   AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
@@ -35,19 +36,10 @@ const CourseCreationStepper = () => {
   const [progressStep, setProgressStep] = useState(0);
   const [generalSubject, setGeneralSubject] = useState('');
   const [additionalInfo, setAdditionalInfo] = useState('');
-  const [title, setTitle] = useState('');
-  const [subjectArea, setSubjectArea] = useState('');
-  const [eduLevel, setEduLevel] = useState<EducationLevel>(
-    EducationLevel.HighSchool
-  );
-  const [language, setLanguage] = useState('english');
-  const [description, setDescription] = useState('');
-  const [learningObjectives, setObjectives] = useState('');
-  const [duration, setDuration] = useState('');
-  const [prerequisites, setPrerequisites] = useState('');
-  const [targetAudience, setTargetAudience] = useState('');
-  const [classContext, setClassContext] = useState('');
+  const [definedSyllabus, setDefinedSyllabus] =
+    useState<AIDefineSyllabusResponse>();
   const [uploadMethod, setUploadMethod] = useState('');
+  const [duration, setDuration] = useState('');
   const [publishMethod, setPublishMethod] = useState('public');
   const [accessCode, setAccessCode] = useState('');
   const [analysedMaterial, setAnalysedMaterial] = useState<AnalyzedMaterial>();
@@ -55,6 +47,7 @@ const CourseCreationStepper = () => {
   const [generatedLessons, setGeneratedLessons] = useState<
     AIPlanLessonResponse[]
   >([]);
+
   const [material, setMaterial] = useState<string>('');
   const [img, setImg] = useState('');
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
@@ -96,22 +89,91 @@ const CourseCreationStepper = () => {
     <StepDefineSyllabus
       additionalInformationState={[additionalInfo, setAdditionalInfo]}
       generalsSubject={[generalSubject, setGeneralSubject]}
-      eduLevelState={[eduLevel, setEduLevel]}
-      languageState={[language, setLanguage]}
+      definedSyllabusState={[definedSyllabus, setDefinedSyllabus]}
     />, // 0
     <StepCourseContent
       key={'course-details'}
-      classContextState={[classContext, setClassContext]}
-      learningObjectivesState={[learningObjectives, setObjectives]}
+      classContextState={[
+        definedSyllabus?.additional_information ?? '',
+        (val: React.SetStateAction<string>) =>
+          setDefinedSyllabus((prev) => ({
+            ...prev!,
+            additional_information:
+              typeof val === 'function'
+                ? val(prev?.additional_information ?? '')
+                : val,
+          })),
+      ]}
+      learningObjectivesState={[
+        (definedSyllabus?.goals ?? []).join(', '),
+        (val: React.SetStateAction<string>) => {
+          const newVal =
+            typeof val === 'function'
+              ? val((definedSyllabus?.goals ?? []).join(', '))
+              : val;
+          setDefinedSyllabus((prev) => ({
+            ...prev!,
+            goals: newVal.split(',').map((s) => s.trim()),
+          }));
+        },
+      ]}
       durationState={[duration, setDuration]}
-      prerequisitesState={[prerequisites, setPrerequisites]}
-      targetAudienceState={[targetAudience, setTargetAudience]}
-      titleState={[title, setTitle]}
-      subjectAreaState={[subjectArea, setSubjectArea]}
-      descriptionState={[description, setDescription]}
+      prerequisitesState={[
+        (definedSyllabus?.prerequisites ?? []).join(', '),
+        (val: React.SetStateAction<string>) => {
+          const newVal =
+            typeof val === 'function'
+              ? val((definedSyllabus?.prerequisites ?? []).join(', '))
+              : val;
+          setDefinedSyllabus((prev) => ({
+            ...prev!,
+            prerequisites: newVal.split(',').map((s) => s.trim()),
+          }));
+        },
+      ]}
+      targetAudienceState={[
+        definedSyllabus?.additional_information ?? '',
+        (val: React.SetStateAction<string>) =>
+          setDefinedSyllabus((prev) => ({
+            ...prev!,
+            additional_information:
+              typeof val === 'function'
+                ? val(prev?.additional_information ?? '')
+                : val,
+          })),
+      ]}
+      titleState={[
+        definedSyllabus?.title ?? '',
+        (val: React.SetStateAction<string>) =>
+          setDefinedSyllabus((prev) => ({
+            ...prev!,
+            title: typeof val === 'function' ? val(prev?.title ?? '') : val,
+          })),
+      ]}
+      subjectAreaState={[
+        definedSyllabus?.general_subject ?? '',
+        (val: React.SetStateAction<string>) =>
+          setDefinedSyllabus((prev) => ({
+            ...prev!,
+            general_subject:
+              typeof val === 'function'
+                ? val(prev?.general_subject ?? '')
+                : val,
+          })),
+      ]}
+      descriptionState={[
+        definedSyllabus?.description ?? '',
+        (val: React.SetStateAction<string>) =>
+          setDefinedSyllabus((prev) => ({
+            ...prev!,
+            description:
+              typeof val === 'function' ? val(prev?.description ?? '') : val,
+          })),
+      ]}
       imgState={[img, setImg]}
       tagsState={[tags, setTags]}
     />, // 1 (intermedio)
+
     <StepContentUpload
       key={'content-upload'}
       selection={[uploadMethod, setUploadMethod]}
@@ -124,13 +186,13 @@ const CourseCreationStepper = () => {
     />, // 3 (intermedio)
     <StepAIGeneration
       key={'ai-generation'}
-      language={language}
+      language={definedSyllabus?.language ?? ''}
       material={material}
-      context={classContext}
+      context={definedSyllabus?.additional_information ?? ''}
       GeneratedLessonsProp={[generatedLessons, setGeneratedLessons]}
       analysedMaterialProp={[analysedMaterial, setAnalysedMaterial]}
       plannedCourseProp={[plannedCourse, setPlannedCourse]}
-      title={title}
+      title={definedSyllabus?.title ?? ''}
       CoursesNodesProp={[courseNodes, setCourseNodes]}
     />, // 4
     <StepGamification key={'gamification'} />, // 5
@@ -142,16 +204,18 @@ const CourseCreationStepper = () => {
     />, // 6
     <StepComplete
       key={'complete'}
-      title={title}
-      subjectArea={subjectArea}
-      educationLevel={eduLevel}
-      language={language}
-      description={description}
-      learningObjectives={learningObjectives}
+      title={definedSyllabus?.title ?? ''}
+      subjectArea={definedSyllabus?.general_subject ?? ''}
+      educationLevel={
+        definedSyllabus?.educational_level ?? EducationLevel.HighSchool
+      }
+      language={definedSyllabus?.language ?? ''}
+      description={definedSyllabus?.description ?? ''}
+      learningObjectives={(definedSyllabus?.goals ?? []).join(', ')}
       duration={duration}
-      prerequisites={prerequisites}
-      classContext={classContext}
-      context={targetAudience}
+      prerequisites={(definedSyllabus?.prerequisites ?? []).join(', ')}
+      classContext={definedSyllabus?.additional_information ?? ''}
+      context={definedSyllabus?.additional_information ?? ''}
       accessCode={accessCode}
       analysedMaterial={analysedMaterial}
       sourceMaterial={material}
@@ -164,7 +228,7 @@ const CourseCreationStepper = () => {
 
   function nextDisable(): boolean {
     if (step === stepComponents.length - 1) return true;
-    else if (step === 0 && title == '') return true;
+    else if (step === 0 && definedSyllabus) return true;
     else if (step === 2 && uploadMethod == '') return true;
     else if (step === 3 && !analysedMaterial) return true;
     else if (

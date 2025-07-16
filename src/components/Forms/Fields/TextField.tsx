@@ -3,89 +3,52 @@ import {
   ChakraProvider,
   extendTheme,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Input,
   Textarea,
 } from '@chakra-ui/react';
-import { RegisterOptions, useFormContext } from 'react-hook-form';
+
 export type TextFieldProps = {
   label: string;
-  name: string;
-  width?: string;
-  constraints?: RegisterOptions;
+  value: string;
+  setValue: (val: string) => void;
   isTextArea?: boolean;
   isReadOnly?: boolean;
   isDisabled?: boolean;
   isRequired?: boolean;
   placeholder?: string;
+  width?: string;
+  height?: string;
 };
-
-const activeLabelStyles = {
-  transform: ' translateY(-18px)',
-};
-
-export const theme = extendTheme({
-  components: {
-    Form: {
-      variants: {
-        floating: {
-          container: {
-            _focusWithin: {
-              label: {
-                ...activeLabelStyles,
-              },
-            },
-            'input:not(:placeholder-shown) + label, textarea:not(:placeholder-shown) ~ label':
-              {
-                ...activeLabelStyles,
-              },
-            label: {
-              font: '15px',
-              top: 1,
-              left: 0,
-              zIndex: 1,
-              position: 'absolute',
-              backgroundColor: 'white',
-              mx: 3,
-            },
-          },
-        },
-      },
-    },
-  },
-});
 
 const TextField = ({
   label,
-  name,
-  constraints,
+  value,
+  setValue,
   isTextArea,
   isReadOnly,
   isDisabled,
   isRequired,
   placeholder,
-  width,
+  width = '100%',
+  height = '2.25rem',
 }: TextFieldProps) => {
-  const { register, getFieldState } = useFormContext();
-  const { error } = getFieldState(name);
-
   const Component = isTextArea ? Textarea : Input;
-  const _placeholder = placeholder ? placeholder : ' ';
+  const _placeholder = placeholder || ' ';
 
   return (
-    <ChakraProvider theme={theme}>
-      <Box p={2} width={width}>
+    <ChakraProvider>
+      <Box p={1} width={width}>
         <FormControl variant="floating" isRequired={isRequired}>
+          <FormLabel m={0}>{label}</FormLabel>
           <Component
-            {...register(name, constraints)}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             isReadOnly={isReadOnly}
             isDisabled={isDisabled}
             placeholder={_placeholder}
-            borderColor={'grey'}
+            size="sm"
           />
-          <FormLabel>{label}</FormLabel>
-          <FormErrorMessage>{error && error.message}</FormErrorMessage>
         </FormControl>
       </Box>
     </ChakraProvider>

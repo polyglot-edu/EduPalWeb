@@ -9,45 +9,38 @@ import ArrayField from '../../Forms/Fields/ArrayField';
 import EnumField from '../../Forms/Fields/EnumField';
 import InputTextField from '../../Forms/Fields/InputTextField';
 import MarkDownField from '../../Forms/Fields/MarkDownField';
+import SyllabusTopicsField from '../../Forms/Fields/SyllabusTopicsField';
 import StepHeading from '../../UtilityComponents/StepHeading';
-
-//From the first buildings to the egypt studies until the creation of the first "Domus" in Greece
-
-type Tag = {
-  name: string;
-  color: string;
-};
 
 type StepCourseDetailsProps = {
   generalsSubject: [string, React.Dispatch<React.SetStateAction<string>>];
-  eduLevelState: [
-    EducationLevel,
-    React.Dispatch<React.SetStateAction<EducationLevel>>
-  ];
-  languageState: [string, React.Dispatch<React.SetStateAction<string>>];
   additionalInformationState: [
     string,
     React.Dispatch<React.SetStateAction<string>>
+  ];
+  definedSyllabusState: [
+    AIDefineSyllabusResponse | undefined,
+    React.Dispatch<React.SetStateAction<AIDefineSyllabusResponse | undefined>>
   ];
 };
 
 const StepDefineSyllabus = ({
   generalsSubject,
-  eduLevelState,
-  languageState,
   additionalInformationState,
+  definedSyllabusState,
 }: StepCourseDetailsProps) => {
   const toast = useToast();
   const [generalSubject, setGeneralSubject] = generalsSubject;
-  const [eduLevel, setEduLevel] = eduLevelState;
-  const [language, setLanguage] = languageState;
+  const [eduLevel, setEduLevel] = useState<EducationLevel>(
+    EducationLevel.HighSchool
+  );
+  const [language, setLanguage] = useState('english');
   const [additionalInformation, setAdditionalInformation] =
     additionalInformationState;
 
   const [isLoadingSyllabus, setIsLoadingSyllabus] = useState(false);
 
-  const [definedSyllabus, setDefinedSyllabus] =
-    useState<AIDefineSyllabusResponse>();
+  const [definedSyllabus, setDefinedSyllabus] = definedSyllabusState;
 
   const educationOptions = Object.entries(EducationLevel).map(
     ([key, value]) => ({
@@ -101,11 +94,11 @@ const StepDefineSyllabus = ({
 
   return (
     <Box>
-      <StepHeading
-        title="Define Syllabus"
-        subtitle="Provide basic information about your course."
-      />
       <Box hidden={definedSyllabus != undefined}>
+        <StepHeading
+          title="Define Syllabus"
+          subtitle="Provide basic information about your course."
+        />
         <InputTextField
           label="General Subject"
           placeholder="Enter course subject."
@@ -166,7 +159,7 @@ const StepDefineSyllabus = ({
       </Box>
 
       {definedSyllabus && (
-        <Box mt={10}>
+        <Box>
           <StepHeading
             title="Edit Generated Syllabus"
             subtitle="You can customize the generated content below."
@@ -229,6 +222,13 @@ const StepDefineSyllabus = ({
             value={definedSyllabus.description}
             setValue={(val) =>
               setDefinedSyllabus({ ...definedSyllabus, description: val })
+            }
+          />
+
+          <SyllabusTopicsField
+            topics={definedSyllabus.topics}
+            updateTopics={(val) =>
+              setDefinedSyllabus({ ...definedSyllabus, topics: val })
             }
           />
 
