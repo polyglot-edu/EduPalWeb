@@ -11,6 +11,7 @@ import {
   LearningOutcome,
   MaterialType,
   PlanLessonNode,
+  PolyglotCourse,
   PolyglotEdge,
   PolyglotFlow,
   PolyglotNode,
@@ -576,6 +577,7 @@ export const generateCourse = async ({
   learningObjectives,
   duration,
   prerequisites,
+  goals,
   targetAudience,
   classContext,
   accessCode,
@@ -592,7 +594,8 @@ export const generateCourse = async ({
   description: string;
   learningObjectives: LearningObjectives;
   duration: string;
-  prerequisites: string;
+  prerequisites: string[];
+  goals: string[];
   targetAudience: string;
   classContext: string;
   accessCode?: string;
@@ -614,11 +617,10 @@ export const generateCourse = async ({
     description,
     learningObjectives: learningObjectives,
     duration: duration,
-    prerequisites: prerequisites
-      ? prerequisites.split(',').map((p) => p.trim())
-      : [],
-    context: classContext,
-    learningContext: targetAudience,
+    prerequisites,
+    goals,
+    targetAudience,
+    classContext,
     accessCode,
     sourceMaterial: material || '',
     img,
@@ -635,7 +637,7 @@ export const generateCourse = async ({
     },
     nSubscribed: 0,
     nCompleted: 0,
-  };
+  } as PolyglotCourse;
 
   return (await API.createNewCourseJson(newCourse)).data;
 };

@@ -45,7 +45,7 @@ const fakeCourses: PolyglotCourseWithFlows[] = [
     duration: '10',
     topics: [],
     topicsAI: [],
-    learningContext: '',
+    classContext: '',
     flowsId: [],
   },
   {
@@ -70,7 +70,7 @@ const fakeCourses: PolyglotCourseWithFlows[] = [
     duration: '5',
     topics: [],
     topicsAI: [],
-    learningContext: '',
+    classContext: '',
     flowsId: [],
   },
 ];

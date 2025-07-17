@@ -1,9 +1,18 @@
-import { Box, Button, Flex, SimpleGrid, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  FormLabel,
+  SimpleGrid,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { API } from '../../../data/api';
 import {
   AIDefineSyllabusResponse,
   EducationLevel,
+  SyllabusTopic,
 } from '../../../types/polyglotElements';
 import ArrayField from '../../Forms/Fields/ArrayField';
 import EnumField from '../../Forms/Fields/EnumField';
@@ -22,15 +31,23 @@ type StepCourseDetailsProps = {
     AIDefineSyllabusResponse | undefined,
     React.Dispatch<React.SetStateAction<AIDefineSyllabusResponse | undefined>>
   ];
+  selectedTopicState: [
+    { topic: SyllabusTopic; index: number } | undefined,
+    React.Dispatch<
+      React.SetStateAction<{ topic: SyllabusTopic; index: number } | undefined>
+    >
+  ];
 };
 
 const StepDefineSyllabus = ({
   generalsSubject,
   additionalInformationState,
   definedSyllabusState,
+  selectedTopicState,
 }: StepCourseDetailsProps) => {
   const toast = useToast();
   const [generalSubject, setGeneralSubject] = generalsSubject;
+  const [selectedTopic, setSelectedTopic] = selectedTopicState;
   const [eduLevel, setEduLevel] = useState<EducationLevel>(
     EducationLevel.HighSchool
   );
@@ -224,14 +241,17 @@ const StepDefineSyllabus = ({
               setDefinedSyllabus({ ...definedSyllabus, description: val })
             }
           />
-
+          <FormLabel>
+            Choose the specific topic you want to explore. You can, also, edit
+            it or create a new one
+          </FormLabel>
           <SyllabusTopicsField
             topics={definedSyllabus.topics}
             updateTopics={(val) =>
               setDefinedSyllabus({ ...definedSyllabus, topics: val })
             }
+            selectedTopicState={[selectedTopic, setSelectedTopic]}
           />
-
           <Flex
             gap={6}
             direction={'row'}

@@ -298,6 +298,17 @@ export type SummerizerBody = {
   learning_outcome: LearningOutcome;
 };
 
+export type AIPlanCourse = {
+  title: string;
+  macro_subject: string;
+  education_level: EducationLevel;
+  learning_objectives: LearningObjectives;
+  number_of_lessons: number;
+  duration_of_lesson: number;
+  language: string;
+  model?: string; // opzionale, default "Gemini"
+};
+
 export type AIPlanLesson = {
   topics: Topic[];
   learning_outcome: LearningOutcome;
@@ -307,17 +318,6 @@ export type AIPlanLesson = {
   education_level: EducationLevel;
   context: string;
   model: string;
-};
-
-export type AIPlanCourse = {
-  title: string;
-  macro_subject: string;
-  education_level: EducationLevel;
-  learning_objectives: LearningObjectives; //to be implemented
-  number_of_lessons: number;
-  duration_of_lesson: number;
-  language: string;
-  model?: string; // opzionale, default "Gemini"
 };
 
 export type PlanLessonNode = {
