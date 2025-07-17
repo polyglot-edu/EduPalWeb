@@ -65,12 +65,7 @@ const CourseCreationStepper = () => {
   useEffect(() => {
     setHasMounted(true);
   }, []);
-
-  useEffect(() => {
-    console.log(selectedTopic);
-    console.log('==========================');
-    console.log((step === 0 && definedSyllabus!=undefined && selectedTopic!=undefined));
-  }, [selectedTopic]);
+  
   if (!hasMounted) return null;
   const nextStep = () => {
     if (step === 2 && uploadMethod === 'selected') {

@@ -47,6 +47,14 @@ const fakeCourses: PolyglotCourseWithFlows[] = [
     topicsAI: [],
     classContext: '',
     flowsId: [],
+    learningObjectives: {
+      knowledge: '',
+      skills: '',
+      attitude: ''
+    },
+    goals: ['Gain historical perspective', 'Develop critical thinking about ancient civilizations'],
+    prerequisites: ['Basic knowledge of European history'],
+    targetAudience: 'College students',
   },
   {
     _id: '2',
@@ -72,6 +80,14 @@ const fakeCourses: PolyglotCourseWithFlows[] = [
     topicsAI: [],
     classContext: '',
     flowsId: [],
+    learningObjectives: {
+      knowledge: '',
+      skills: '',
+      attitude: ''
+    },
+    goals: ['Appreciate Renaissance art', 'Understand historical context of masterpieces'],
+    prerequisites: ['Interest in art history'],
+    targetAudience: 'High school students',
   },
 ];
 
