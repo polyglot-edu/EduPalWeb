@@ -4,6 +4,7 @@ import {
   Button,
   Divider,
   Flex,
+  FormLabel,
   Image,
   SimpleGrid,
   Text,
@@ -18,6 +19,7 @@ import EnumField from '../Forms/Fields/EnumField';
 import InputTextField from '../Forms/Fields/InputTextField';
 import MarkDownField from '../Forms/Fields/MarkDownField';
 import TagsField from '../Forms/Fields/TagsField';
+import TextField from '../Forms/Fields/TextField';
 import StepHeading from '../UtilityComponents/StepHeading';
 import SortableList from './SortableList';
 
@@ -167,13 +169,51 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
         value={course.description}
         setValue={(val) => setCourse({ ...course, description: val })}
       />
-      <InputTextField
-        label="Learning Objectives"
-        value={course.learningObjectives || ''}
-        setValue={(val) => setCourse({ ...course, learningObjectives: val })}
-        placeholder="List key outcomes"
-      />
-
+      <FormLabel>Learning Objective</FormLabel>
+      <SimpleGrid columns={{ base: 3, md: 3 }} spacing={4} mb={4}>
+        <TextField
+          label="Knowledge"
+          isTextArea
+          value={course.learningObjectives.knowledge || ''}
+          setValue={(val) =>
+            setCourse({
+              ...course,
+              learningObjectives: {
+                ...course.learningObjectives,
+                knowledge: val,
+              },
+            })
+          }
+          height="2rem"
+        />
+        <TextField
+          label="Skills"
+          isTextArea
+          value={course.learningObjectives.skills || ''}
+          setValue={(val) =>
+            setCourse({
+              ...course,
+              learningObjectives: { ...course.learningObjectives, skills: val },
+            })
+          }
+          height="2rem"
+        />
+        <TextField
+          label="Attitude"
+          isTextArea
+          value={course.learningObjectives.attitude || ''}
+          setValue={(val) =>
+            setCourse({
+              ...course,
+              learningObjectives: {
+                ...course.learningObjectives,
+                attitude: val,
+              },
+            })
+          }
+          height="2rem"
+        />
+      </SimpleGrid>
       <Divider my={6} />
 
       <StepHeading title="Learning Flows" subtitle="Reorder and manage flows" />

@@ -91,6 +91,11 @@ const StepAIGeneration = ({
   const [currentStep, setCurrentStep] = useState<
     'course' | 'lessons' | 'generating' | 'check'
   >('course');
+  
+  useEffect(() => {
+    console.log('lesson change');
+    console.log(lessons);
+  }, [lessons]);
 
   if (!definedSyllabus||!selectedTopic) return <></>;
   
@@ -217,11 +222,6 @@ const StepAIGeneration = ({
       isClosable: true,
     });
   };
-
-  useEffect(() => {
-    console.log('lesson change');
-    console.log(lessons);
-  }, [lessons]);
 
   return (
     <Box>

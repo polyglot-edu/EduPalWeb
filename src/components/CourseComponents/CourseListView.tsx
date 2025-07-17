@@ -37,8 +37,7 @@ export const CourseCardView = ({ course, onView }: CourseCardProps) => {
     topics,
     tags,
     img,
-    context,
-    classContext: learningContext,
+    classContext,
     author,
     published,
     lastUpdate,
@@ -93,7 +92,7 @@ export const CourseCardView = ({ course, onView }: CourseCardProps) => {
         )}
         {language && <Badge colorScheme="orange">{language}</Badge>}
         {duration && <Badge colorScheme="teal">Duration: {duration}</Badge>}
-        {learningContext && <Badge colorScheme="cyan">{learningContext}</Badge>}
+        {classContext && <Badge colorScheme="cyan">{classContext}</Badge>}
       </Flex>
 
       {tags?.length > 0 && (
@@ -107,10 +106,20 @@ export const CourseCardView = ({ course, onView }: CourseCardProps) => {
       )}
 
       {learningObjectives && (
-        <Box mb={4}>
+        <>
           <Text fontWeight="bold">Learning Objectives:</Text>
-          <Text>{learningObjectives}</Text>
-        </Box>
+          <Box pl={4} mt={1}>
+            <Text>
+              <strong>Knowledge:</strong> {learningObjectives.knowledge}
+            </Text>
+            <Text>
+              <strong>Skills:</strong> {learningObjectives.skills}
+            </Text>
+            <Text>
+              <strong>Attitude:</strong> {learningObjectives.attitude}
+            </Text>
+          </Box>
+        </>
       )}
 
       {topics?.length > 0 && (

@@ -13,7 +13,6 @@ import { HamburgerIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
 import {
-  AIDefineSyllabus,
   AIDefineSyllabusResponse,
   AIPlanCourseResponse,
   AIPlanLessonResponse,
@@ -65,7 +64,7 @@ const CourseCreationStepper = () => {
   useEffect(() => {
     setHasMounted(true);
   }, []);
-  
+
   if (!hasMounted) return null;
   const nextStep = () => {
     if (step === 2 && uploadMethod === 'selected') {
@@ -92,11 +91,9 @@ const CourseCreationStepper = () => {
     }
   };
 
-  //aggiornare il courseType backend + frontend !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  //
-
   const stepComponents = [
     <StepDefineSyllabus
+      key={'define-syllabus'}
       additionalInformationState={[additionalInfo, setAdditionalInfo]}
       generalsSubject={[generalSubject, setGeneralSubject]}
       definedSyllabusState={[definedSyllabus, setDefinedSyllabus]}
@@ -217,8 +214,8 @@ const CourseCreationStepper = () => {
         selectedTopic?.topic.learning_objectives ?? ({} as LearningObjectives)
       }
       duration={duration}
-      goals={(definedSyllabus?.goals ?? [])}
-      prerequisites={(definedSyllabus?.prerequisites ?? [])}
+      goals={definedSyllabus?.goals ?? []}
+      prerequisites={definedSyllabus?.prerequisites ?? []}
       classContext={definedSyllabus?.additional_information ?? ''}
       context={context ?? ''}
       accessCode={accessCode}
@@ -233,7 +230,7 @@ const CourseCreationStepper = () => {
 
   function nextDisable(): boolean {
     if (step === stepComponents.length - 1) return true;
-    else if (step === 0 && !definedSyllabus || !selectedTopic) return true;
+    else if ((step === 0 && !definedSyllabus) || !selectedTopic) return true;
     else if (step === 2 && uploadMethod == '') return true;
     else if (step === 3 && !analysedMaterial) return true;
     else if (
