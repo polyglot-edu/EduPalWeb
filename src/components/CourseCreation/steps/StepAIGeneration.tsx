@@ -12,7 +12,9 @@ import React, { useEffect, useState } from 'react';
 import { API } from '../../../data/api';
 import {
   AIDefineSyllabus,
+  AIDefineSyllabusResponse,
   AIPlanCourse,
+  AIPlanCourseResponse,
   AIPlanLessonResponse,
   AnalyzedMaterial,
   Assignment,
@@ -20,24 +22,28 @@ import {
   LearningOutcome,
   LessonNodeAI,
   PlanLessonNode,
+  SyllabusTopic,
 } from '../../../types/polyglotElements';
 import PlanLessonCard from '../../Card/PlanLessonCard';
 import ReviewLessonCard from '../../Card/ReviewLessonCard';
 import EnumField from '../../Forms/Fields/EnumField';
 import InputTextField from '../../Forms/Fields/InputTextField';
 import NumberField from '../../Forms/Fields/NumberField';
+import TextField from '../../Forms/Fields/TextField';
 import StepHeading from '../../UtilityComponents/StepHeading';
 
 type StepCoursePlannerProps = {
   language: string;
   material: string;
+  definedSyllabus: AIDefineSyllabusResponse | undefined;
+  selectedTopic: SyllabusTopic | undefined;
   analysedMaterialProp: [
     AnalyzedMaterial | undefined,
     React.Dispatch<React.SetStateAction<AnalyzedMaterial | undefined>>
   ];
   plannedCourseProp: [
-    AIDefineSyllabus | undefined,
-    React.Dispatch<React.SetStateAction<AIDefineSyllabus | undefined>>
+    AIPlanCourseResponse | undefined,
+    React.Dispatch<React.SetStateAction<AIPlanCourseResponse | undefined>>
   ];
   GeneratedLessonsProp: [
     AIPlanLessonResponse[],
@@ -60,6 +66,8 @@ const StepAIGeneration = ({
   GeneratedLessonsProp,
   title,
   CoursesNodesProp,
+  definedSyllabus,
+  selectedTopic,
 }: StepCoursePlannerProps) => {
   const [analysedMaterial] = analysedMaterialProp;
   const [plannedCourse, setPlannedCourse] = plannedCourseProp;
@@ -70,11 +78,11 @@ const StepAIGeneration = ({
     analysedMaterial?.macro_subject || ''
   );
   const [eduLevel, setEduLevel] = useState<EducationLevel>(
-    analysedMaterial?.education_level || EducationLevel.HighSchool
+    definedSyllabus?.educational_level || EducationLevel.HighSchool
   );
   const [courseNodes, setCourseNodes] = CoursesNodesProp;
   const [objectives, setObjectives] = useState<string[]>([]);
-  const [numLessons, setNumberOfLessons] = useState<number>(6);
+  const [numLessons, setNumberOfLessons] = useState<number>(3);
   const [lessonDuration, setLessonDuration] = useState<number>(60);
   const [model, setModel] = useState<string>('Gemini');
 
@@ -84,6 +92,8 @@ const StepAIGeneration = ({
     'course' | 'lessons' | 'generating' | 'check'
   >('course');
 
+  if (!definedSyllabus||!selectedTopic) return <></>;
+  
   const extractAssignmentsWithTopicInfo = (lesson: LessonNodeAI) => {
     const all: {
       assignment: Assignment;
@@ -149,18 +159,13 @@ const StepAIGeneration = ({
         title: analysedMaterial.title,
         macro_subject: macroSubject,
         education_level: eduLevel,
-        learning_objectives: {
-          //to be implemented
-          knowledge: '',
-          skills: '',
-          attitude: '',
-        },
+        learning_objectives: selectedTopic.learning_objectives,
         number_of_lessons: numLessons,
         duration_of_lesson: lessonDuration,
         language: language || analysedMaterial?.language || 'English',
         model: model || 'Gemini',
       } as AIPlanCourse);
-      setPlannedCourse(response.data as AIDefineSyllabus);
+      setPlannedCourse(response.data as AIPlanCourseResponse);
       setLessons(response.data.nodes as LessonNodeAI[]);
       setCurrentStep('lessons');
       toast({
@@ -189,10 +194,10 @@ const StepAIGeneration = ({
       const response = await API.planLesson({
         topics: lesson.topics,
         learning_outcome: lesson.learning_outcome,
-        language: language || analysedMaterial?.language || 'English',
+        language: language || definedSyllabus?.language || 'English',
         macro_subject: macroSubject,
         title: lesson.title,
-        education_level: eduLevel,
+        education_level: definedSyllabus.educational_level,
         context: context,
         model: model || 'Gemini',
       });
@@ -260,16 +265,16 @@ const StepAIGeneration = ({
                       prev[i] || {
                         topic: '',
                         explanation: '',
-                        learning_outcome: undefined,
+                        learning_outcome: LearningOutcome.ApplyKnowledge,
                       }
                   )
                 );
               }}
               min={1}
-              max={50}
+              max={5}
             />
 
-            <InputTextField
+            <TextField
               label="Lesson Duration (minutes)"
               value={lessonDuration.toString()}
               setValue={(val) => setLessonDuration(parseInt(val))}

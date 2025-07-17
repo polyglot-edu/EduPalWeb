@@ -38,7 +38,7 @@ export const CourseCardView = ({ course, onView }: CourseCardProps) => {
     tags,
     img,
     context,
-    learningContext,
+    classContext: learningContext,
     author,
     published,
     lastUpdate,

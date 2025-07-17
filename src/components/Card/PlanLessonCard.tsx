@@ -233,7 +233,7 @@ const PlanLessonCard = ({
               <Select
                 size="sm"
                 placeholder="Select outcome"
-                value={topic.learning_outcome || ''}
+                value={topic.learning_outcome || lesson.learning_outcome}
                 onChange={(e) =>
                   updateTopic(tIndex, {
                     ...topic,

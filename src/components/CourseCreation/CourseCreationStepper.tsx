@@ -15,11 +15,13 @@ import { IconType } from 'react-icons';
 import {
   AIDefineSyllabus,
   AIDefineSyllabusResponse,
+  AIPlanCourseResponse,
   AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
   LearningObjectives,
   PlanLessonNode,
+  SyllabusTopic,
 } from '../../types/polyglotElements';
 import StepAIGeneration from './steps/StepAIGeneration';
 import StepComplete from './steps/StepComplete';
@@ -41,15 +43,18 @@ const CourseCreationStepper = () => {
     useState<AIDefineSyllabusResponse>();
   const [uploadMethod, setUploadMethod] = useState('');
   const [duration, setDuration] = useState('');
+  const [context, setContext] = useState('');
   const [publishMethod, setPublishMethod] = useState('public');
   const [accessCode, setAccessCode] = useState('');
   const [analysedMaterial, setAnalysedMaterial] = useState<AnalyzedMaterial>();
-  const [plannedCourse, setPlannedCourse] = useState<AIDefineSyllabus>();
+  const [plannedCourse, setPlannedCourse] = useState<AIPlanCourseResponse>();
   const [generatedLessons, setGeneratedLessons] = useState<
     AIPlanLessonResponse[]
   >([]);
-  const [selectedLearningObjectives, setSelectedLearningObjectives] =
-    useState(0);
+  const [selectedTopic, setSelectedTopic] = useState<{
+    topic: SyllabusTopic;
+    index: number;
+  }>();
   const [material, setMaterial] = useState<string>('');
   const [img, setImg] = useState('');
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
@@ -61,6 +66,11 @@ const CourseCreationStepper = () => {
     setHasMounted(true);
   }, []);
 
+  useEffect(() => {
+    console.log(selectedTopic);
+    console.log('==========================');
+    console.log((step === 0 && definedSyllabus!=undefined && selectedTopic!=undefined));
+  }, [selectedTopic]);
   if (!hasMounted) return null;
   const nextStep = () => {
     if (step === 2 && uploadMethod === 'selected') {
@@ -87,53 +97,42 @@ const CourseCreationStepper = () => {
     }
   };
 
-  //manca da integrare Learning objectives di "definedSyllabus.topics[]"
-  //integrare resto tool con le nuove info
-  //aggiornare il courseType backend + frontend
+  //aggiornare il courseType backend + frontend !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //
 
   const stepComponents = [
     <StepDefineSyllabus
       additionalInformationState={[additionalInfo, setAdditionalInfo]}
       generalsSubject={[generalSubject, setGeneralSubject]}
       definedSyllabusState={[definedSyllabus, setDefinedSyllabus]}
+      selectedTopicState={[selectedTopic, setSelectedTopic]}
     />, // 0
     <StepCourseContent
       key={'course-details'}
-      classContextState={[
-        definedSyllabus?.additional_information ?? '',
-        (val: React.SetStateAction<string>) =>
-          setDefinedSyllabus((prev) => ({
-            ...prev!,
-            additional_information:
-              typeof val === 'function'
-                ? val(prev?.additional_information ?? '')
-                : val,
-          })),
-      ]}
-      learningObjectivesState={[
-        (definedSyllabus?.goals ?? []).join(', '),
-        (val: React.SetStateAction<string>) => {
+      classContextState={[context, setContext]}
+      selectedTopicState={[selectedTopic, setSelectedTopic]}
+      durationState={[duration, setDuration]}
+      prerequisitesState={[
+        definedSyllabus?.prerequisites ?? [],
+        (val: React.SetStateAction<string[]>) => {
           const newVal =
             typeof val === 'function'
-              ? val((definedSyllabus?.goals ?? []).join(', '))
+              ? val(definedSyllabus?.prerequisites ?? [])
               : val;
           setDefinedSyllabus((prev) => ({
             ...prev!,
-            goals: newVal.split(',').map((s) => s.trim()),
+            prerequisites: newVal,
           }));
         },
       ]}
-      durationState={[duration, setDuration]}
-      prerequisitesState={[
-        (definedSyllabus?.prerequisites ?? []).join(', '),
-        (val: React.SetStateAction<string>) => {
+      goalsState={[
+        definedSyllabus?.goals ?? [],
+        (val: React.SetStateAction<string[]>) => {
           const newVal =
-            typeof val === 'function'
-              ? val((definedSyllabus?.prerequisites ?? []).join(', '))
-              : val;
+            typeof val === 'function' ? val(definedSyllabus?.goals ?? []) : val;
           setDefinedSyllabus((prev) => ({
             ...prev!,
-            prerequisites: newVal.split(',').map((s) => s.trim()),
+            goals: newVal,
           }));
         },
       ]}
@@ -194,7 +193,9 @@ const CourseCreationStepper = () => {
       key={'ai-generation'}
       language={definedSyllabus?.language ?? ''}
       material={material}
-      context={definedSyllabus?.additional_information ?? ''}
+      context={context ?? ''}
+      definedSyllabus={definedSyllabus}
+      selectedTopic={selectedTopic?.topic}
       GeneratedLessonsProp={[generatedLessons, setGeneratedLessons]}
       analysedMaterialProp={[analysedMaterial, setAnalysedMaterial]}
       plannedCourseProp={[plannedCourse, setPlannedCourse]}
@@ -218,13 +219,13 @@ const CourseCreationStepper = () => {
       language={definedSyllabus?.language ?? ''}
       description={definedSyllabus?.description ?? ''}
       learningObjectives={
-        definedSyllabus?.topics[selectedLearningObjectives]
-          .learning_objectives ?? ({} as LearningObjectives)
+        selectedTopic?.topic.learning_objectives ?? ({} as LearningObjectives)
       }
       duration={duration}
-      prerequisites={(definedSyllabus?.prerequisites ?? []).join(', ')}
+      goals={(definedSyllabus?.goals ?? [])}
+      prerequisites={(definedSyllabus?.prerequisites ?? [])}
       classContext={definedSyllabus?.additional_information ?? ''}
-      context={definedSyllabus?.additional_information ?? ''}
+      context={context ?? ''}
       accessCode={accessCode}
       analysedMaterial={analysedMaterial}
       sourceMaterial={material}
@@ -237,7 +238,7 @@ const CourseCreationStepper = () => {
 
   function nextDisable(): boolean {
     if (step === stepComponents.length - 1) return true;
-    else if (step === 0 && definedSyllabus) return true;
+    else if (step === 0 && !definedSyllabus || !selectedTopic) return true;
     else if (step === 2 && uploadMethod == '') return true;
     else if (step === 3 && !analysedMaterial) return true;
     else if (

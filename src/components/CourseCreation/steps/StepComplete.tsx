@@ -27,7 +27,6 @@ import {
   LearningObjectives,
   PlanLessonNode,
   PolyglotNode,
-  SyllabusTopic,
 } from '../../../types/polyglotElements';
 
 type StepCompleteProps = {
@@ -43,7 +42,8 @@ type StepCompleteProps = {
   description: string;
   learningObjectives: LearningObjectives;
   duration: string;
-  prerequisites: string;
+  prerequisites: string[];
+  goals: string[];
   classContext: string;
   accessCode?: string;
   img?: string;
@@ -63,6 +63,7 @@ const StepComplete = ({
   description,
   learningObjectives,
   duration,
+  goals,
   prerequisites,
   classContext,
   accessCode,
@@ -106,6 +107,7 @@ const StepComplete = ({
         learningObjectives,
         duration,
         prerequisites,
+        goals,
         targetAudience: context,
         classContext,
         accessCode,
@@ -117,7 +119,7 @@ const StepComplete = ({
       });
       setGenerating(false);
       setIsCourseGenerated(true);
-      setCourseId(newCourse._id);
+      setCourseId(newCourse.id || newCourse._id);
     };
 
     generate();
@@ -179,7 +181,7 @@ const StepComplete = ({
                             {flowNodes.map((node, idx) => (
                               <Flex key={idx} align="center" gap={3}>
                                 <CheckCircleIcon color="green.500" />
-                                <Text>{node.type}</Text>
+                                <Text>{node.title}</Text>
                               </Flex>
                             ))}
                             <Spinner size="sm" />

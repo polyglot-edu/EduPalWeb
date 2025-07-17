@@ -181,7 +181,7 @@ const CreateCourseModal = ({
         duration: '',
         topics: [],
         topicsAI: [],
-        learningContext: '',
+        classContext: '',
         author: {
           _id: undefined,
           username: undefined,

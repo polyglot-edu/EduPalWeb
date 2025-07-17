@@ -9,20 +9,22 @@ export type PolyglotCourse = {
   education_level: EducationLevel;
   language: string;
   duration: string;
-  learningObjectives?: LearningObjectives;
+  learningObjectives: LearningObjectives;
+  goals: string[];
+  prerequisites: string[];
   topics: string[];
   topicsAI: Topic[];
   tags: { name: string; color: string }[];
   img?: string;
   accessCode?: string;
   sourceMaterial?: string;
-  context?: string;
-  learningContext: string;
+  classContext: string;
   flowsId: string[];
   author: {
     _id?: string;
     username?: string;
   };
+  targetAudience: string;
   published: boolean;
   lastUpdate: Date;
   nSubscribed: number;

@@ -1,17 +1,25 @@
 import {
   Box,
+  Center,
   Flex,
+  FormLabel,
   Image,
   SimpleGrid,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { EducationLevel } from '../../../types/polyglotElements';
+import {
+  EducationLevel,
+  LearningObjectives,
+  SyllabusTopic,
+} from '../../../types/polyglotElements';
+import ArrayField from '../../Forms/Fields/ArrayField';
 import EnumField from '../../Forms/Fields/EnumField';
 import InputTextField from '../../Forms/Fields/InputTextField';
 import MarkDownField from '../../Forms/Fields/MarkDownField';
 import TagsField from '../../Forms/Fields/TagsField';
+import TextField from '../../Forms/Fields/TextField';
 import StepHeading from '../../UtilityComponents/StepHeading';
 
 type Tag = {
@@ -20,12 +28,18 @@ type Tag = {
 };
 
 type StepCourseContentProps = {
-  learningObjectivesState: [
-    string,
-    React.Dispatch<React.SetStateAction<string>>
+  selectedTopicState: [
+    { topic: SyllabusTopic; index: number } | undefined,
+    React.Dispatch<
+      React.SetStateAction<{ topic: SyllabusTopic; index: number } | undefined>
+    >
   ];
   durationState: [string, React.Dispatch<React.SetStateAction<string>>];
-  prerequisitesState: [string, React.Dispatch<React.SetStateAction<string>>];
+  prerequisitesState: [
+    string[],
+    React.Dispatch<React.SetStateAction<string[]>>
+  ];
+  goalsState: [string[], React.Dispatch<React.SetStateAction<string[]>>];
   targetAudienceState: [string, React.Dispatch<React.SetStateAction<string>>];
   classContextState: [string, React.Dispatch<React.SetStateAction<string>>];
   titleState: [string, React.Dispatch<React.SetStateAction<string>>];
@@ -36,9 +50,10 @@ type StepCourseContentProps = {
 };
 
 const StepCourseContent = ({
-  learningObjectivesState,
+  selectedTopicState,
   durationState,
   prerequisitesState,
+  goalsState,
   targetAudienceState,
   classContextState,
   titleState,
@@ -47,10 +62,11 @@ const StepCourseContent = ({
   imgState,
   tagsState,
 }: StepCourseContentProps) => {
-  const [learningObjectives, setObjectives] = learningObjectivesState;
+  const [selectedTopic, setSelectedTopic] = selectedTopicState;
   const [duration, setDuration] = durationState;
   const [classContext, setClassContext] = classContextState;
   const [prerequisites, setPrerequisites] = prerequisitesState;
+  const [goals, setGoals] = goalsState;
   const [targetAudience, setTargetAudience] = targetAudienceState;
   const [title, setTitle] = titleState;
   const [subjectArea, setSubjectArea] = subjectAreaState;
@@ -69,6 +85,23 @@ const StepCourseContent = ({
       value,
     })
   );
+
+  const updateTopicField = (
+    field: keyof SyllabusTopic | keyof LearningObjectives,
+    value: string
+  ) => {
+    if (!selectedTopic) return;
+    const updatedTopic = selectedTopic.topic;
+    if (field === 'macro_topic' || field === 'details') {
+      updatedTopic[field] = value;
+    } else {
+      updatedTopic.learning_objectives = {
+        ...updatedTopic.learning_objectives,
+        [field]: value,
+      };
+    }
+    setSelectedTopic({ topic: updatedTopic, index: selectedTopic.index });
+  };
 
   return (
     <Box>
@@ -168,15 +201,47 @@ const StepCourseContent = ({
           infoPlacement="right"
         />
       </Box>
-      <InputTextField
-        label="Learning Objectives"
-        placeholder="Enter learning objectives"
-        value={learningObjectives}
-        setValue={setObjectives}
-        infoTitle="Learning Objectives"
-        infoDescription="Define the key learning outcomes you want students to achieve by the end of the course."
-        infoPlacement="right"
-      />
+      <Box pt={'10px'}>
+        <Center>
+          <FormLabel>Course Topic</FormLabel>
+        </Center>
+        <InputTextField
+          label="Macro Topic"
+          value={selectedTopic?.topic.macro_topic || ''}
+          setValue={(val) => updateTopicField('macro_topic', val)}
+          height="2rem"
+        />
+        <InputTextField
+          label="Details"
+          value={selectedTopic?.topic.details || ''}
+          setValue={(val) => updateTopicField('details', val)}
+          height="2rem"
+        />
+        <FormLabel>Learning Objective</FormLabel>
+        <SimpleGrid columns={{ base: 3, md: 3 }} spacing={4} mb={4}>
+          <TextField
+            label="Knowledge"
+            isTextArea
+            value={selectedTopic?.topic.learning_objectives.knowledge || ''}
+            setValue={(val) => updateTopicField('knowledge', val)}
+            height="2rem"
+          />
+          <TextField
+            label="Skills"
+            isTextArea
+            value={selectedTopic?.topic.learning_objectives.skills || ''}
+            setValue={(val) => updateTopicField('skills', val)}
+            height="2rem"
+          />
+          <TextField
+            label="Attitude"
+            isTextArea
+            value={selectedTopic?.topic.learning_objectives.attitude || ''}
+            setValue={(val) => updateTopicField('attitude', val)}
+            height="2rem"
+          />
+        </SimpleGrid>
+      </Box>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
         <InputTextField
           label="Duration"
@@ -225,15 +290,27 @@ const StepCourseContent = ({
         infoPlacement="right"
         height="100px"
       />
-      <InputTextField
-        label="Prerequisites"
-        placeholder="Enter prerequisites (if any)"
-        value={prerequisites}
-        setValue={setPrerequisites}
-        infoTitle="Prerequisites"
-        infoDescription="List any prior knowledge or skills required for students to successfully engage with the course content."
-        infoPlacement="right"
-      />
+      <Flex
+        gap={6}
+        direction={'row'}
+        wrap={{ base: 'wrap', md: 'nowrap' }}
+        justify="space-between"
+      >
+        <Box w={{ base: '100%', md: '48%' }}>
+          <ArrayField
+            label="Goals"
+            value={goals}
+            setValue={(val) => setGoals(val)}
+          />
+        </Box>
+        <Box w={{ base: '100%', md: '48%' }}>
+          <ArrayField
+            label="Prerequisites"
+            value={prerequisites}
+            setValue={(val) => setPrerequisites(val)}
+          />
+        </Box>
+      </Flex>
     </Box>
   );
 };

@@ -91,8 +91,8 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
         />
         <InputTextField
           label="Learning Context"
-          value={course.learningContext}
-          setValue={(val) => setCourse({ ...course, learningContext: val })}
+          value={course.classContext}
+          setValue={(val) => setCourse({ ...course, classContext: val })}
         />
       </SimpleGrid>
       <Flex flex="1" minW="280px" alignItems="flex-start" gap={4}>
