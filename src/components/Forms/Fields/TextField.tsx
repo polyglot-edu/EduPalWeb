@@ -48,7 +48,7 @@ const TextField = ({
             isDisabled={isDisabled}
             placeholder={_placeholder}
             size="sm"
-          borderColor="grey"
+            borderColor="grey"
           />
         </FormControl>
       </Box>

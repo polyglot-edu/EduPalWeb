@@ -4,7 +4,6 @@ import {
   Flex,
   FormLabel,
   SimpleGrid,
-  Text,
   useToast,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
@@ -14,6 +13,7 @@ import {
   EducationLevel,
   SyllabusTopic,
 } from '../../../types/polyglotElements';
+import EduChat from '../../Chat/EduChat';
 import ArrayField from '../../Forms/Fields/ArrayField';
 import EnumField from '../../Forms/Fields/EnumField';
 import InputTextField from '../../Forms/Fields/InputTextField';
@@ -58,6 +58,8 @@ const StepDefineSyllabus = ({
   const [isLoadingSyllabus, setIsLoadingSyllabus] = useState(false);
 
   const [definedSyllabus, setDefinedSyllabus] = definedSyllabusState;
+
+  const [chatResponseData, setChatResponseData] = useState<any>(undefined);
 
   const educationOptions = Object.entries(EducationLevel).map(
     ([key, value]) => ({
@@ -285,6 +287,10 @@ const StepDefineSyllabus = ({
           </Flex>
         </Box>
       )}
+      <EduChat
+        usage="define_syllabus"
+        responseDataState={[chatResponseData, setChatResponseData]}
+      />
     </Box>
   );
 };

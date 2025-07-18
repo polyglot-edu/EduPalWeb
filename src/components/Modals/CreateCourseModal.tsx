@@ -191,11 +191,11 @@ const CreateCourseModal = ({
         learningObjectives: {
           knowledge: '',
           skills: '',
-          attitude: ''
+          attitude: '',
         },
         goals: [],
         prerequisites: [],
-        targetAudience: ''
+        targetAudience: '',
       };
 
       const response: AxiosResponse = await API.createNewCourse(base_course);

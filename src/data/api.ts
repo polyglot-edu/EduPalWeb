@@ -1,5 +1,6 @@
 import axiosCreate, { AxiosInstance, AxiosResponse } from 'axios';
 import {
+  AIChatMessage,
   AIDefineSyllabus,
   AIExerciseType,
   AIPlanCourse,
@@ -287,7 +288,10 @@ export const API = {
   },
 
   defineSyllabus: (body: AIDefineSyllabus): Promise<AxiosResponse> => {
-    return axios.post<{}, AxiosResponse, {}>(`/api/openai/DefineSyllabus`, body);
+    return axios.post<{}, AxiosResponse, {}>(
+      `/api/openai/DefineSyllabus`,
+      body
+    );
   },
 
   planLesson: (body: AIPlanLesson): Promise<AxiosResponse> => {
@@ -311,5 +315,11 @@ export const API = {
 
   generateNewAssignment: (body: PapyAssignmentAPI): Promise<AxiosResponse> => {
     return axiosPapyGame.post<{}, AxiosResponse, {}>(`/newAssignment`, body);
+  },
+
+  //chat apis
+
+  chatTeacher: (body: AIChatMessage): Promise<AxiosResponse> => {
+    return axios.post<{}, AxiosResponse, {}>(`/api/openai/chat/teacher`, body);
   },
 };

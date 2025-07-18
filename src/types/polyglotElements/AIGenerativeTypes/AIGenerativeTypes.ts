@@ -378,3 +378,24 @@ export type AIDefineSyllabusResponse = {
   prerequisites: string[];
   language: string;
 };
+
+//chat types
+
+export type AIChatMessage = {
+  role: 'user' | 'planner' | 'assistant' | 'tool' | 'grounding';
+  content: string;
+  timestamp: Date;
+  in_memory: boolean;
+  system_instructions: string;
+  resources: any[];
+  model?: string;
+};
+
+export type AIChatResponse = {
+  content: string;
+  role: 'user' | 'planner' | 'assistant' | 'tool' | 'grounding';
+  timestamp: Date;
+  in_memory: boolean;
+  system_instructions?: string;
+  resources: any[];
+};

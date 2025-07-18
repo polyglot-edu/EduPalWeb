@@ -91,14 +91,14 @@ const StepAIGeneration = ({
   const [currentStep, setCurrentStep] = useState<
     'course' | 'lessons' | 'generating' | 'check'
   >('course');
-  
+
   useEffect(() => {
     console.log('lesson change');
     console.log(lessons);
   }, [lessons]);
 
-  if (!definedSyllabus||!selectedTopic) return <></>;
-  
+  if (!definedSyllabus || !selectedTopic) return <></>;
+
   const extractAssignmentsWithTopicInfo = (lesson: LessonNodeAI) => {
     const all: {
       assignment: Assignment;

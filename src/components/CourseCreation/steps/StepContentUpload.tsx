@@ -36,7 +36,12 @@ const StepContentUpload = ({ selection }: StepContentUploadProps) => {
             </Text>
           </VStack>
         </Box>
-        <Tooltip label="Coming soon" isDisabled={false} placement="top" hasArrow>
+        <Tooltip
+          label="Coming soon"
+          isDisabled={false}
+          placement="top"
+          hasArrow
+        >
           <Box
             p={6}
             border="2px dashed"
