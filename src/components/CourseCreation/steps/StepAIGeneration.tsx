@@ -11,7 +11,6 @@ import {
 import React, { useEffect, useState } from 'react';
 import { API } from '../../../data/api';
 import {
-  AIDefineSyllabus,
   AIDefineSyllabusResponse,
   AIPlanCourse,
   AIPlanCourseResponse,
@@ -23,9 +22,11 @@ import {
   LessonNodeAI,
   PlanLessonNode,
   SyllabusTopic,
+  Topic,
 } from '../../../types/polyglotElements';
 import PlanLessonCard from '../../Card/PlanLessonCard';
 import ReviewLessonCard from '../../Card/ReviewLessonCard';
+import EduChat from '../../Chat/EduChat';
 import EnumField from '../../Forms/Fields/EnumField';
 import InputTextField from '../../Forms/Fields/InputTextField';
 import NumberField from '../../Forms/Fields/NumberField';
@@ -81,10 +82,12 @@ const StepAIGeneration = ({
     definedSyllabus?.educational_level || EducationLevel.HighSchool
   );
   const [courseNodes, setCourseNodes] = CoursesNodesProp;
-  const [objectives, setObjectives] = useState<string[]>([]);
   const [numLessons, setNumberOfLessons] = useState<number>(3);
   const [lessonDuration, setLessonDuration] = useState<number>(60);
   const [model, setModel] = useState<string>('Gemini');
+
+  const [chatLessonResponseData, setChatLessonResponseData] =
+    useState<any>(undefined);
 
   const [lessons, setLessons] = useState<LessonNodeAI[]>([]);
 
@@ -93,9 +96,45 @@ const StepAIGeneration = ({
   >('course');
 
   useEffect(() => {
-    console.log('lesson change');
-    console.log(lessons);
-  }, [lessons]);
+    console.log(chatLessonResponseData);
+    const seenTopics = new Set<string>();
+    const topics: Topic[] = [];
+
+    if (!chatLessonResponseData) return;
+
+    if (Array.isArray(chatLessonResponseData.topics)) {
+      topics.push(...chatLessonResponseData.topics);
+    } else if (Array.isArray(chatLessonResponseData.nodes)) {
+      for (const node of chatLessonResponseData.nodes) {
+        if (!seenTopics.has(node.topic)) {
+          seenTopics.add(node.topic);
+          topics.push({
+            topic: node.topic,
+            explanation: node.explanation,
+            ...(node.learning_outcome
+              ? { learning_outcome: node.learning_outcome }
+              : {}),
+          });
+        }
+      }
+    }
+
+    setLessons((prev) => [
+      ...prev,
+      {
+        ...chatLessonResponseData,
+        topics: topics,
+      },
+    ]);
+  }, [chatLessonResponseData]);
+
+  useEffect(() => {
+    console.log(plannedCourse);
+    if (plannedCourse) {
+      setLessons(plannedCourse.nodes as LessonNodeAI[]);
+      setCurrentStep('lessons');
+    }
+  }, [plannedCourse]);
 
   if (!definedSyllabus || !selectedTopic) return <></>;
 
@@ -172,7 +211,6 @@ const StepAIGeneration = ({
       } as AIPlanCourse);
       setPlannedCourse(response.data as AIPlanCourseResponse);
       setLessons(response.data.nodes as LessonNodeAI[]);
-      setCurrentStep('lessons');
       toast({
         title: 'Course planned successfully.',
         status: 'success',
@@ -197,7 +235,7 @@ const StepAIGeneration = ({
     generatedLessons.length = 0;
     lessons.forEach(async (lesson, index) => {
       const response = await API.planLesson({
-        topics: lesson.topics,
+        topics: lesson?.topics || [],
         learning_outcome: lesson.learning_outcome,
         language: language || definedSyllabus?.language || 'English',
         macro_subject: macroSubject,
@@ -232,6 +270,20 @@ const StepAIGeneration = ({
       </Box>
       {currentStep === 'course' && (
         <>
+          <EduChat
+            usage="plan_course"
+            responseDataState={[plannedCourse, setPlannedCourse]}
+            knownData={{
+              title: analysedMaterial?.title || '',
+              macro_subject: macroSubject,
+              education_level: eduLevel,
+              learning_objectives: selectedTopic.learning_objectives,
+              number_of_lessons: numLessons,
+              duration_of_lesson: lessonDuration,
+              language: language,
+              model: 'Gemini',
+            }}
+          />
           <StepHeading
             title="Plan Your Course"
             subtitle="Review the material and define the course structure."
@@ -282,17 +334,6 @@ const StepAIGeneration = ({
             />
           </SimpleGrid>
 
-          <Box mt={4}>
-            <InputTextField
-              label="Learning Objectives (comma-separated)"
-              value={objectives.join(', ')}
-              setValue={(val) =>
-                setObjectives(val.split(',').map((s) => s.trim()))
-              }
-              placeholder="e.g., Understand recursion, Apply sorting algorithms"
-            />
-          </Box>
-
           <Box mt={6}>
             <Button
               colorScheme="teal"
@@ -307,6 +348,22 @@ const StepAIGeneration = ({
       )}
       {currentStep === 'lessons' && (
         <>
+          <EduChat
+            usage="plan_lessons"
+            responseDataState={[
+              chatLessonResponseData,
+              setChatLessonResponseData,
+            ]}
+            knownData={{
+              topics: definedSyllabus.topics,
+              learning_outcome: selectedTopic.learning_objectives,
+              language: language,
+              macro_subject: macroSubject,
+              education_level: definedSyllabus.educational_level,
+              context: context,
+              model: 'Gemini',
+            }}
+          />
           <StepHeading
             title="Plan Your Lessons"
             subtitle="Edit each topic's details and learning outcomes."

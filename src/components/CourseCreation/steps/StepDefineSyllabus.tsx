@@ -59,8 +59,6 @@ const StepDefineSyllabus = ({
 
   const [definedSyllabus, setDefinedSyllabus] = definedSyllabusState;
 
-  const [chatResponseData, setChatResponseData] = useState<any>(undefined);
-
   const educationOptions = Object.entries(EducationLevel).map(
     ([key, value]) => ({
       label: key.replace(/([A-Z])/g, ' $1').trim(),
@@ -289,7 +287,7 @@ const StepDefineSyllabus = ({
       )}
       <EduChat
         usage="define_syllabus"
-        responseDataState={[chatResponseData, setChatResponseData]}
+        responseDataState={[definedSyllabus, setDefinedSyllabus]}
       />
     </Box>
   );

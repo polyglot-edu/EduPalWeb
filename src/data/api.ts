@@ -319,7 +319,24 @@ export const API = {
 
   //chat apis
 
-  chatTeacher: (body: AIChatMessage): Promise<AxiosResponse> => {
-    return axios.post<{}, AxiosResponse, {}>(`/api/openai/chat/teacher`, body);
+  getChatTeacher: (chatId: string): Promise<AxiosResponse> => {
+    return axios.get<{}, AxiosResponse, {}>(
+      `/api/openai/chat/teacher/` + chatId
+    );
+  },
+
+  chatTeacher: (
+    chatId: string,
+    body: AIChatMessage
+  ): Promise<AxiosResponse> => {
+    return axios.post<{}, AxiosResponse, {}>(
+      `/api/openai/chat/teacher/` + chatId,
+      body
+    );
+  },
+  resetChatTeacher: (chatId: string): Promise<AxiosResponse> => {
+    return axios.put<{}, AxiosResponse, {}>(
+      `/api/openai/chat/teacher/` + chatId
+    );
   },
 };

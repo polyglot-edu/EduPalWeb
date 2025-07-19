@@ -79,13 +79,6 @@ const StepCourseContent = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imgError, setImgError] = useState(false);
 
-  const educationOptions = Object.entries(EducationLevel).map(
-    ([key, value]) => ({
-      label: key.replace(/([A-Z])/g, ' $1').trim(),
-      value,
-    })
-  );
-
   const updateTopicField = (
     field: keyof SyllabusTopic | keyof LearningObjectives,
     value: string

@@ -392,7 +392,7 @@ export type AIChatMessage = {
 };
 
 export type AIChatResponse = {
-  content: string;
+  content: any;
   role: 'user' | 'planner' | 'assistant' | 'tool' | 'grounding';
   timestamp: Date;
   in_memory: boolean;

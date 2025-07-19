@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiOutlineFolderOpen } from 'react-icons/ai';
 import { BsStars } from 'react-icons/bs';
 import { FaRegCheckCircle } from 'react-icons/fa';
@@ -64,6 +64,14 @@ const CourseCreationStepper = () => {
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  const containerStartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerStartRef.current) {
+      containerStartRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [step]);
 
   if (!hasMounted) return null;
   const nextStep = () => {
@@ -273,7 +281,8 @@ const CourseCreationStepper = () => {
         textAlign="center"
         py={2}
       >
-        <Box flex="1" overflowY="auto" mt={4} mb={4}>
+        <Box flex="1">
+          <div ref={containerStartRef} />
           {stepComponents[step]}
         </Box>
 
