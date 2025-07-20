@@ -364,7 +364,7 @@ export const generateLessonFlow = async ({
   analysedMaterial,
   context,
   language,
-}: GenerateLessonFlowProp): Promise<PolyglotFlow> => {
+}: GenerateLessonFlowProp): Promise<string> => {
   if (!analysedMaterial) throw 'AnalyzedMaterial not Found';
   const generatedNodes: PolyglotNode[] = await generateLessonActivities({
     material,
@@ -563,9 +563,9 @@ export const generateLessonFlow = async ({
     topicsAI: toDoTopics,
     duration: analysedMaterial.estimated_duration.toString(),
   };
-  const newFlow = (await API.createNewFlowJson(flow)).data as PolyglotFlow;
+  const newFlow = (await API.createNewFlowJson(flow)).data;
 
-  return newFlow;
+  return (newFlow.id as string) || (newFlow._id as string);
 };
 
 export const generateCourse = async ({

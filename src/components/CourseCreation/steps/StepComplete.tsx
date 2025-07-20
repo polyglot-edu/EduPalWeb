@@ -86,7 +86,7 @@ const StepComplete = ({
         setCurrentLessonIndex(i);
         setFlowNodes([]);
 
-        const flow = await generateLessonFlow({
+        const flowId = await generateLessonFlow({
           material: sourceMaterial,
           generatedLesson: generatedLessons[i],
           lessonNodes: coursesNodes[i],
@@ -95,7 +95,7 @@ const StepComplete = ({
           context,
           language,
         });
-        flowsId.push(flow._id);
+        flowsId.push(flowId);
         setCompletedLessons((prev) => [...prev, i]);
       }
       const newCourse = await generateCourse({
