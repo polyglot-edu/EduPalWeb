@@ -14,12 +14,14 @@ import { useEffect, useState } from 'react';
 import {
   EducationLevel,
   PolyglotCourseWithFlows,
+  PolyglotFlow,
 } from '../../types/polyglotElements';
 import EnumField from '../Forms/Fields/EnumField';
 import InputTextField from '../Forms/Fields/InputTextField';
 import MarkDownField from '../Forms/Fields/MarkDownField';
 import TagsField from '../Forms/Fields/TagsField';
 import TextField from '../Forms/Fields/TextField';
+import FlowSelectorModal from '../UtilityComponents/FlowSelectorModal';
 import StepHeading from '../UtilityComponents/StepHeading';
 import SortableList from './SortableList';
 
@@ -36,6 +38,12 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
   const [tagName, setTagName] = useState('');
   const [colorTag, setColorTag] = useState('gray');
   const [imgError, setImgError] = useState(false);
+  const [selectedFlows, setSelectedFlows] = useState<PolyglotFlow[]>([]);
+  const {
+    isOpen: isFlowModalOpen,
+    onOpen: openFlowModal,
+    onClose: closeFlowModal,
+  } = useDisclosure();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -47,8 +55,16 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
   );
 
   useEffect(() => {
+    console.log(course);
     if (!course) return;
   }, [course]);
+
+  useEffect(() => {
+    const flowsIds = selectedFlows.map((flow) => flow._id);
+    setCourse((prev) =>
+      prev ? { ...prev, flowsId: flowsIds, flows: selectedFlows } : prev
+    );
+  }, [selectedFlows]);
 
   if (!course) {
     return <p>Loading...</p>;
@@ -236,9 +252,14 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
         )}
       />
 
-      <Button leftIcon={<AddIcon />} mt={4}>
+      <Button leftIcon={<AddIcon />} onClick={openFlowModal} mt={4}>
         Add New Flow
       </Button>
+      <FlowSelectorModal
+        selectedFlowsState={[selectedFlows, setSelectedFlows]}
+        isOpen={isFlowModalOpen}
+        onClose={closeFlowModal}
+      />
     </Box>
   );
 };

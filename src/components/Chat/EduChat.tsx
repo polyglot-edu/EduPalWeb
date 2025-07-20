@@ -14,6 +14,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2'; // icona stilizzata
+import ReactMarkdown from 'react-markdown';
 import { API } from '../../data/api';
 import chatIcon from '../../public/novaChatIcon.png';
 import {
@@ -304,9 +305,27 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                       boxShadow="sm"
                       textAlign={msg.role === 'user' ? 'right' : 'left'}
                     >
-                      <Text fontSize="sm" whiteSpace="pre-wrap">
+                      <ReactMarkdown
+                        components={{
+                          p: (props) => (
+                            <Text
+                              fontSize="sm"
+                              whiteSpace="pre-wrap"
+                              {...props}
+                            />
+                          ),
+                          strong: (props) => (
+                            <Text
+                              as="strong"
+                              fontWeight="bold"
+                              display="inline"
+                              {...props}
+                            />
+                          ),
+                        }}
+                      >
                         {msg.content}
-                      </Text>
+                      </ReactMarkdown>
                     </Box>
                   </Flex>
                 ))}

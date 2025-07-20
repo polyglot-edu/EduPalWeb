@@ -59,8 +59,8 @@ const StepPublishing = ({
         </Text>
         <FlowCarousel
           flows={flows}
-          selectedFlows={selectedFlows}
-          setSelectedFlows={setSelectedFlows}
+          selectedFlowsId={selectedFlows}
+          setSelectedFlowsId={setSelectedFlows}
         />
       </Box>
       <RadioGroup onChange={setVisibility} value={visibility}>

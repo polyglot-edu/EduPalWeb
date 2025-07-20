@@ -10,14 +10,18 @@ import { PolyglotFlow } from '../../types/polyglotElements';
 
 interface FlowCarouselProps {
   flows: PolyglotFlow[];
-  selectedFlows: string[];
-  setSelectedFlows: (flows: string[]) => void;
+  selectedFlowsId?: string[];
+  setSelectedFlowsId?: (flows: string[]) => void;
+  selectedFlows?: PolyglotFlow[];
+  setSelectedFlows?: (flows: PolyglotFlow[]) => void;
 }
 
 const FlowCarousel: React.FC<FlowCarouselProps> = ({
   flows,
-  selectedFlows,
+  selectedFlowsId,
+  setSelectedFlowsId,
   setSelectedFlows,
+  selectedFlows,
 }) => {
   const perPage = 4;
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -25,12 +29,21 @@ const FlowCarousel: React.FC<FlowCarouselProps> = ({
 
   const visibleFlows = flows.slice(currentIndex, currentIndex + perPage);
 
-  const toggleFlowSelection = (id: string) => {
-    if (selectedFlows.includes(id)) {
-      setSelectedFlows(selectedFlows.filter((flowId) => flowId !== id));
-    } else {
-      setSelectedFlows([...selectedFlows, id]);
-    }
+  const toggleFlowSelection = (flow: PolyglotFlow) => {
+    if (setSelectedFlowsId && selectedFlowsId)
+      if (selectedFlowsId.includes(flow._id)) {
+        setSelectedFlowsId(
+          selectedFlowsId.filter((flowId) => flowId !== flow._id)
+        );
+      } else {
+        setSelectedFlowsId([...selectedFlowsId, flow._id]);
+      }
+    if (setSelectedFlows && selectedFlows)
+      if (selectedFlows.find((f) => f._id === flow._id)) {
+        setSelectedFlows(selectedFlows.filter((f) => flow._id !== f._id));
+      } else {
+        setSelectedFlows([...selectedFlows, flow]);
+      }
   };
 
   return (
@@ -45,12 +58,14 @@ const FlowCarousel: React.FC<FlowCarouselProps> = ({
       />
       <Flex gap={3} overflow="hidden">
         {visibleFlows.map((flow) => {
-          const isSelected = selectedFlows.includes(flow._id);
+          const isSelected =
+            (selectedFlowsId && selectedFlowsId.includes(flow._id)) ||
+            (selectedFlows && selectedFlows.find((f) => f._id === flow._id));
 
           return (
             <Box
               key={flow._id}
-              position="relative" // ✅ Per posizionare il pallino in alto a destra
+              position="relative" 
               border="2px"
               borderColor={isSelected ? 'purple.500' : 'gray.200'}
               bgColor={isSelected ? 'purple.50' : 'white'}
@@ -61,11 +76,10 @@ const FlowCarousel: React.FC<FlowCarouselProps> = ({
               flexShrink={0}
               cursor="pointer"
               _hover={{ bg: 'purple.50' }}
-              onClick={() => toggleFlowSelection(flow._id)}
+              onClick={() => toggleFlowSelection(flow)}
               boxShadow={isSelected ? 'md' : 'sm'}
               transition="all 0.2s ease"
             >
-              {/* ✅ Badge Published/Not published */}
               <IconButton
                 icon={flow.publish ? <CheckIcon /> : <CloseIcon />}
                 aria-label={flow.publish ? 'Published' : 'Not published'}
@@ -77,7 +91,7 @@ const FlowCarousel: React.FC<FlowCarouselProps> = ({
                 right="10px"
                 isRound
                 _hover={{ bg: flow.publish ? 'green.600' : 'red.600' }}
-                pointerEvents="none" // 👉 così non interferisce col click sulla card
+                pointerEvents="none"
               />
 
               <Text fontWeight="semibold" fontSize="lg" mb={1}>

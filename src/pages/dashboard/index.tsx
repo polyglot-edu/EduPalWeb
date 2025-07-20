@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MdCheckCircle, MdGroup, MdSchool, MdStar } from 'react-icons/md';
 import AnalyticsCard from '../../components/Card/AnalyticsCard';
 import CourseCard from '../../components/Card/CourseCard';
+import EduChat from '../../components/Chat/EduChat';
 import NavBar from '../../components/NavBars/NavBar';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import MainSideBar from '../../components/Sidebar/MainSidebar';
@@ -109,7 +110,7 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { user } = useUser();
-
+  const [chatDataResponse, setChatDataResponse] = useState<any>(null);
   const API = useMemo(() => new APIV2(accessToken), [accessToken]);
 
   const analytics = {
@@ -164,6 +165,10 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
         ml={isOpen ? '250px' : '60px'}
         transition="margin-left 0.2s"
       >
+        <EduChat
+          usage="general"
+          responseDataState={[chatDataResponse, setChatDataResponse]}
+        />
         <Heading size="lg" mb={4}>
           👋 Welcome, {user?.name || 'Guest'}!
         </Heading>

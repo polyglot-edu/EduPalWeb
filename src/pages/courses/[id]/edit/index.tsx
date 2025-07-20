@@ -17,7 +17,10 @@ import SaveCourseModal from '../../../../components/Modals/SaveCourseModal';
 import NavBar from '../../../../components/NavBars/NavBar';
 import MainSideBar from '../../../../components/Sidebar/MainSidebar';
 import { APIV2 } from '../../../../data/api';
-import { PolyglotCourseWithFlows } from '../../../../types/polyglotElements';
+import {
+  PolyglotCourse,
+  PolyglotCourseWithFlows,
+} from '../../../../types/polyglotElements';
 
 type CourseEditPageProps = {
   accessToken: string | undefined;
@@ -68,10 +71,11 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
   );
 
   const saveCourse = useCallback(async () => {
+    console.log('Saving course:', course);
     if (!course) return;
     try {
-      API.saveCourse(course).then((res) => {
-        if (res.status == 204) {
+      API.saveCourse(course as PolyglotCourse).then((res) => {
+        if (res.status == 204||res.status == 200) {
           toast({
             title: 'Course saved successfully.',
             status: 'success',
@@ -79,7 +83,7 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
             isClosable: true,
             position: 'bottom-left',
           });
-          router.push('/dashboard');
+          router.push('/courses/' + course._id );
         } else {
           toast({
             title: 'Error saving course.',
@@ -94,7 +98,7 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
     } catch (err) {
       console.log(err);
     }
-  }, [API]);
+  }, [API, course]);
   useEffect(() => {
     setHasMounted(true);
   }, []);
@@ -104,7 +108,6 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
     if (user || process.env.TEST_MODE === 'true') {
       API.loadCourseElement(courseId)
         .then((resp) => {
-          console.log(resp.data);
           setCourse({ ...resp.data, _id: courseId });
         })
         .catch((err) => {
@@ -112,7 +115,6 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
         });
       console.log('User is available:', user);
     }
-    console.log('test');
   }, [user, courseId]);
 
   if (!hasMounted) {
