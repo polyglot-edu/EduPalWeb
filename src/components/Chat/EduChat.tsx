@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
-import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2'; // icona stilizzata
+import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
 import { API } from '../../data/api';
 import chatIcon from '../../public/novaChatIcon.png';
@@ -38,7 +38,7 @@ const UsageMapping = [
     startingMessages:
       'I can fill in details, generate objectives, and suggest content as you go. What do you want to work on first?',
     system_instructions:
-      'The user is now in the freemode chat page and can ask anything related to education, teaching, or course creation. If the user asks for something not related to education, please remind them that this is an educational assistant.',
+      'The user is now in the freemode chat and can explore any topic related to education, teaching, or course design. Respond openly and creatively, offering relevant support. If the user asks about unrelated subjects, gently remind them that this assistant is specialized in educational content and course development.',
   },
   {
     usage: 'define_syllabus',
@@ -46,7 +46,7 @@ const UsageMapping = [
     startingMessages:
       'You’re working on the syllabus for your course. Let’s define the subject, level, and other key details together. What is your course about?',
     system_instructions:
-      'The user is now in the "syllabus generation" page and needs to finish filling in the fields to proceed. If the user asks for something not related to the syllabus please remind them to finish filling in syllabus details first. Here are the current fields in case the user asks for help to edit them: { general_subject: string; additional_information: string; education_level: EducationLevel; language?: string; model?: string; }.',
+      'The user is working on generating a course syllabus. Focus on helping them complete the necessary fields: { general_subject, additional_information, education_level, language?, model? }. Guide the conversation toward completing these inputs. If the user diverts to unrelated topics, kindly prompt them to finish the syllabus first, as it is required to proceed with course creation.',
   },
   {
     usage: 'plan_course',
@@ -54,7 +54,7 @@ const UsageMapping = [
     startingMessages:
       'Let’s design the full course! I can help you structure lessons, define objectives, and set durations. Do you already have a course title or subject in mind?',
     system_instructions:
-      'The user is currently planning a full course. Please assist them in defining and refining the course structure. If the user asks about something unrelated, remind them to complete the course planning. Current fields include: { title: string; macro_subject: string; education_level: EducationLevel; learning_objectives: LearningObjectives; number_of_lessons: number; duration_of_lesson: number; language: string; model?: string; }.',
+      'The user is designing a complete course. Assist them in structuring the course by collecting and refining the following fields: { title, macro_subject, education_level, learning_objectives, number_of_lessons, duration_of_lesson, language, model? }. Encourage clarity and coherence across components. If the user asks about something else, steer them back to completing the course plan.',
   },
   {
     usage: 'plan_lessons',
@@ -62,7 +62,7 @@ const UsageMapping = [
     startingMessages:
       'We’re planning a specific lesson. I can help break down topics, outcomes, and structure. What’s the focus of this lesson?',
     system_instructions:
-      'The user is currently in the lesson planning phase. Focus on helping define lesson content and structure. If the user drifts to unrelated topics, remind them to complete the lesson plan. Current fields include: { topics: Topic[]; learning_outcome: LearningOutcome; language: string; macro_subject: string; title: string; education_level: EducationLevel; context: string; model: string; }.',
+      'The user is currently planning a specific lesson. Your goal is to help them break down the lesson into clear and teachable parts using the following fields: { topics, learning_outcome, language, macro_subject, title, education_level, context, model }. Prioritize clarity, relevance, and alignment with course goals. If the user shifts to unrelated matters, gently remind them to finish the lesson plan.',
   },
 ];
 type Usage = 'general' | 'define_syllabus' | 'plan_course' | 'plan_lessons';
