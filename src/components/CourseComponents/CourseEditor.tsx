@@ -55,6 +55,7 @@ const CourseEditor = ({ courseState }: CourseEditorProps) => {
   );
 
   useEffect(() => {
+    setSelectedFlows(course?.flows || []);
     console.log(course);
     if (!course) return;
   }, [course]);

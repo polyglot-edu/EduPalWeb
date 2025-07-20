@@ -11,7 +11,8 @@ interface CourseCardProps {
 }
 
 const CourseCard = ({ course }: CourseCardProps) => {
-  const image = course.img != undefined ? course.img : FlowExample.src;
+  const image =
+    course.img != undefined && course.img != '' ? course.img : FlowExample.src;
   const courseId = course?._id;
 
   const router = useRouter();
@@ -90,6 +91,7 @@ const CourseCard = ({ course }: CourseCardProps) => {
               color="white"
               _hover={{ bg: 'purple.400' }}
               size="sm"
+              onClick={() => router.push(`/courses/${course._id}/edit`)}
             >
               Edit
             </Button>
