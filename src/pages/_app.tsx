@@ -28,7 +28,6 @@ const theme = extendTheme(
           padding: 0,
         },
         body: {
-          background: '#000000ff',
           height: '100%',
           overflowX: 'hidden',
           overflowY: 'auto',
