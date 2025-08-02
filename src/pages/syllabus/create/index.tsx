@@ -248,62 +248,146 @@ export default function SyllabusCreatePage() {
           isOpen={isOpen}
           onToggle={onToggle}
         />
-
         <Box
-          ml={isOpen ? '250px' : '60px'}
+          ml={isOpen ? '270px' : '80px'}
           flex="1"
           overflow="auto"
           p={6}
-          title={!aiHelp ? 'AI Help' : 'Custom'}
-          hidden={!aiHelp}
+          bg="white"
+          borderRadius="md"
+          boxShadow="md"
+          mt={4}
+          mb={4}
+          mr={4}
+          textAlign="center"
+          py={2}
         >
-          <IconButton
-            aria-label={'ai-custom'}
-            float="right"
-            onClick={() => setAiHelp(!aiHelp)}
-          >
-            {!aiHelp ? <AddIcon /> : <HamburgerIcon />}
-          </IconButton>
-          {definedSyllabus?.title === '' ? (
-            <>
-              <Box>
-                <StepHeading
-                  title="Define Syllabus"
-                  subtitle="Provide basic information about your course."
-                />
-                <InputTextField
-                  label="General Subject"
-                  placeholder="Enter syllabus subject."
-                  value={subjectArea}
-                  setValue={setSubjectArea}
-                  infoTitle="Title"
-                  infoDescription="Enter the general subject of your syllabus."
-                  infoPlacement="right"
-                />
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                  <EnumField
-                    label="Educational Level"
-                    value={definedSyllabus.educational_level}
-                    setValue={(value: string) =>
-                      setDefinedSyllabus({
-                        ...definedSyllabus,
-                        educational_level: value as EducationLevel,
-                      })
-                    }
-                    options={educationOptions}
-                    infoTitle="Educational Level"
-                    infoDescription="Specify the academic level of the target audience."
+          <Box title={!aiHelp ? 'AI Help' : 'Custom'} hidden={!aiHelp}>
+            <IconButton
+              aria-label={'ai-custom'}
+              float="right"
+              onClick={() => setAiHelp(!aiHelp)}
+            >
+              {!aiHelp ? <AddIcon /> : <HamburgerIcon />}
+            </IconButton>
+            {definedSyllabus?.title === '' ? (
+              <>
+                <Box>
+                  <StepHeading
+                    title="Define Syllabus"
+                    subtitle="Provide basic information about your syllabus."
+                  />
+                  <InputTextField
+                    label="General Subject"
+                    placeholder="Enter syllabus subject."
+                    value={subjectArea}
+                    setValue={setSubjectArea}
+                    infoTitle="Title"
+                    infoDescription="Enter the general subject of your syllabus."
                     infoPlacement="right"
                   />
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                    <EnumField
+                      label="Educational Level"
+                      value={definedSyllabus.educational_level}
+                      setValue={(value: string) =>
+                        setDefinedSyllabus({
+                          ...definedSyllabus,
+                          educational_level: value as EducationLevel,
+                        })
+                      }
+                      options={educationOptions}
+                      infoTitle="Educational Level"
+                      infoDescription="Specify the academic level of the target audience."
+                      infoPlacement="right"
+                    />
 
+                    <EnumField
+                      label="Language"
+                      value={definedSyllabus.language}
+                      setValue={(value: string) =>
+                        setDefinedSyllabus({
+                          ...definedSyllabus,
+                          language: value,
+                        })
+                      }
+                      options={[
+                        { label: 'English', value: 'english' },
+                        { label: 'Italiano', value: 'italian' },
+                        { label: 'Français', value: 'french' },
+                        { label: 'Español', value: 'spanish' },
+                        { label: 'Deutsch', value: 'german' },
+                      ]}
+                      infoTitle="Language"
+                      infoDescription="Choose the language of the syllabus."
+                      infoPlacement="right"
+                    />
+                  </SimpleGrid>
+
+                  <Box width="100%" mt={6}>
+                    <MarkDownField
+                      label="Additional Information"
+                      value={additionalInformation}
+                      setValue={setAdditionalInformation}
+                      infoTitle="Additional Info"
+                      infoDescription="Provide more details about the syllabus you want to create to help centralize and define it."
+                      infoPlacement="right"
+                    />
+                  </Box>
+                  <Box mt={6}>
+                    <Button
+                      colorScheme="teal"
+                      onClick={handleDefineSyllabus}
+                      isLoading={isLoadingSyllabus}
+                    >
+                      Define Syllabus
+                    </Button>
+                  </Box>
+                </Box>
+              </>
+            ) : (
+              <>
+                <StepHeading
+                  title="Edit Complete Syllabus Topic"
+                  subtitle="You can now complete or adjust the topic of your syllabus."
+                />
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                  <InputTextField
+                    label="Title"
+                    value={definedSyllabus.title}
+                    setValue={(val: any) =>
+                      setDefinedSyllabus({ ...definedSyllabus, title: val })
+                    }
+                  />
+                  <InputTextField
+                    label="General Subject"
+                    value={definedSyllabus.general_subject}
+                    setValue={(val: any) =>
+                      setDefinedSyllabus({
+                        ...definedSyllabus,
+                        general_subject: val,
+                      })
+                    }
+                  />
+                  <EnumField
+                    label="Education Level"
+                    value={definedSyllabus.educational_level}
+                    setValue={(val: any) =>
+                      setDefinedSyllabus({
+                        ...definedSyllabus,
+                        educational_level: val as EducationLevel,
+                      })
+                    }
+                    options={[
+                      { label: 'University', value: 'UNIVERSITY' },
+                      { label: 'High School', value: 'HIGH_SCHOOL' },
+                    ]}
+                  />
                   <EnumField
                     label="Language"
                     value={definedSyllabus.language}
-                    setValue={(value: string) =>
-                      setDefinedSyllabus({
-                        ...definedSyllabus,
-                        language: value,
-                      })
+                    setValue={(val: any) =>
+                      setDefinedSyllabus({ ...definedSyllabus, language: val })
                     }
                     options={[
                       { label: 'English', value: 'english' },
@@ -312,207 +396,127 @@ export default function SyllabusCreatePage() {
                       { label: 'Español', value: 'spanish' },
                       { label: 'Deutsch', value: 'german' },
                     ]}
-                    infoTitle="Language"
-                    infoDescription="Choose the language of the syllabus."
-                    infoPlacement="right"
                   />
                 </SimpleGrid>
-
-                <Box width="100%" mt={6}>
-                  <MarkDownField
-                    label="Additional Information"
-                    value={additionalInformation}
-                    setValue={setAdditionalInformation}
-                    infoTitle="Additional Info"
-                    infoDescription="Provide more details about the course you want to create to help centralize and define its syllabus."
-                    infoPlacement="right"
-                  />
-                </Box>
+                <MarkDownField
+                  label="Additional Information"
+                  value={definedSyllabus.additional_information}
+                  setValue={(val: any) =>
+                    setDefinedSyllabus({
+                      ...definedSyllabus,
+                      additional_information: val,
+                    })
+                  }
+                />
+                <InputTextField
+                  label="Description"
+                  value={definedSyllabus.description}
+                  setValue={(val: any) =>
+                    setDefinedSyllabus({
+                      ...definedSyllabus,
+                      description: val,
+                    })
+                  }
+                />
+                <FormLabel mt={4}>
+                  Define the structure of your syllabus by selecting or editing
+                  topics.
+                </FormLabel>
+                <SyllabusTopicsField
+                  topics={definedSyllabus.topics}
+                  updateTopics={(val: any) =>
+                    setDefinedSyllabus({
+                      ...definedSyllabus,
+                      topics: val,
+                    })
+                  }
+                  selectedTopicState={[selectedTopic, setSelectedTopic]}
+                />
+                <Flex
+                  gap={6}
+                  direction="row"
+                  wrap={{ base: 'wrap', md: 'nowrap' }}
+                  justify="space-between"
+                >
+                  <Box w={{ base: '100%', md: '48%' }}>
+                    <ArrayField
+                      label="Goals"
+                      value={definedSyllabus.goals}
+                      setValue={(val: any) =>
+                        setDefinedSyllabus({
+                          ...definedSyllabus,
+                          goals: val,
+                        })
+                      }
+                    />
+                  </Box>
+                  <Box w={{ base: '100%', md: '48%' }}>
+                    <ArrayField
+                      label="Prerequisites"
+                      value={definedSyllabus.prerequisites}
+                      setValue={(val: any) =>
+                        setDefinedSyllabus({
+                          ...definedSyllabus,
+                          prerequisites: val,
+                        })
+                      }
+                    />
+                  </Box>
+                </Flex>
                 <Box mt={6}>
-                  <Button
-                    colorScheme="teal"
-                    onClick={handleDefineSyllabus}
-                    isLoading={isLoadingSyllabus}
-                  >
-                    Define Syllabus
+                  <Button colorScheme="teal" onClick={() => setAiHelp(false)}>
+                    Confirm <CheckIcon />
                   </Button>
                 </Box>
-              </Box>
-            </>
-          ) : (
-            <>
-              <StepHeading
-                title="Edit Complete Syllabus Topic"
-                subtitle="You can now complete or adjust the topic of your syllabus."
-              />
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                <InputTextField
-                  label="Title"
-                  value={definedSyllabus.title}
-                  setValue={(val: any) =>
-                    setDefinedSyllabus({ ...definedSyllabus, title: val })
-                  }
-                />
-                <InputTextField
-                  label="General Subject"
-                  value={definedSyllabus.general_subject}
-                  setValue={(val: any) =>
-                    setDefinedSyllabus({
-                      ...definedSyllabus,
-                      general_subject: val,
-                    })
-                  }
-                />
-                <EnumField
-                  label="Education Level"
-                  value={definedSyllabus.educational_level}
-                  setValue={(val: any) =>
-                    setDefinedSyllabus({
-                      ...definedSyllabus,
-                      educational_level: val as EducationLevel,
-                    })
-                  }
-                  options={[
-                    { label: 'University', value: 'UNIVERSITY' },
-                    { label: 'High School', value: 'HIGH_SCHOOL' },
-                  ]}
-                />
-                <EnumField
-                  label="Language"
-                  value={definedSyllabus.language}
-                  setValue={(val: any) =>
-                    setDefinedSyllabus({ ...definedSyllabus, language: val })
-                  }
-                  options={[
-                    { label: 'English', value: 'english' },
-                    { label: 'Italiano', value: 'italian' },
-                    { label: 'Français', value: 'french' },
-                    { label: 'Español', value: 'spanish' },
-                    { label: 'Deutsch', value: 'german' },
-                  ]}
-                />
-              </SimpleGrid>
-              <MarkDownField
-                label="Additional Information"
-                value={definedSyllabus.additional_information}
-                setValue={(val: any) =>
-                  setDefinedSyllabus({
-                    ...definedSyllabus,
-                    additional_information: val,
-                  })
-                }
-              />
-              <InputTextField
-                label="Description"
-                value={definedSyllabus.description}
-                setValue={(val: any) =>
-                  setDefinedSyllabus({
-                    ...definedSyllabus,
-                    description: val,
-                  })
-                }
-              />
-              <FormLabel mt={4}>
-                Define the structure of your course by selecting or editing
-                topics.
-              </FormLabel>
-              <SyllabusTopicsField
-                topics={definedSyllabus.topics}
-                updateTopics={(val: any) =>
-                  setDefinedSyllabus({
-                    ...definedSyllabus,
-                    topics: val,
-                  })
-                }
+              </>
+            )}
+          </Box>
+          <Box hidden={aiHelp}>
+            {definedSyllabus && (
+              <EditSyllabus
+                definedSyllabus={definedSyllabus}
                 selectedTopicState={[selectedTopic, setSelectedTopic]}
+                setDefinedSyllabus={setDefinedSyllabus}
+                academicYearState={[academicYear, setAcademicYear]}
+                courseCodeState={[courseCode, setCourseCode]}
+                courseOfStudyState={[courseOfStudy, setCourseOfStudy]}
+                semesterState={[semester, setSemester]}
+                creditsState={[credits, setCredits]}
+                teachingHoursState={[teachingHours, setTeachingHours]}
+                disciplinarySectorState={[
+                  disciplinarySector,
+                  setDisciplinarySector,
+                ]}
+                teachingMethodsState={[teachingMethods, setTeachingMethods]}
+                assessmentMethodsState={[
+                  assessmentMethods,
+                  setAssessmentMethods,
+                ]}
+                referenceMaterialsState={[
+                  referenceMaterials,
+                  setReferenceMaterials,
+                ]}
+                studyregulationState={[studyRegulation, setStudyregulation]}
+                courseYearState={[courseYear, setCourseYear]}
+                curriculumPathState={[curriculumPath, setCurriculumPath]}
+                studentPartitionState={[studentPartition, setStudentPartition]}
+                integratedCourseUnitState={[
+                  integratedCourseUnit,
+                  setIntegratedCourseUnit,
+                ]}
+                courseTypeState={[courseType, setCourseType]}
+                departmentState={[department, setDepartment]}
               />
-              <Flex
-                gap={6}
-                direction="row"
-                wrap={{ base: 'wrap', md: 'nowrap' }}
-                justify="space-between"
-              >
-                <Box w={{ base: '100%', md: '48%' }}>
-                  <ArrayField
-                    label="Goals"
-                    value={definedSyllabus.goals}
-                    setValue={(val: any) =>
-                      setDefinedSyllabus({
-                        ...definedSyllabus,
-                        goals: val,
-                      })
-                    }
-                  />
-                </Box>
-                <Box w={{ base: '100%', md: '48%' }}>
-                  <ArrayField
-                    label="Prerequisites"
-                    value={definedSyllabus.prerequisites}
-                    setValue={(val: any) =>
-                      setDefinedSyllabus({
-                        ...definedSyllabus,
-                        prerequisites: val,
-                      })
-                    }
-                  />
-                </Box>
-              </Flex>
-              <Box mt={6}>
-                <Button colorScheme="teal" onClick={() => setAiHelp(false)}>
-                  Confirm <CheckIcon />
-                </Button>
-              </Box>
-            </>
-          )}
-        </Box>
-        <Box
-          ml={isOpen ? '250px' : '60px'}
-          flex="1"
-          overflow="auto"
-          p={6}
-          hidden={aiHelp}
-        >
-          {definedSyllabus && (
-            <EditSyllabus
-              definedSyllabus={definedSyllabus}
-              selectedTopicState={[selectedTopic, setSelectedTopic]}
-              setDefinedSyllabus={setDefinedSyllabus}
-              academicYearState={[academicYear, setAcademicYear]}
-              courseCodeState={[courseCode, setCourseCode]}
-              courseOfStudyState={[courseOfStudy, setCourseOfStudy]}
-              semesterState={[semester, setSemester]}
-              creditsState={[credits, setCredits]}
-              teachingHoursState={[teachingHours, setTeachingHours]}
-              disciplinarySectorState={[
-                disciplinarySector,
-                setDisciplinarySector,
-              ]}
-              teachingMethodsState={[teachingMethods, setTeachingMethods]}
-              assessmentMethodsState={[assessmentMethods, setAssessmentMethods]}
-              referenceMaterialsState={[
-                referenceMaterials,
-                setReferenceMaterials,
-              ]}
-              studyregulationState={[studyRegulation, setStudyregulation]}
-              courseYearState={[courseYear, setCourseYear]}
-              curriculumPathState={[curriculumPath, setCurriculumPath]}
-              studentPartitionState={[studentPartition, setStudentPartition]}
-              integratedCourseUnitState={[
-                integratedCourseUnit,
-                setIntegratedCourseUnit,
-              ]}
-              courseTypeState={[courseType, setCourseType]}
-              departmentState={[department, setDepartment]}
-            />
-          )}
+            )}
 
-          <Box mt={6} display="flex" justifyContent="space-between">
-            <Button variant="outline" onClick={() => setAiHelp(true)}>
-              Undo
-            </Button>
-            <Button colorScheme="teal" onClick={handleCreateSyllabus}>
-              Create Syllabus
-            </Button>
+            <Box mt={6} display="flex" justifyContent="space-between">
+              <Button variant="outline" onClick={() => setAiHelp(true)}>
+                Undo
+              </Button>
+              <Button colorScheme="teal" onClick={handleCreateSyllabus}>
+                Create Syllabus
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Flex>
