@@ -138,7 +138,7 @@ export default function EditSyllabusPage({
   return (
     <Box h="100vh" overflow="hidden" bg="gray.50">
       <Box h="64px">
-        <NavBar user={user} onAccessibilityClick={() => {}} />
+        <NavBar user={user} onAccessibilityClick={() => {console.log('access')}} />
       </Box>
 
       <Flex h="calc(100vh - 64px)">

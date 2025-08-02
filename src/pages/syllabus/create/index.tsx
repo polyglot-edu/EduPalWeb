@@ -166,7 +166,7 @@ export default function SyllabusCreatePage() {
       title: definedSyllabus.title,
       description: definedSyllabus.description,
       goals: definedSyllabus.goals,
-      topics: selectedTopic.topic,
+      topics: [selectedTopic.topic],
       prerequisites: definedSyllabus.prerequisites,
       language: definedSyllabus.language,
       author: {
@@ -219,7 +219,7 @@ export default function SyllabusCreatePage() {
   return (
     <Box h="100vh" overflow="hidden" bg="gray.50">
       <Box h="64px">
-        <NavBar user={user} onAccessibilityClick={() => {}} />
+        <NavBar user={user} onAccessibilityClick={() => {console.log('access')}} />
       </Box>
 
       <Flex h="calc(100vh - 64px)">

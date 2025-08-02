@@ -90,7 +90,7 @@ export default function SyllabusDetailView({ syllabus }: Props) {
           </Box>
         </SimpleGrid>
 
-        {syllabus.topics && syllabus.topics.learning_objectives && (
+        {syllabus.topics && syllabus.topics[0].learning_objectives && (
           <Box mb={6}>
             <Heading size="md" mb={2}>
               Learning Objectives
@@ -101,19 +101,19 @@ export default function SyllabusDetailView({ syllabus }: Props) {
                   <Td>
                     <b>Knowledge</b>
                   </Td>
-                  <Td>{syllabus.topics.learning_objectives.knowledge}</Td>
+                  <Td>{syllabus.topics[0].learning_objectives.knowledge}</Td>
                 </Tr>
                 <Tr>
                   <Td>
                     <b>Skills</b>
                   </Td>
-                  <Td>{syllabus.topics.learning_objectives.skills}</Td>
+                  <Td>{syllabus.topics[0].learning_objectives.skills}</Td>
                 </Tr>
                 <Tr>
                   <Td>
                     <b>Attitude</b>
                   </Td>
-                  <Td>{syllabus.topics.learning_objectives.attitude}</Td>
+                  <Td>{syllabus.topics[0].learning_objectives.attitude}</Td>
                 </Tr>
               </Tbody>
             </Table>

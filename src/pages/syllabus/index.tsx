@@ -51,7 +51,7 @@ const SyllabusDashboard = () => {
 
   return (
     <>
-      <NavBar user={user} onAccessibilityClick={() => {}} />
+      <NavBar user={user} onAccessibilityClick={() => {console.log('access')}} />
       <MainSideBar
         onNavigate={handleNavigate}
         isOpen={isOpen}
