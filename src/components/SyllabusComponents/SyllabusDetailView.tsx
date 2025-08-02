@@ -40,6 +40,8 @@ export default function SyllabusDetailView({ syllabus }: Props) {
       width="100%"
     >
       <Box p={6}>
+        <SyllabusDocxButton syllabus={syllabus} />
+
         <Heading size="lg" mb={1}>
           {syllabus.title || 'Untitled Course'}
         </Heading>
@@ -47,7 +49,6 @@ export default function SyllabusDetailView({ syllabus }: Props) {
           {syllabus.description || 'No description provided.'}
         </Text>
 
-        <SyllabusDocxButton syllabus={syllabus} />
         <Stack direction="row" spacing={3} mb={6}>
           {syllabus.subjectArea && (
             <Badge colorScheme="blue">{syllabus.subjectArea}</Badge>
@@ -133,7 +134,15 @@ export default function SyllabusDetailView({ syllabus }: Props) {
                 ['Academic Year', syllabus.academicYear],
                 ['Course Code', syllabus.courseCode],
                 ['Course of Study', syllabus.courseOfStudy],
+                ['Study Regulation', syllabus.studyRegulation],
+                ['Curriculum Path', syllabus.curriculumPath],
+                ['Integrated Course Unit', syllabus.integratedCourseUnit],
+                ['Student Partition', syllabus.studentPartition],
                 ['Semester', syllabus.semester],
+                ['Course Year', syllabus.courseYear],
+                ['Subject Area', syllabus.subjectArea],
+                ['Course Type', syllabus.courseType],
+                ['Department', syllabus.department],
                 ['Credits (CFU)', syllabus.credits],
                 ['Teaching Hours', syllabus.teachingHours],
                 ['Disciplinary Sector', syllabus.disciplinarySector],

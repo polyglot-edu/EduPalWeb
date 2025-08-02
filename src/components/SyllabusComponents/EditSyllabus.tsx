@@ -1,6 +1,5 @@
 import { Box, Center, Flex, FormLabel, SimpleGrid } from '@chakra-ui/react';
 import {
-  AIDefineSyllabusResponse,
   EducationLevel,
   LearningObjectives,
   SyllabusTopic,
@@ -125,9 +124,9 @@ export default function EditSyllabus({
         />
         <TextField
           label="Subject Area"
-          value={definedSyllabus.general_subject}
+          value={definedSyllabus.subjectArea || definedSyllabus.general_subject}
           setValue={(val: any) =>
-            setDefinedSyllabus({ ...definedSyllabus, general_subject: val })
+            setDefinedSyllabus({ ...definedSyllabus, subjectArea: val })
           }
         />
 

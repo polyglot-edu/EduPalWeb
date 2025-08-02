@@ -1,5 +1,5 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { AddIcon, CheckIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { AddIcon, HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -465,7 +465,7 @@ export default function SyllabusCreatePage() {
                 </Flex>
                 <Box mt={6}>
                   <Button colorScheme="teal" onClick={() => setAiHelp(false)}>
-                    Confirm <CheckIcon />
+                    Confirm
                   </Button>
                 </Box>
               </>

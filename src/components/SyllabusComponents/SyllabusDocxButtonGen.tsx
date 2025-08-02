@@ -277,8 +277,8 @@ const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
   };
 
   return (
-    <Button float="right" onClick={generateDocx} colorScheme="blue" size="md">
-      Download Syllabus (Word)
+    <Button float="right" onClick={generateDocx} colorScheme="purple" size="sm">
+      Download (docx)
     </Button>
   );
 };
