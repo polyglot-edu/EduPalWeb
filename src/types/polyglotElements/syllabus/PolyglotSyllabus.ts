@@ -13,7 +13,7 @@ export type PolyglotSyllabus = {
   title: string;
   description: string;
   goals: string[];
-  topics: SyllabusTopic;
+  topics: SyllabusTopic[];
   prerequisites: string[];
   language: string;
   author: {

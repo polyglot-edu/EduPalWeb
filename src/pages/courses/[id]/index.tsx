@@ -71,10 +71,7 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
         </Heading>
 
         <Flex justify="space-between" mb={4}>
-          <CourseCardView
-            key={course._id}
-            course={course}
-          />
+          <CourseCardView key={course._id} course={course} />
         </Flex>
       </Box>
     </>

@@ -31,7 +31,9 @@ const TextField = ({
   return (
     <Box p={2} width={width}>
       <FormControl isRequired={isRequired}>
-        <FormLabel m={0}>{label}</FormLabel>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <FormLabel m={0}>{label}</FormLabel>
+        </Box>
         <Component
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -39,7 +41,10 @@ const TextField = ({
           isDisabled={isDisabled}
           placeholder={_placeholder}
           borderColor="grey"
+          borderRadius="md"
+          padding="0.375rem 0.75rem"
           height={!isTextArea ? height : undefined}
+          minHeight={isTextArea ? '2.5rem' : undefined}
           size="sm"
         />
       </FormControl>

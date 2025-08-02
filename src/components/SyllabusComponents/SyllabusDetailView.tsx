@@ -24,7 +24,7 @@ type Props = {
 export default function SyllabusDetailView({ syllabus }: Props) {
   const router = useRouter();
   console.log('Syllabus Detail View:', syllabus);
-  console.log(syllabus.topics)
+  console.log(syllabus.topics);
   if (!syllabus) {
     return <Box>No syllabus data available.</Box>;
   }

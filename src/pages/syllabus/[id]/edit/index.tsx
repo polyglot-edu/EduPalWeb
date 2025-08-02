@@ -1,15 +1,22 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Box, Button, Flex, useDisclosure, useToast } from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Flex,
+  Tooltip,
+  useDisclosure,
+  useToast,
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import DeleteSyllabusModal from '../../../../components/Modals/DeleteSyllabusModal';
+import SaveSyllabusModal from '../../../../components/Modals/SaveSyllabusModal';
 import NavBar from '../../../../components/NavBars/NavBar';
 import MainSideBar from '../../../../components/Sidebar/MainSidebar';
 import EditSyllabus from '../../../../components/SyllabusComponents/EditSyllabus';
 import { APIV2 } from '../../../../data/api';
-import {
-  PolyglotSyllabus,
-  SyllabusTopic,
-} from '../../../../types/polyglotElements';
+import { PolyglotSyllabus } from '../../../../types/polyglotElements';
 
 export default function EditSyllabusPage({
   accessToken,
@@ -19,19 +26,43 @@ export default function EditSyllabusPage({
   const { isOpen, onToggle } = useDisclosure({ defaultIsOpen: true });
   const handleNavigate = (route: string) => console.log('Navigate to:', route);
   const { user } = useUser();
+  const { isOpen: dOpen, onClose: dOnClose, onOpen: dOnOpen } = useDisclosure();
+  const { isOpen: sOpen, onClose: sOnClose, onOpen: sOnOpen } = useDisclosure();
+
   const [syllabus, setSyllabus] = useState<PolyglotSyllabus | undefined>();
   const [originalSyllabus, setOriginalSyllabus] = useState<PolyglotSyllabus>();
-  const [selectedTopic, setSelectedTopic] = useState<{
-    topic: SyllabusTopic;
-    index: number;
-  }>();
 
   const toast = useToast();
   const router = useRouter();
   const syllabusId = router.query.id as string;
 
   const API = useMemo(() => new APIV2(accessToken), [accessToken]);
-
+  const deleteSyllabus = useCallback(
+    async (syllabusId: string) => {
+      API.deleteSyllabus(syllabusId).then((res) => {
+        if (res.status == 204) {
+          toast({
+            title: 'Syllabus deleted successfully.',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+            position: 'bottom-left',
+          });
+          router.push('/syllabus');
+        } else {
+          toast({
+            title: 'Error deleting Syllabus.',
+            description: 'Please try again.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+            position: 'bottom-left',
+          });
+        }
+      });
+    },
+    [API]
+  );
   useEffect(() => {
     if (!syllabusId) return;
 
@@ -124,6 +155,13 @@ export default function EditSyllabusPage({
           flex="1"
           overflow="auto"
         >
+          <Flex float={'right'}>
+            <Button zIndex={11} float={'right'} variant="unstyled">
+              <Tooltip label="Delete" placement="right">
+                <DeleteIcon onClick={dOnOpen} w={5} h={5} color="red" />
+              </Tooltip>
+            </Button>
+          </Flex>
           <EditSyllabus
             definedSyllabus={syllabus}
             setDefinedSyllabus={setSyllabus}
@@ -167,22 +205,49 @@ export default function EditSyllabusPage({
               syllabus.referenceMaterials,
               (v: any) => setSyllabus({ ...syllabus, referenceMaterials: v }),
             ]}
-            selectedTopicState={[selectedTopic, setSelectedTopic]}
-          />
+            selectedTopicState={[
+              { topic: syllabus.topics[0], index: -1 },
+              (v) => {
+                const newVal = typeof v === 'function' ? v(undefined) : v;
 
-          <Box mt={6} display="flex" justifyContent="space-between">
-            <Button
-              variant="outline"
-              onClick={() => setSyllabus(originalSyllabus)}
-            >
-              Undo
-            </Button>
-            <Button colorScheme="teal" onClick={handleSaveSyllabus}>
-              Save Changes
-            </Button>
-          </Box>
+                if (newVal) {
+                  setSyllabus({ ...syllabus, topics: [newVal.topic] });
+                }
+              },
+            ]}
+          />
+          <Flex mt={8} justify="space-between" py={2}>
+            <Box flex="2" display="flex" justifyContent="center">
+              <Button onClick={() => router.back()}>Cancel</Button>
+            </Box>
+            <Box flex="2" display="flex" justifyContent="center">
+              <Button
+                colorScheme="teal"
+                onClick={() => setSyllabus(originalSyllabus)}
+              >
+                Undo
+              </Button>
+            </Box>
+            <Box flex="2" display="flex" justifyContent="center">
+              <Button colorScheme="purple" onClick={sOnOpen}>
+                Save
+              </Button>
+            </Box>
+          </Flex>
         </Box>
       </Flex>
+      <DeleteSyllabusModal
+        isOpen={dOpen}
+        onClose={dOnClose}
+        deleteFunc={deleteSyllabus}
+        syllabusId={syllabusId ?? ''}
+      />
+      <SaveSyllabusModal
+        isOpen={sOpen}
+        onClose={sOnClose}
+        saveFunc={handleSaveSyllabus}
+        syllabusId={syllabusId ?? ''}
+      />
     </Box>
   );
 }

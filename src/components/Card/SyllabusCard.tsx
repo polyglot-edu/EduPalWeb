@@ -1,6 +1,6 @@
+import { EditIcon, ViewIcon } from '@chakra-ui/icons';
 import { Badge, Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { EditIcon, ViewIcon } from '@chakra-ui/icons';
 import { PolyglotSyllabus } from '../../types/polyglotElements';
 
 interface SyllabusCardProps {

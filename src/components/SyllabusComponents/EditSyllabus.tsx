@@ -168,7 +168,9 @@ export default function EditSyllabus({
           setValue={(val) => updateTopicField('details', val)}
           height="2rem"
         />
-        <FormLabel>Learning Objective</FormLabel>
+        <Center>
+          <FormLabel>Learning Objective</FormLabel>
+        </Center>
         <SimpleGrid columns={{ base: 3, md: 3 }} spacing={4} mb={4}>
           <TextField
             label="Knowledge"

@@ -1,4 +1,5 @@
 import axiosCreate, { AxiosInstance, AxiosResponse } from 'axios';
+import { create } from 'domain';
 import {
   AIChatMessage,
   AIDefineSyllabus,
@@ -19,10 +20,9 @@ import {
   PapyAssignmentAPI,
   PapyProject,
 } from '../types/polyglotElements/PapyrusTypes/PapyrusTypes';
+import { PolyglotSyllabus } from '../types/polyglotElements/syllabus/PolyglotSyllabus';
 import { User } from '../types/user';
 import { createNewDefaultPolyglotFlow } from '../utils/utils';
-import { create } from 'domain';
-import { PolyglotSyllabus } from '../types/polyglotElements/syllabus/PolyglotSyllabus';
 
 export type aiAPIResponse = {
   Date: string;
@@ -153,28 +153,27 @@ export class APIV2 {
   saveCourse(course: PolyglotCourse): Promise<AxiosResponse> {
     return this.axios.put<{}, AxiosResponse, {}>(`/api/course`, course);
   }
-  
+
   //syllabus apis
-  createNewPolyglotSyllabus (body: PolyglotSyllabus): Promise<AxiosResponse> {
+  createNewPolyglotSyllabus(body: PolyglotSyllabus): Promise<AxiosResponse> {
     return axios.post<{}, AxiosResponse, {}>(`/api/syllabus`, body);
   }
-  
+
   getAllSyllabuses(): Promise<AxiosResponse> {
     return axios.get<{}, AxiosResponse, {}>(`/api/syllabus/`);
   }
 
-  getSyllabus (courseId: string): Promise<AxiosResponse> {
+  getSyllabus(courseId: string): Promise<AxiosResponse> {
     return axios.get<{}, AxiosResponse, {}>(`/api/syllabus/${courseId}`);
   }
 
-  updateSyllabus (body: PolyglotSyllabus): Promise<AxiosResponse> {
+  updateSyllabus(body: PolyglotSyllabus): Promise<AxiosResponse> {
     return axios.put<{}, AxiosResponse, {}>(`/api/syllabus`, body);
   }
 
-  deleteSyllabus (syllabusId: string): Promise<AxiosResponse> {
+  deleteSyllabus(syllabusId: string): Promise<AxiosResponse> {
     return axios.delete<{}, AxiosResponse, {}>(`/api/syllabus/${syllabusId}`);
   }
-
 }
 
 export const API = {
@@ -327,11 +326,13 @@ export const API = {
   },
 
   //syllabus apis
-  createNewPolyglotSyllabus: (body: PolyglotSyllabus): Promise<AxiosResponse> => {
+  createNewPolyglotSyllabus: (
+    body: PolyglotSyllabus
+  ): Promise<AxiosResponse> => {
     return axios.post<{}, AxiosResponse, {}>(`/api/syllabus`, body);
   },
-  
-  getAllSyllabuses:(): Promise<AxiosResponse> => {
+
+  getAllSyllabuses: (): Promise<AxiosResponse> => {
     return axios.get<{}, AxiosResponse, {}>(`/api/syllabus/`);
   },
 

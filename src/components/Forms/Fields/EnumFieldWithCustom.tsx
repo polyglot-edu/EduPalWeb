@@ -1,6 +1,6 @@
-import { Box, FormControl, FormLabel, Select, Input } from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Input, Select } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import InfoButton from '../../UtilityComponents/InfoButton';
-import { useState, useEffect } from 'react';
 
 export type EnumFieldOption = {
   label: string;
