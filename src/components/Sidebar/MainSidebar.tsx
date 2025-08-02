@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/icons';
 import { Box, Button, Flex, IconButton, Text, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { MdMenuBook } from 'react-icons/md';
 
 type SidebarProps = {
   onNavigate?: (route: string) => void;
@@ -39,6 +40,12 @@ const sections: Section[] = [
         label: 'Dashboard',
         icon: <ViewIcon />,
         route: '/dashboard',
+        active: true,
+      },
+      {
+        label: 'Syllabuses',
+        icon: <MdMenuBook />,
+        route: '/syllabus',
         active: true,
       },
       {
