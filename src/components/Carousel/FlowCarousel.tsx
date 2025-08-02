@@ -65,7 +65,7 @@ const FlowCarousel: React.FC<FlowCarouselProps> = ({
           return (
             <Box
               key={flow._id}
-              position="relative" 
+              position="relative"
               border="2px"
               borderColor={isSelected ? 'purple.500' : 'gray.200'}
               bgColor={isSelected ? 'purple.50' : 'white'}

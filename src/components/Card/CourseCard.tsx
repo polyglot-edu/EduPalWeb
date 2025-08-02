@@ -13,7 +13,6 @@ interface CourseCardProps {
 const CourseCard = ({ course }: CourseCardProps) => {
   const image =
     course.img != undefined && course.img != '' ? course.img : FlowExample.src;
-  const courseId = course?._id;
 
   const router = useRouter();
   return (

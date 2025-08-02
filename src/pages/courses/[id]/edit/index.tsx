@@ -75,7 +75,7 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
     if (!course) return;
     try {
       API.saveCourse(course as PolyglotCourse).then((res) => {
-        if (res.status == 204||res.status == 200) {
+        if (res.status == 204 || res.status == 200) {
           toast({
             title: 'Course saved successfully.',
             status: 'success',
@@ -83,7 +83,7 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
             isClosable: true,
             position: 'bottom-left',
           });
-          router.push('/courses/' + course._id );
+          router.push('/courses/' + course._id);
         } else {
           toast({
             title: 'Error saving course.',

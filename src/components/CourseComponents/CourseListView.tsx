@@ -195,6 +195,8 @@ export const CourseCardView = ({ course, onView }: CourseCardProps) => {
           <Button
             leftIcon={<Icon as={MdVisibility} />}
             onClick={() => onView?.(_id)}
+            title="Coming Soon"
+            isDisabled
           >
             View
           </Button>

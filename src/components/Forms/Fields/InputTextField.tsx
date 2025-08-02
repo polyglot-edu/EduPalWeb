@@ -27,7 +27,7 @@ const InputTextField = ({
   value,
   setValue,
   width,
-  height = '2.5rem',
+  height = 'auto',
   placeholder,
   isDisabled,
   isReadOnly,

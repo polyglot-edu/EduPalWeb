@@ -21,6 +21,8 @@ import {
 } from '../types/polyglotElements/PapyrusTypes/PapyrusTypes';
 import { User } from '../types/user';
 import { createNewDefaultPolyglotFlow } from '../utils/utils';
+import { create } from 'domain';
+import { PolyglotSyllabus } from '../types/polyglotElements/syllabus/PolyglotSyllabus';
 
 export type aiAPIResponse = {
   Date: string;
@@ -151,6 +153,28 @@ export class APIV2 {
   saveCourse(course: PolyglotCourse): Promise<AxiosResponse> {
     return this.axios.put<{}, AxiosResponse, {}>(`/api/course`, course);
   }
+  
+  //syllabus apis
+  createNewPolyglotSyllabus (body: PolyglotSyllabus): Promise<AxiosResponse> {
+    return axios.post<{}, AxiosResponse, {}>(`/api/syllabus`, body);
+  }
+  
+  getAllSyllabuses(): Promise<AxiosResponse> {
+    return axios.get<{}, AxiosResponse, {}>(`/api/syllabus/`);
+  }
+
+  getSyllabus (courseId: string): Promise<AxiosResponse> {
+    return axios.get<{}, AxiosResponse, {}>(`/api/syllabus/${courseId}`);
+  }
+
+  updateSyllabus (body: PolyglotSyllabus): Promise<AxiosResponse> {
+    return axios.put<{}, AxiosResponse, {}>(`/api/syllabus`, body);
+  }
+
+  deleteSyllabus (syllabusId: string): Promise<AxiosResponse> {
+    return axios.delete<{}, AxiosResponse, {}>(`/api/syllabus/${syllabusId}`);
+  }
+
 }
 
 export const API = {
@@ -300,6 +324,27 @@ export const API = {
 
   planCourse: (body: AIPlanCourse): Promise<AxiosResponse> => {
     return axios.post<{}, AxiosResponse, {}>(`/api/openai/PlanCourse`, body);
+  },
+
+  //syllabus apis
+  createNewPolyglotSyllabus: (body: PolyglotSyllabus): Promise<AxiosResponse> => {
+    return axios.post<{}, AxiosResponse, {}>(`/api/syllabus`, body);
+  },
+  
+  getAllSyllabuses:(): Promise<AxiosResponse> => {
+    return axios.get<{}, AxiosResponse, {}>(`/api/syllabus/`);
+  },
+
+  getSyllabus: (courseId: string): Promise<AxiosResponse> => {
+    return axios.get<{}, AxiosResponse, {}>(`/api/syllabus/${courseId}`);
+  },
+
+  updateSyllabus: (body: PolyglotSyllabus): Promise<AxiosResponse> => {
+    return axios.put<{}, AxiosResponse, {}>(`/api/syllabus`, body);
+  },
+
+  deleteSyllabus: (syllabusId: string): Promise<AxiosResponse> => {
+    return axios.delete<{}, AxiosResponse, {}>(`/api/syllabus/${syllabusId}`);
   },
 
   getAssignmentProjects: (): Promise<AxiosResponse> => {

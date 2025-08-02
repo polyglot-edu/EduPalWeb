@@ -1,12 +1,4 @@
-import {
-  Box,
-  ChakraProvider,
-  extendTheme,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-} from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
 
 export type TextFieldProps = {
   label: string;
@@ -30,29 +22,28 @@ const TextField = ({
   isDisabled,
   isRequired,
   placeholder,
-  width = '100%',
+  width,
   height = '2.25rem',
 }: TextFieldProps) => {
   const Component = isTextArea ? Textarea : Input;
   const _placeholder = placeholder || ' ';
 
   return (
-    <ChakraProvider>
-      <Box p={1} width={width}>
-        <FormControl variant="floating" isRequired={isRequired}>
-          <FormLabel m={0}>{label}</FormLabel>
-          <Component
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            isReadOnly={isReadOnly}
-            isDisabled={isDisabled}
-            placeholder={_placeholder}
-            size="sm"
-            borderColor="grey"
-          />
-        </FormControl>
-      </Box>
-    </ChakraProvider>
+    <Box p={2} width={width}>
+      <FormControl isRequired={isRequired}>
+        <FormLabel m={0}>{label}</FormLabel>
+        <Component
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          isReadOnly={isReadOnly}
+          isDisabled={isDisabled}
+          placeholder={_placeholder}
+          borderColor="grey"
+          height={!isTextArea ? height : undefined}
+          size="sm"
+        />
+      </FormControl>
+    </Box>
   );
 };
 
