@@ -16,6 +16,7 @@ import {
 import { useRouter } from 'next/router';
 import { MdEdit, MdVisibility } from 'react-icons/md';
 import { PolyglotSyllabus } from '../../types/polyglotElements';
+import SyllabusDocxButton from './SyllabusDocxButtonGen';
 
 type Props = {
   syllabus: PolyglotSyllabus;
@@ -36,6 +37,7 @@ export default function SyllabusDetailView({ syllabus }: Props) {
       borderWidth="2px"
       borderColor="purple.300"
       overflow="hidden"
+      width="100%"
     >
       <Box p={6}>
         <Heading size="lg" mb={1}>
@@ -45,9 +47,10 @@ export default function SyllabusDetailView({ syllabus }: Props) {
           {syllabus.description || 'No description provided.'}
         </Text>
 
+        <SyllabusDocxButton syllabus={syllabus} />
         <Stack direction="row" spacing={3} mb={6}>
-          {syllabus.general_subject && (
-            <Badge colorScheme="blue">{syllabus.general_subject}</Badge>
+          {syllabus.subjectArea && (
+            <Badge colorScheme="blue">{syllabus.subjectArea}</Badge>
           )}
           {syllabus.educational_level && (
             <Badge colorScheme="purple">{syllabus.educational_level}</Badge>
