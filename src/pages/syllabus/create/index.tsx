@@ -69,7 +69,7 @@ export default function SyllabusCreatePage() {
 
   const toast = useToast();
 
-  const [generalSubject, setGeneralSubject] = useState('');
+  const [subjectArea, setSubjectArea] = useState('');
   const [additionalInformation, setAdditionalInformation] = useState('');
 
   const [academicYear, setAcademicYear] = useState('');
@@ -82,6 +82,14 @@ export default function SyllabusCreatePage() {
   const [teachingMethods, setTeachingMethods] = useState<string[]>([]);
   const [assessmentMethods, setAssessmentMethods] = useState<string[]>([]);
   const [referenceMaterials, setReferenceMaterials] = useState<string[]>([]);
+  const [courseYear, setCourseYear] = useState('1st');
+  const [studyRegulation, setStudyregulation] = useState('');
+  const [curriculumPath, setCurriculumPath] = useState('');
+  const [studentPartition, setStudentPartition] = useState('');
+  const [integratedCourseUnit, setIntegratedCourseUnit] = useState('');
+  const [courseType, setCourseType] = useState('');
+  const [department, setDepartment] = useState('');
+
   const [aiHelp, setAiHelp] = useState(true);
   const [isLoadingSyllabus, setIsLoadingSyllabus] = useState(false);
 
@@ -97,7 +105,7 @@ export default function SyllabusCreatePage() {
   );
 
   const handleDefineSyllabus = () => {
-    if (!generalSubject || generalSubject == '') {
+    if (!subjectArea || subjectArea == '') {
       toast({
         title: 'General subject is mandatory!',
         status: 'warning',
@@ -109,7 +117,7 @@ export default function SyllabusCreatePage() {
     }
     setIsLoadingSyllabus(true);
     API.defineSyllabus({
-      general_subject: generalSubject,
+      general_subject: subjectArea,
       additional_information: additionalInformation,
       education_level:
         definedSyllabus?.educational_level || ('high school' as EducationLevel),
@@ -160,7 +168,7 @@ export default function SyllabusCreatePage() {
 
     API.createNewPolyglotSyllabus({
       _id: UUIDv4(),
-      general_subject: definedSyllabus.general_subject,
+      subjectArea: definedSyllabus.general_subject,
       educational_level: definedSyllabus.educational_level,
       additional_information: definedSyllabus.additional_information,
       title: definedSyllabus.title,
@@ -184,6 +192,13 @@ export default function SyllabusCreatePage() {
       teachingMethods: teachingMethods,
       assessmentMethods: assessmentMethods,
       referenceMaterials: referenceMaterials,
+      studyRegulation: studyRegulation,
+      curriculumPath: curriculumPath,
+      studentPartition: studentPartition,
+      integratedCourseUnit: integratedCourseUnit,
+      courseType: courseType,
+      department: department,
+      courseYear: courseYear,
     })
       .then((res) => {
         console.log('Syllabus created:', res.data);
@@ -219,7 +234,12 @@ export default function SyllabusCreatePage() {
   return (
     <Box h="100vh" overflow="hidden" bg="gray.50">
       <Box h="64px">
-        <NavBar user={user} onAccessibilityClick={() => {console.log('access')}} />
+        <NavBar
+          user={user}
+          onAccessibilityClick={() => {
+            console.log('access');
+          }}
+        />
       </Box>
 
       <Flex h="calc(100vh - 64px)">
@@ -253,11 +273,11 @@ export default function SyllabusCreatePage() {
                 />
                 <InputTextField
                   label="General Subject"
-                  placeholder="Enter course subject."
-                  value={generalSubject}
-                  setValue={setGeneralSubject}
+                  placeholder="Enter syllabus subject."
+                  value={subjectArea}
+                  setValue={setSubjectArea}
                   infoTitle="Title"
-                  infoDescription="Enter the title you want to give to your course."
+                  infoDescription="Enter the general subject of your syllabus."
                   infoPlacement="right"
                 />
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
@@ -293,7 +313,7 @@ export default function SyllabusCreatePage() {
                       { label: 'Deutsch', value: 'german' },
                     ]}
                     infoTitle="Language"
-                    infoDescription="Choose the language of the learning materials."
+                    infoDescription="Choose the language of the syllabus."
                     infoPlacement="right"
                   />
                 </SimpleGrid>
@@ -473,6 +493,16 @@ export default function SyllabusCreatePage() {
                 referenceMaterials,
                 setReferenceMaterials,
               ]}
+              studyregulationState={[studyRegulation, setStudyregulation]}
+              courseYearState={[courseYear, setCourseYear]}
+              curriculumPathState={[curriculumPath, setCurriculumPath]}
+              studentPartitionState={[studentPartition, setStudentPartition]}
+              integratedCourseUnitState={[
+                integratedCourseUnit,
+                setIntegratedCourseUnit,
+              ]}
+              courseTypeState={[courseType, setCourseType]}
+              departmentState={[department, setDepartment]}
             />
           )}
 

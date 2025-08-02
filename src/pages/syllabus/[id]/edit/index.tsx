@@ -86,30 +86,7 @@ export default function EditSyllabusPage({
   const handleSaveSyllabus = () => {
     if (!syllabus) return;
 
-    API.updateSyllabus({
-      _id: syllabus._id,
-      general_subject: syllabus.general_subject,
-      educational_level: syllabus.educational_level,
-      additional_information: syllabus.additional_information,
-      title: syllabus.title,
-      description: syllabus.description,
-      goals: syllabus.goals,
-      topics: syllabus.topics,
-      prerequisites: syllabus.prerequisites,
-      language: syllabus.language,
-      author: syllabus.author,
-      lastUpdate: new Date(),
-      academicYear: syllabus.academicYear,
-      courseCode: syllabus.courseCode,
-      courseOfStudy: syllabus.courseOfStudy,
-      semester: syllabus.semester,
-      credits: syllabus.credits,
-      teachingHours: syllabus.teachingHours,
-      disciplinarySector: syllabus.disciplinarySector,
-      teachingMethods: syllabus.teachingMethods,
-      assessmentMethods: syllabus.assessmentMethods,
-      referenceMaterials: syllabus.referenceMaterials,
-    })
+    API.updateSyllabus(syllabus)
       .then((res: any) => {
         toast({
           title: 'Syllabus updated successfully!',
@@ -138,7 +115,12 @@ export default function EditSyllabusPage({
   return (
     <Box h="100vh" overflow="hidden" bg="gray.50">
       <Box h="64px">
-        <NavBar user={user} onAccessibilityClick={() => {console.log('access')}} />
+        <NavBar
+          user={user}
+          onAccessibilityClick={() => {
+            console.log('access');
+          }}
+        />
       </Box>
 
       <Flex h="calc(100vh - 64px)">
@@ -214,6 +196,34 @@ export default function EditSyllabusPage({
                   setSyllabus({ ...syllabus, topics: [newVal.topic] });
                 }
               },
+            ]}
+            studyregulationState={[
+              syllabus.studyRegulation,
+              (v: any) => setSyllabus({ ...syllabus, studyRegulation: v }),
+            ]}
+            curriculumPathState={[
+              syllabus.curriculumPath,
+              (v: any) => setSyllabus({ ...syllabus, curriculumPath: v }),
+            ]}
+            studentPartitionState={[
+              syllabus.studentPartition,
+              (v: any) => setSyllabus({ ...syllabus, studentPartition: v }),
+            ]}
+            integratedCourseUnitState={[
+              syllabus.integratedCourseUnit,
+              (v: any) => setSyllabus({ ...syllabus, integratedCourseUnit: v }),
+            ]}
+            courseTypeState={[
+              syllabus.courseType,
+              (v: any) => setSyllabus({ ...syllabus, courseType: v }),
+            ]}
+            departmentState={[
+              syllabus.department,
+              (v: any) => setSyllabus({ ...syllabus, department: v }),
+            ]}
+            courseYearState={[
+              syllabus.courseYear,
+              (v: any) => setSyllabus({ ...syllabus, courseYear: v }),
             ]}
           />
           <Flex mt={8} justify="space-between" py={2}>

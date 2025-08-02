@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import NavBar from '../../../components/NavBars/NavBar';
 import MainSideBar from '../../../components/Sidebar/MainSidebar';
 import SyllabusDetailView from '../../../components/SyllabusComponents/SyllabusDetailView';
+import SyllabusDocxButton from '../../../components/SyllabusComponents/SyllabusDocxButtonGen';
 import { APIV2 } from '../../../data/api';
 import { PolyglotSyllabus } from '../../../types/polyglotElements';
 

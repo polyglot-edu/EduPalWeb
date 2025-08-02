@@ -1,5 +1,6 @@
 import { Box, Center, Flex, FormLabel, SimpleGrid } from '@chakra-ui/react';
 import {
+  AIDefineSyllabusResponse,
   EducationLevel,
   LearningObjectives,
   SyllabusTopic,
@@ -32,6 +33,13 @@ type Props = {
       React.SetStateAction<{ topic: SyllabusTopic; index: number } | undefined>
     >
   ];
+  studyregulationState: [string, (v: string) => void];
+  curriculumPathState: [string, (v: string) => void];
+  studentPartitionState: [string, (v: string) => void];
+  integratedCourseUnitState: [string, (v: string) => void];
+  courseTypeState: [string, (v: string) => void];
+  departmentState: [string, (v: string) => void];
+  courseYearState: [string, (v: string) => void];
 };
 
 export default function EditSyllabus({
@@ -48,6 +56,13 @@ export default function EditSyllabus({
   assessmentMethodsState,
   referenceMaterialsState,
   selectedTopicState,
+  studyregulationState: studyRegulationState,
+  curriculumPathState,
+  studentPartitionState,
+  integratedCourseUnitState,
+  courseTypeState,
+  departmentState,
+  courseYearState,
 }: Props) {
   const [academicYear, setAcademicYear] = academicYearState;
   const [courseCode, setCourseCode] = courseCodeState;
@@ -60,6 +75,15 @@ export default function EditSyllabus({
   const [assessmentMethods, setAssessmentMethods] = assessmentMethodsState;
   const [referenceMaterials, setReferenceMaterials] = referenceMaterialsState;
   const [selectedTopic, setSelectedTopic] = selectedTopicState;
+
+  const [studyRegulation, setStudyRegulation] = studyRegulationState;
+  const [curriculumPath, setCurriculumPath] = curriculumPathState;
+  const [studentPartition, setStudentPartition] = studentPartitionState;
+  const [integratedCourseUnit, setIntegratedCourseUnit] =
+    integratedCourseUnitState;
+  const [courseType, setCourseType] = courseTypeState;
+  const [department, setDepartment] = departmentState;
+  const [courseYear, setCourseYear] = courseYearState;
 
   const updateTopicField = (
     field: keyof SyllabusTopic | keyof LearningObjectives,
@@ -100,12 +124,13 @@ export default function EditSyllabus({
           }
         />
         <TextField
-          label="General Subject"
+          label="Subject Area"
           value={definedSyllabus.general_subject}
           setValue={(val: any) =>
             setDefinedSyllabus({ ...definedSyllabus, general_subject: val })
           }
         />
+
         <EnumField
           label="Education Level"
           value={definedSyllabus.educational_level}
@@ -224,9 +249,19 @@ export default function EditSyllabus({
 
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
           <TextField
-            label="Academic Year"
-            value={academicYear}
-            setValue={setAcademicYear}
+            label="Course of Study"
+            value={courseOfStudy}
+            setValue={setCourseOfStudy}
+          />
+          <TextField
+            label="Study Regulation"
+            value={studyRegulation}
+            setValue={setStudyRegulation}
+          />
+          <TextField
+            label="Curriculum Path"
+            value={curriculumPath}
+            setValue={setCurriculumPath}
           />
           <TextField
             label="Course Code"
@@ -234,9 +269,20 @@ export default function EditSyllabus({
             setValue={setCourseCode}
           />
           <TextField
-            label="Course of Study"
-            value={courseOfStudy}
-            setValue={setCourseOfStudy}
+            label="Integrated Course Unit"
+            value={integratedCourseUnit}
+            setValue={setIntegratedCourseUnit}
+          />
+
+          <TextField
+            label="Student Partition"
+            value={studentPartition}
+            setValue={setStudentPartition}
+          />
+          <TextField
+            label="Academic Year"
+            value={academicYear}
+            setValue={setAcademicYear}
           />
           <EnumField
             label="Semester"
@@ -247,6 +293,29 @@ export default function EditSyllabus({
               { label: 'second semester', value: 'second' },
               { label: 'annual course', value: 'year' },
             ]}
+          />
+
+          <TextField
+            label="Department"
+            value={department}
+            setValue={setDepartment}
+          />
+          <TextField
+            label="Disciplinary Sector"
+            value={disciplinarySector}
+            setValue={setDisciplinarySector}
+          />
+
+          <TextField
+            label="Course Type"
+            value={courseType}
+            setValue={setCourseType}
+          />
+
+          <TextField
+            label="Teaching Hours"
+            value={teachingHours.toString()}
+            setValue={(v: any) => setTeachingHours(parseInt(v) || 0)}
           />
           <EnumFieldWithCustom
             label="Credits (CFU)"
@@ -260,15 +329,18 @@ export default function EditSyllabus({
             ]}
             allowCustom={true}
           />
-          <TextField
-            label="Teaching Hours"
-            value={teachingHours.toString()}
-            setValue={(v: any) => setTeachingHours(parseInt(v) || 0)}
-          />
-          <TextField
-            label="Disciplinary Sector"
-            value={disciplinarySector}
-            setValue={setDisciplinarySector}
+          <EnumFieldWithCustom
+            label="Course Year"
+            value={courseYear}
+            setValue={(v: any) => setCourseYear(v || 0)}
+            options={[
+              { label: '1st year', value: '1st' },
+              { label: '2nd year', value: '2nd' },
+              { label: '3rd year', value: '3rd' },
+              { label: '4th year', value: '4th' },
+              { label: '5th year', value: '5th' },
+            ]}
+            allowCustom={true}
           />
         </SimpleGrid>
 

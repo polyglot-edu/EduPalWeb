@@ -7,7 +7,6 @@ type SyllabusTopic = {
 };
 export type PolyglotSyllabus = {
   _id: string;
-  general_subject: string;
   educational_level: EducationLevel;
   additional_information: string;
   title: string;
@@ -22,6 +21,14 @@ export type PolyglotSyllabus = {
   };
   lastUpdate: Date;
 
+  subjectArea: string;
+  courseYear: string;
+  studyRegulation: string;
+  curriculumPath: string;
+  studentPartition: string;
+  integratedCourseUnit: string;
+  courseType: string;
+  department: string;
   academicYear: string;
   courseCode: string;
   courseOfStudy: string;
