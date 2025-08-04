@@ -20,6 +20,8 @@ type Props = {
   syllabus: PolyglotSyllabus;
 };
 
+//modifica topic per selezione multipla MANCAAAAAAAAAAAAAAAAAAA
+
 const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
   const generateDocx = async () => {
     const {
@@ -63,22 +65,22 @@ const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
         layout: TableLayoutType.FIXED,
         width: { size: 100, type: WidthType.PERCENTAGE },
         rows: [
-          ['Academic Year', academicYear],
-          ['Degree Program', courseOfStudy], // e.g., "F3I - Computer Science"
-          ['Study Regulation', studyRegulation], // Not provided
-          ['Curriculum Path', curriculumPath], // Not provided
-          ['Course / Module', `${courseCode} - ${title}`], // e.g., "F1081 - Mobile App Dev"
-          ['Integrated Course Unit', integratedCourseUnit], // Not provided
-          ['Student Partition', studentPartition], // Not provided
-          ['Semester ', semester], // e.g., "S2 - Second Semester"
-          ['Location', department], // Not provided
-          ['Course Year', courseYear], // missing
-          ['Scientific Sector', disciplinarySector], // e.g., "INF/01 - Computer Science"
-          ['Course Type', courseType], // missing
-          ['Subject Area', subjectArea], //missing
-          ['Credits (CFU)', credits?.toString()],
-          ['Contact Hours', teachingHours?.toString()],
-          ['AF_ID', ''], // Provided
+          ['Anno Offerta', academicYear],
+          ['Corso di Studio', courseOfStudy],
+          ['Regolamento Didattico', studyRegulation],
+          ['Percorso di Studio', curriculumPath],
+          ['Insegnamento/Modulo', `${courseCode} - ${title}`],
+          ['Attività Formativa Integrata', integratedCourseUnit],
+          ['Partizione Studenti', studentPartition],
+          ['Periodo Didattico', semester],
+          ['Sede', department],
+          ['Anno Corso', courseYear],
+          ['Settore', disciplinarySector],
+          ['Tipo attività Formativa', courseType],
+          ['Ambito', subjectArea],
+          ['CFU', credits?.toString()],
+          ['Ore Attività Frontali', teachingHours?.toString()],
+          ['AF_ID', ''],
         ].map(
           ([label, value]) =>
             new TableRow({
@@ -118,71 +120,107 @@ const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
         ),
       });
 
-    const buildTextInfoTable = () =>
-      new Table({
+    const buildTextInfoTable = () => {
+      const content = topics
+        .map((topic) => `${topic.macro_topic}:\n${topic.details}`)
+        .join('\n\n');
+
+      const objectives = topics
+        .map((topic) => {
+          const { knowledge, skills, attitude } =
+            topic.learning_objectives || {};
+          return [knowledge, skills, attitude].filter(Boolean).join(' ');
+        })
+        .filter(Boolean)
+        .join('\n\n');
+      return new Table({
         layout: TableLayoutType.FIXED,
         width: { size: 100, type: WidthType.PERCENTAGE },
         columnWidths: [1800, 1800, 1800, 1800, 7200], // in twips (~12.5%, 50%)
         rows: [
-          ['Text Type', 'Code Type', 'Max Char.', 'Required', 'Value'],
           [
-            'Language of Instruction',
+            'Tipo Testo',
+            'Codice Tipo Testo',
+            'Num. Max. Caratteri',
+            'Obbl.',
+            'Testo in Italiano',
+            'Testo in Inglese',
+          ],
+          [
+            'Lingua insegnamento',
             'LINGUA_INS',
             null,
-            language ? 'Yes' : 'No',
-            language,
+            language ? 'Sì' : 'No',
+            language == 'italian' ? language : '',
+            language == 'english' ? language : '',
           ],
           [
-            'Objectives',
+            'Obiettivi',
             'OBIETT_FORM',
             null,
-            goalsString ? 'Yes' : 'No',
-            goalsString || 'N/D',
+            goalsString ? 'Sì' : 'No',
+            language == 'italian' ? objectives || 'N/D' : '',
+            language == 'english' ? objectives || 'N/D' : '',
           ],
           [
-            'Prerequisites',
+            'Prerequisiti',
             'PREREQ',
             null,
-            prereqString ? 'Yes' : 'No',
-            prereqString || 'N/D',
+            prereqString ? 'Sì' : 'No',
+            language == 'italian' ? prereqString || 'N/D' : '',
+            language == 'english' ? prereqString || 'N/D' : '',
           ],
           [
-            'Contents',
+            'Contenuti',
             'CONTENUTI',
             null,
-            description ? 'Yes' : 'No',
-            description,
+            description ? 'Sì' : 'No',
+            language == 'italian' ? content : '',
+            language == 'english' ? content : '',
           ],
           [
-            'Teaching Methods',
+            'Metodi didattici',
             'METODI_DID',
             null,
-            teachingMethodsString ? 'Yes' : 'No',
-            teachingMethodsString || 'N/D',
+            teachingMethodsString ? 'Sì' : 'No',
+            language == 'italian' ? teachingMethodsString || 'N/D' : '',
+            language == 'english' ? teachingMethodsString || 'N/D' : '',
           ],
           [
-            'Assessment Methods',
+            "Verifica dell'apprendimento",
             'MOD_VER_APPR',
             null,
-            assessmentMethodsString ? 'Yes' : 'No',
-            assessmentMethodsString || 'N/D',
+            assessmentMethodsString ? 'Sì' : 'No',
+            language == 'italian' ? assessmentMethodsString || 'N/D' : '',
+            language == 'english' ? assessmentMethodsString || 'N/D' : '',
           ],
           [
-            'Reference Texts',
+            'Testi',
             'TESTI_RIF',
             null,
-            referenceMaterialsString ? 'Yes' : 'No',
-            referenceMaterialsString || 'N/D',
+            referenceMaterialsString ? 'Sì' : 'No',
+            language == 'italian' ? referenceMaterialsString || 'N/D' : '',
+            language == 'english' ? referenceMaterialsString || 'N/D' : '',
+          ],
+          [
+            'Obiettivi Agenda 2030 per lo sviluppo sostenibile',
+            'OB_SVIL_SOS',
+            null,
+            'Sì',
+            null,
+            null,
           ],
           [
             'Additional Information',
             'ALTRO',
             null,
-            additional_information ? 'Yes' : 'No',
-            additional_information,
+            additional_information ? 'Sì' : 'No',
+            language == 'italian' ? additional_information : '',
+            language == 'english' ? additional_information : '',
           ],
+          ['NON COMPILARE!', 'PROGR_EST', '1', 'No', null, null],
         ].map(
-          ([type, codeType, maxChar, required, value], rowIndex) =>
+          ([type, codeType, maxChar, required, valueIt,valueEn], rowIndex) =>
             new TableRow({
               children: [
                 new TableCell({
@@ -194,7 +232,7 @@ const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
                     }),
                   ],
                 }),
-                ...[codeType, maxChar, required, value].map(
+                ...[codeType, maxChar, required, valueIt, valueEn].map(
                   (cellValue, colIndex) =>
                     new TableCell({
                       width: {
@@ -218,6 +256,7 @@ const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
             })
         ),
       });
+    };
 
     const doc = new Document({
       styles: {
@@ -247,7 +286,7 @@ const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
               spacing: { after: 400 },
               children: [
                 new TextRun({
-                  text: 'Educational Activity Syllabus',
+                  text: 'Syllabus Attività Formativa',
                   font: 'Aptos Display (Titoli)',
                   size: 40,
                   bold: true,

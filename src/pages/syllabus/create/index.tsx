@@ -11,7 +11,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { v4 as UUIDv4 } from 'uuid';
 import EduChat from '../../../components/Chat/EduChat';
 import ArrayField from '../../../components/Forms/Fields/ArrayField';
@@ -104,6 +104,14 @@ export default function SyllabusCreatePage() {
       value,
     })
   );
+
+  const containerStartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerStartRef.current) {
+      containerStartRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [aiHelp]);
 
   const handleDefineSyllabus = () => {
     if (!subjectArea || subjectArea == '') {
@@ -263,6 +271,7 @@ export default function SyllabusCreatePage() {
           textAlign="center"
           py={2}
         >
+          <div ref={containerStartRef} />
           <Box title={!aiHelp ? 'AI Help' : 'Custom'} hidden={!aiHelp}>
             <IconButton
               aria-label={'ai-custom'}
@@ -383,10 +392,7 @@ export default function SyllabusCreatePage() {
                         educational_level: val as EducationLevel,
                       })
                     }
-                    options={[
-                      { label: 'University', value: 'UNIVERSITY' },
-                      { label: 'High School', value: 'HIGH_SCHOOL' },
-                    ]}
+                    options={educationOptions}
                   />
                   <EnumField
                     label="Language"
