@@ -41,7 +41,7 @@ const SyllabusDashboard = () => {
         ]);
       })
       .catch((err) => {
-        console.error('Failed to load syllabuses:', err.message);
+        console.error('Failed to load syllabi:', err.message);
       });
   }, [API]);
 
@@ -76,14 +76,14 @@ const SyllabusDashboard = () => {
         />
 
         <Heading size="lg" mb={4}>
-          📚 Syllabuses
+          📚 Syllabi
         </Heading>
 
         <SearchBar
           inputValue={searchValue}
           setInputValue={setSearchValue}
           items={suggestions}
-          placeholder="Search syllabuses by title or description..."
+          placeholder="Search syllabi by title or description..."
         />
 
         <Flex justify="flex-end" mt={4} mb={6}>

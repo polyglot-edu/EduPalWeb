@@ -43,7 +43,7 @@ const sections: Section[] = [
         active: true,
       },
       {
-        label: 'Syllabuses',
+        label: 'Syllabi',
         icon: <MdMenuBook />,
         route: '/syllabus',
         active: true,
@@ -162,6 +162,8 @@ export const MainSideBar = ({ onNavigate, isOpen, onToggle }: SidebarProps) => {
             <VStack spacing={1} align="stretch">
               {section.items.map((item) => (
                 <Button
+                  title={!item.active ? 'Coming soon' : item.label}
+                  isDisabled={!item.active}
                   key={item.label}
                   variant="ghost"
                   justifyContent={isOpen ? 'flex-start' : 'center'}
