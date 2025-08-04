@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { v4 as UUIDv4 } from 'uuid';
+import EduChat from '../../../components/Chat/EduChat';
 import ArrayField from '../../../components/Forms/Fields/ArrayField';
 import EnumField from '../../../components/Forms/Fields/EnumField';
 import InputTextField from '../../../components/Forms/Fields/InputTextField';
@@ -344,6 +345,10 @@ export default function SyllabusCreatePage() {
                     </Button>
                   </Box>
                 </Box>
+                <EduChat
+                  usage="define_syllabus"
+                  responseDataState={[definedSyllabus, setDefinedSyllabus]}
+                />
               </>
             ) : (
               <>
