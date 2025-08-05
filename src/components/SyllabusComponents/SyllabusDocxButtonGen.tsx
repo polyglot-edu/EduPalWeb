@@ -133,10 +133,18 @@ const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
         })
         .filter(Boolean)
         .join('\n\n');
+
       return new Table({
         layout: TableLayoutType.FIXED,
         width: { size: 100, type: WidthType.PERCENTAGE },
-        columnWidths: [1800, 1800, 1800, 1800, 7200], // in twips (~12.5%, 50%)
+        columnWidths: [
+          1600,
+          1600,
+          1600,
+          1600,
+          language == 'italian' ? 7000 : 1600,
+          language == 'english' ? 7000 : 1600,
+        ], // in twips (~12.5%, 50%)
         rows: [
           [
             'Tipo Testo',
@@ -220,7 +228,7 @@ const SyllabusDocxButton: React.FC<Props> = ({ syllabus }) => {
           ],
           ['NON COMPILARE!', 'PROGR_EST', '1', 'No', null, null],
         ].map(
-          ([type, codeType, maxChar, required, valueIt,valueEn], rowIndex) =>
+          ([type, codeType, maxChar, required, valueIt, valueEn], rowIndex) =>
             new TableRow({
               children: [
                 new TableCell({

@@ -28,8 +28,8 @@ export default function EditSyllabusPage({
   const { user } = useUser();
   const { isOpen: dOpen, onClose: dOnClose, onOpen: dOnOpen } = useDisclosure();
   const { isOpen: sOpen, onClose: sOnClose, onOpen: sOnOpen } = useDisclosure();
-
   const [syllabus, setSyllabus] = useState<PolyglotSyllabus | undefined>();
+  const [selectedTopic, setSelectedTopic] = useState<number[]>();
   const [originalSyllabus, setOriginalSyllabus] = useState<PolyglotSyllabus>();
 
   const toast = useToast();
@@ -82,6 +82,12 @@ export default function EditSyllabusPage({
         console.error(err);
       });
   }, [syllabusId, API]);
+
+  useEffect(() => {
+    if (syllabus)
+      if (syllabus?.topics?.length)
+        setSelectedTopic(syllabus.topics.map((_, index) => index));
+  }, [syllabus]);
 
   const handleSaveSyllabus = () => {
     if (!syllabus) return;
@@ -187,16 +193,7 @@ export default function EditSyllabusPage({
               syllabus.referenceMaterials,
               (v: any) => setSyllabus({ ...syllabus, referenceMaterials: v }),
             ]}
-            selectedTopicState={[
-              { topic: syllabus.topics[0], index: -1 },
-              (v) => {
-                const newVal = typeof v === 'function' ? v(undefined) : v;
-
-                if (newVal) {
-                  setSyllabus({ ...syllabus, topics: [newVal.topic] });
-                }
-              },
-            ]}
+            selectedTopicState={[selectedTopic || [], setSelectedTopic]}
             studyregulationState={[
               syllabus.studyRegulation,
               (v: any) => setSyllabus({ ...syllabus, studyRegulation: v }),

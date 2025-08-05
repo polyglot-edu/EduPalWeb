@@ -18,7 +18,7 @@ import ArrayField from '../../../components/Forms/Fields/ArrayField';
 import EnumField from '../../../components/Forms/Fields/EnumField';
 import InputTextField from '../../../components/Forms/Fields/InputTextField';
 import MarkDownField from '../../../components/Forms/Fields/MarkDownField';
-import SyllabusTopicsField from '../../../components/Forms/Fields/SyllabusTopicsField';
+import SyllabusTopicsFieldMultiple from '../../../components/Forms/Fields/SyllabusTopicsFieldMultiple';
 import NavBar from '../../../components/NavBars/NavBar';
 import MainSideBar from '../../../components/Sidebar/MainSidebar';
 import EditSyllabus from '../../../components/SyllabusComponents/EditSyllabus';
@@ -27,7 +27,6 @@ import { API } from '../../../data/api';
 import {
   AIDefineSyllabusResponse,
   EducationLevel,
-  SyllabusTopic,
 } from '../../../types/polyglotElements';
 
 export default function SyllabusCreatePage() {
@@ -35,24 +34,7 @@ export default function SyllabusCreatePage() {
   const handleNavigate = (route: string) => console.log('Navigate to:', route);
   const { user } = useUser();
 
-  const [selectedTopic, setSelectedTopic] = useState<
-    | {
-        topic: SyllabusTopic;
-        index: number;
-      }
-    | undefined
-  >({
-    topic: {
-      macro_topic: '',
-      details: '',
-      learning_objectives: {
-        knowledge: '',
-        skills: '',
-        attitude: '',
-      },
-    },
-    index: -1,
-  });
+  const [selectedTopic, setSelectedTopic] = useState<number[]>([]);
 
   const [definedSyllabus, setDefinedSyllabus] = useState<
     AIDefineSyllabusResponse | undefined
@@ -175,6 +157,10 @@ export default function SyllabusCreatePage() {
 
     if (!selectedTopic) return;
 
+    const topicsSelected = definedSyllabus.topics.filter((topic, index) =>
+      selectedTopic.includes(index)
+    );
+
     API.createNewPolyglotSyllabus({
       _id: UUIDv4(),
       subjectArea: definedSyllabus.general_subject,
@@ -183,7 +169,7 @@ export default function SyllabusCreatePage() {
       title: definedSyllabus.title,
       description: definedSyllabus.description,
       goals: definedSyllabus.goals,
-      topics: [selectedTopic.topic],
+      topics: topicsSelected,
       prerequisites: definedSyllabus.prerequisites,
       language: definedSyllabus.language,
       author: {
@@ -433,7 +419,7 @@ export default function SyllabusCreatePage() {
                   Define the structure of your syllabus by selecting or editing
                   topics.
                 </FormLabel>
-                <SyllabusTopicsField
+                <SyllabusTopicsFieldMultiple
                   topics={definedSyllabus.topics}
                   updateTopics={(val: any) =>
                     setDefinedSyllabus({

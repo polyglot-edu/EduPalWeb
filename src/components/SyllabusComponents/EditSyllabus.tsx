@@ -1,4 +1,4 @@
-import { Box, Center, Flex, FormLabel, SimpleGrid } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, FormLabel, SimpleGrid } from '@chakra-ui/react';
 import {
   EducationLevel,
   LearningObjectives,
@@ -26,12 +26,7 @@ type Props = {
   teachingMethodsState: [string[], (v: string[]) => void];
   assessmentMethodsState: [string[], (v: string[]) => void];
   referenceMaterialsState: [string[], (v: string[]) => void];
-  selectedTopicState: [
-    { topic: SyllabusTopic; index: number } | undefined,
-    React.Dispatch<
-      React.SetStateAction<{ topic: SyllabusTopic; index: number } | undefined>
-    >
-  ];
+  selectedTopicState: [number[], React.Dispatch<number[]>];
   studyregulationState: [string, (v: string) => void];
   curriculumPathState: [string, (v: string) => void];
   studentPartitionState: [string, (v: string) => void];
@@ -86,19 +81,20 @@ export default function EditSyllabus({
 
   const updateTopicField = (
     field: keyof SyllabusTopic | keyof LearningObjectives,
-    value: string
+    value: string,
+    index: number
   ) => {
-    if (!selectedTopic) return;
-    const updatedTopic = selectedTopic.topic;
+    const updatedTopics: SyllabusTopic[] = [...definedSyllabus.topics];
+
     if (field === 'macro_topic' || field === 'details') {
-      updatedTopic[field] = value;
+      updatedTopics[index][field] = value;
     } else {
-      updatedTopic.learning_objectives = {
-        ...updatedTopic.learning_objectives,
+      updatedTopics[index].learning_objectives = {
+        ...updatedTopics[index].learning_objectives,
         [field]: value,
       };
     }
-    setSelectedTopic({ topic: updatedTopic, index: selectedTopic.index });
+    setDefinedSyllabus((prev: any) => ({ ...prev, topics: updatedTopics }));
   };
 
   const educationOptions = Object.entries(EducationLevel).map(
@@ -107,6 +103,39 @@ export default function EditSyllabus({
       value,
     })
   );
+
+  const addTopic = () => {
+    setDefinedSyllabus((prev: { topics: any }) => ({
+      ...prev,
+      topics: [
+        ...prev.topics,
+        {
+          macro_topic: '',
+          details: '',
+          learning_objectives: {
+            knowledge: '',
+            skills: '',
+            attitude: '',
+          },
+        },
+      ],
+    }));
+    setSelectedTopic([...selectedTopic, definedSyllabus.topics.length]);
+  };
+
+  const removeTopic = (indexToRemove: number) => {
+    setDefinedSyllabus((prev: { topics: any[] }) => {
+      const updatedTopics = prev.topics.filter((_, i) => i !== indexToRemove);
+      return { ...prev, topics: updatedTopics };
+    });
+
+    setSelectedTopic(
+      selectedTopic
+        .filter((i) => i !== indexToRemove)
+        .map((i) => (i > indexToRemove ? i - 1 : i))
+    );
+  };
+
   return (
     <Box>
       <StepHeading
@@ -175,50 +204,97 @@ export default function EditSyllabus({
           setDefinedSyllabus({ ...definedSyllabus, description: val })
         }
       />
+      <Box pt="10px">
+        <Center>
+          <FormLabel>Syllabus Topics</FormLabel>
+        </Center>
 
-      <Box pt={'10px'}>
-        <Center>
-          <FormLabel>Course Topic</FormLabel>
+        {selectedTopic &&
+          selectedTopic.map((index) => {
+            const topic = definedSyllabus.topics[index];
+            if (!topic) return null;
+
+            return (
+              <Box
+                key={index}
+                mt="3"
+                borderWidth="1px"
+                borderRadius="md"
+                p={3}
+                bg="purple.100"
+                _hover={{
+                  bg: 'purple.200',
+                  cursor: 'pointer',
+                }}
+              >
+                <Flex justify="space-between" align="center" mb={2}>
+                  <FormLabel m={0}>Topic {index + 1}</FormLabel>
+                  <Button
+                    size="xs"
+                    colorScheme="red"
+                    onClick={() => removeTopic(index)}
+                  >
+                    Remove
+                  </Button>
+                </Flex>
+
+                <InputTextField
+                  label="Macro Topic"
+                  value={topic.macro_topic || ''}
+                  setValue={(val) =>
+                    updateTopicField('macro_topic', val, index)
+                  }
+                  height="2rem"
+                />
+
+                <InputTextField
+                  label="Details"
+                  value={topic.details || ''}
+                  setValue={(val) => updateTopicField('details', val, index)}
+                  height="2rem"
+                />
+
+                <Center>
+                  <FormLabel>Learning Objective</FormLabel>
+                </Center>
+
+                <SimpleGrid columns={{ base: 3, md: 3 }} spacing={4} mb={4}>
+                  <TextField
+                    label="Knowledge"
+                    isTextArea
+                    value={topic.learning_objectives?.knowledge || ''}
+                    setValue={(val) =>
+                      updateTopicField('knowledge', val, index)
+                    }
+                    height="2rem"
+                  />
+                  <TextField
+                    label="Skills"
+                    isTextArea
+                    value={topic.learning_objectives?.skills || ''}
+                    setValue={(val) => updateTopicField('skills', val, index)}
+                    height="2rem"
+                  />
+                  <TextField
+                    label="Attitude"
+                    isTextArea
+                    value={topic.learning_objectives?.attitude || ''}
+                    setValue={(val) => updateTopicField('attitude', val, index)}
+                    height="2rem"
+                  />
+                </SimpleGrid>
+              </Box>
+            );
+          })}
+
+        {/* Pulsante per aggiungere un topic */}
+        <Center mt={4}>
+          <Button size="sm" colorScheme="purple" onClick={addTopic}>
+            + Add Topic
+          </Button>
         </Center>
-        <InputTextField
-          label="Macro Topic"
-          value={selectedTopic?.topic.macro_topic || ''}
-          setValue={(val) => updateTopicField('macro_topic', val)}
-          height="2rem"
-        />
-        <InputTextField
-          label="Details"
-          value={selectedTopic?.topic.details || ''}
-          setValue={(val) => updateTopicField('details', val)}
-          height="2rem"
-        />
-        <Center>
-          <FormLabel>Learning Objective</FormLabel>
-        </Center>
-        <SimpleGrid columns={{ base: 3, md: 3 }} spacing={4} mb={4}>
-          <TextField
-            label="Knowledge"
-            isTextArea
-            value={selectedTopic?.topic.learning_objectives.knowledge || ''}
-            setValue={(val) => updateTopicField('knowledge', val)}
-            height="2rem"
-          />
-          <TextField
-            label="Skills"
-            isTextArea
-            value={selectedTopic?.topic.learning_objectives.skills || ''}
-            setValue={(val) => updateTopicField('skills', val)}
-            height="2rem"
-          />
-          <TextField
-            label="Attitude"
-            isTextArea
-            value={selectedTopic?.topic.learning_objectives.attitude || ''}
-            setValue={(val) => updateTopicField('attitude', val)}
-            height="2rem"
-          />
-        </SimpleGrid>
       </Box>
+
       <Flex gap={6} wrap={{ base: 'wrap', md: 'nowrap' }} mt={4}>
         <Box w={{ base: '100%', md: '48%' }}>
           <ArrayField

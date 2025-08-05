@@ -9,7 +9,6 @@ import {
   Image,
   Stack,
   Text,
-  Tooltip,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -57,160 +56,165 @@ export const CourseCardView = ({ course, onView }: CourseCardProps) => {
   }
 
   return (
-    <Box
-      bg={cardBg}
-      p={6}
-      borderRadius="lg"
-      boxShadow="xl"
-      borderColor={borderColor}
-    >
-      <Image
-        src={img || defaultImg.src}
-        alt="Course image"
-        objectFit="cover"
-        w="100%"
-        h="250px"
-        mb={4}
-        borderRadius="md"
-      />
+    <Box bg={cardBg} borderRadius="lg" boxShadow="xl" borderColor={borderColor}>
+      <Box p={6} pb={0}>
+        <Image
+          src={img || defaultImg.src}
+          alt="Course image"
+          objectFit="cover"
+          w="100%"
+          h="250px"
+          mb={4}
+          borderRadius="md"
+        />
 
-      <Flex justify="space-between" align="center" mb={2}>
-        <Heading size="lg">{title || 'Untitled Course'}</Heading>
-        <Badge colorScheme={published ? 'green' : 'yellow'}>
-          {published ? 'Published' : 'Draft'}
-        </Badge>
-      </Flex>
+        <Flex justify="space-between" align="center" mb={2}>
+          <Heading size="lg">{title || 'Untitled Course'}</Heading>
+          <Badge colorScheme={published ? 'green' : 'yellow'}>
+            {published ? 'Published' : 'Draft'}
+          </Badge>
+        </Flex>
 
-      <Text fontSize="md" mb={2} color="gray.600">
-        {description || 'No description provided.'}
-      </Text>
+        <Text fontSize="md" mb={2} color="gray.600">
+          {description || 'No description provided.'}
+        </Text>
 
-      <Flex wrap="wrap" gap={2} mb={4}>
-        {macro_subject && <Badge colorScheme="blue">{macro_subject}</Badge>}
-        {education_level && (
-          <Badge colorScheme="purple">{education_level}</Badge>
+        <Flex wrap="wrap" gap={2} mb={4}>
+          {macro_subject && <Badge colorScheme="blue">{macro_subject}</Badge>}
+          {education_level && (
+            <Badge colorScheme="purple">{education_level}</Badge>
+          )}
+          {language && <Badge colorScheme="orange">{language}</Badge>}
+          {duration && <Badge colorScheme="teal">Duration: {duration}</Badge>}
+          {classContext && <Badge colorScheme="cyan">{classContext}</Badge>}
+        </Flex>
+
+        {tags?.length > 0 && (
+          <Stack direction="row" wrap="wrap" mb={4}>
+            {tags.map((tag, idx) => (
+              <Badge key={idx} colorScheme={tag.color} mr={1}>
+                {tag.name}
+              </Badge>
+            ))}
+          </Stack>
         )}
-        {language && <Badge colorScheme="orange">{language}</Badge>}
-        {duration && <Badge colorScheme="teal">Duration: {duration}</Badge>}
-        {classContext && <Badge colorScheme="cyan">{classContext}</Badge>}
-      </Flex>
 
-      {tags?.length > 0 && (
-        <Stack direction="row" wrap="wrap" mb={4}>
-          {tags.map((tag, idx) => (
-            <Badge key={idx} colorScheme={tag.color} mr={1}>
-              {tag.name}
-            </Badge>
-          ))}
-        </Stack>
-      )}
-
-      {learningObjectives && (
-        <>
-          <Text fontWeight="bold">Learning Objectives:</Text>
-          <Box pl={4} mt={1}>
-            <Text>
-              <strong>Knowledge:</strong> {learningObjectives.knowledge}
-            </Text>
-            <Text>
-              <strong>Skills:</strong> {learningObjectives.skills}
-            </Text>
-            <Text>
-              <strong>Attitude:</strong> {learningObjectives.attitude}
-            </Text>
-          </Box>
-        </>
-      )}
-
-      {topics?.length > 0 && (
-        <Box mb={4}>
-          <Text fontWeight="bold">Topics:</Text>
-          <Text>{topics.join(', ')}</Text>
-        </Box>
-      )}
-
-      <Divider my={4} />
-
-      <Heading size="md" mb={2}>
-        Flows
-      </Heading>
-      <Stack spacing={4}>
-        {flows.map((flow, index) => {
-          return (
-            <Box
-              key={index}
-              p={4}
-              borderWidth="1px"
-              borderRadius="md"
-              borderColor={borderColor}
-            >
-              <Flex justify="space-between" align="center">
-                <Box>
-                  <Text fontWeight="bold" fontSize="lg">
-                    {flow.title}
-                  </Text>
-                  <Text color="gray.500" fontSize="sm">
-                    {flow.description}
-                  </Text>
-                  <Flex mt={2} wrap="wrap" gap={2}>
-                    {flow.tags?.map((tag, idx) => (
-                      <Badge key={idx} colorScheme={tag.color}>
-                        {tag.name}
-                      </Badge>
-                    ))}
-                  </Flex>
-                  <Text mt={2}>Activities: {flow.nodes?.length ?? 0}</Text>
-                </Box>
-
-                <Button
-                  onClick={() =>
-                    router.push(
-                      'https://staging.polyglot-edu.com/flows/' + flow._id
-                    )
-                  }
-                  size="sm"
-                >
-                  Open Learning Path
-                </Button>
-              </Flex>
+        {learningObjectives && (
+          <>
+            <Text fontWeight="bold">Learning Objectives:</Text>
+            <Box pl={4} mt={1}>
+              <Text>
+                <strong>Knowledge:</strong> {learningObjectives.knowledge}
+              </Text>
+              <Text>
+                <strong>Skills:</strong> {learningObjectives.skills}
+              </Text>
+              <Text>
+                <strong>Attitude:</strong> {learningObjectives.attitude}
+              </Text>
             </Box>
-          );
-        })}
-      </Stack>
+          </>
+        )}
 
-      <Divider my={6} />
+        {topics?.length > 0 && (
+          <Box mb={4}>
+            <Text fontWeight="bold">Topics:</Text>
+            <Text>{topics.join(', ')}</Text>
+          </Box>
+        )}
 
-      <Flex justify="space-between" fontSize="sm" color="gray.500">
-        <Flex align="center" gap={1}>
-          <Icon as={FaUser} /> {author?.username || 'Anonymous'}
+        <Divider my={4} />
+
+        <Heading size="md" mb={2}>
+          Flows
+        </Heading>
+        <Stack spacing={4}>
+          {flows.map((flow, index) => {
+            return (
+              <Box
+                key={index}
+                p={4}
+                borderWidth="1px"
+                borderRadius="md"
+                borderColor={borderColor}
+              >
+                <Flex justify="space-between" align="center">
+                  <Box>
+                    <Text fontWeight="bold" fontSize="lg">
+                      {flow.title}
+                    </Text>
+                    <Text color="gray.500" fontSize="sm">
+                      {flow.description}
+                    </Text>
+                    <Flex mt={2} wrap="wrap" gap={2}>
+                      {flow.tags?.map((tag, idx) => (
+                        <Badge key={idx} colorScheme={tag.color}>
+                          {tag.name}
+                        </Badge>
+                      ))}
+                    </Flex>
+                    <Text mt={2}>Activities: {flow.nodes?.length ?? 0}</Text>
+                  </Box>
+
+                  <Button
+                    onClick={() =>
+                      router.push(
+                        'https://staging.polyglot-edu.com/flows/' + flow._id
+                      )
+                    }
+                    size="sm"
+                  >
+                    Open Learning Path
+                  </Button>
+                </Flex>
+              </Box>
+            );
+          })}
+        </Stack>
+
+        <Divider my={6} />
+
+        <Flex justify="space-between" fontSize="sm" color="gray.500">
+          <Flex align="center" gap={1}>
+            <Icon as={FaUser} /> {author?.username || 'Anonymous'}
+          </Flex>
+          <Flex gap={3}>
+            <Text>{nSubscribed} enrolled</Text>
+            <Text>{nCompleted} completed</Text>
+          </Flex>
         </Flex>
-        <Flex gap={3}>
-          <Text>{nSubscribed} enrolled</Text>
-          <Text>{nCompleted} completed</Text>
-        </Flex>
-      </Flex>
-
-      <Stack direction="row" spacing={4} mt={6}>
-        <Tooltip label="View Course">
+      </Box>
+      <Box
+        bg="rgba(244, 232, 193, 0.45)"
+        borderTop="1px solid"
+        borderColor="purple.200"
+        py={3}
+      >
+        <Flex justify="space-evenly">
           <Button
-            leftIcon={<Icon as={MdVisibility} />}
-            onClick={() => onView?.(_id)}
-            title="Coming Soon"
-            isDisabled
-          >
-            View
-          </Button>
-        </Tooltip>
-        <Tooltip label="Edit Course">
-          <Button
-            leftIcon={<Icon as={MdEdit} />}
-            variant="outline"
+            leftIcon={<MdEdit />}
+            bg="purple.300"
+            color="white"
+            _hover={{ bg: 'purple.400' }}
+            size="sm"
             onClick={() => router.push('/courses/' + course._id + '/edit')}
           >
             Edit
           </Button>
-        </Tooltip>
-      </Stack>
+          <Button
+            leftIcon={<MdVisibility />}
+            bg="purple.600"
+            color="white"
+            _hover={{ bg: 'purple.700' }}
+            size="sm"
+            onClick={() => onView?.(_id)}
+            isDisabled
+            title="Coming Soon"
+          >
+            View
+          </Button>
+        </Flex>
+      </Box>
     </Box>
   );
 };

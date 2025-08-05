@@ -43,8 +43,7 @@ const TextField = ({
           borderColor="grey"
           borderRadius="md"
           padding="0.375rem 0.75rem"
-          height={!isTextArea ? height : undefined}
-          minHeight={isTextArea ? '2.5rem' : undefined}
+          maxHeight={isTextArea ? '100px' : undefined}
           size="sm"
         />
       </FormControl>

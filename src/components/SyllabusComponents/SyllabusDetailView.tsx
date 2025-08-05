@@ -12,6 +12,7 @@ import {
   Td,
   Text,
   Tr,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { MdEdit, MdVisibility } from 'react-icons/md';
@@ -24,20 +25,19 @@ type Props = {
 
 export default function SyllabusDetailView({ syllabus }: Props) {
   const router = useRouter();
-  console.log('Syllabus Detail View:', syllabus);
-  console.log(syllabus.topics);
+    console.log('Syllabus Detail View:', syllabus);
+    const cardBg = useColorModeValue('white', 'gray.800');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
+
   if (!syllabus) {
     return <Box>No syllabus data available.</Box>;
   }
   return (
     <Box
-      bg="white"
+      bg={cardBg}
       borderRadius="lg"
-      boxShadow="md"
-      borderWidth="2px"
-      borderColor="purple.300"
-      overflow="hidden"
-      width="100%"
+      boxShadow="xl"
+      borderColor={borderColor}
     >
       <Box p={6}>
         <SyllabusDocxButton syllabus={syllabus} />
@@ -93,34 +93,49 @@ export default function SyllabusDetailView({ syllabus }: Props) {
             </Stack>
           </Box>
         </SimpleGrid>
-
-        {syllabus.topics && syllabus.topics[0].learning_objectives && (
+        {syllabus.topics && syllabus.topics.length > 0 && (
           <Box mb={6}>
-            <Heading size="md" mb={2}>
+            <Heading size="md" mb={4}>
               Learning Objectives
             </Heading>
-            <Table variant="simple" size="sm">
-              <Tbody>
-                <Tr>
-                  <Td>
-                    <b>Knowledge</b>
-                  </Td>
-                  <Td>{syllabus.topics[0].learning_objectives.knowledge}</Td>
-                </Tr>
-                <Tr>
-                  <Td>
-                    <b>Skills</b>
-                  </Td>
-                  <Td>{syllabus.topics[0].learning_objectives.skills}</Td>
-                </Tr>
-                <Tr>
-                  <Td>
-                    <b>Attitude</b>
-                  </Td>
-                  <Td>{syllabus.topics[0].learning_objectives.attitude}</Td>
-                </Tr>
-              </Tbody>
-            </Table>
+
+            {syllabus.topics.map((topic, index) => {
+              const lo = topic.learning_objectives;
+              if (!lo) return null;
+
+              return (
+                <Box
+                  key={index}
+                  mb={6}
+                  p={4}
+                  borderWidth="1px"
+                  borderRadius="md"
+                >
+                  <Heading size="sm" mb={3}>
+                    Topic {index + 1}: {topic.macro_topic || 'Untitled'}
+                  </Heading>
+                  <Text size="sm">{topic.details}</Text>
+                  <Table variant="striped" size="sm" mt={'1'}>
+                    <Tbody>
+                      <Tr>
+                        <Td fontWeight="bold" width="150px">
+                          Knowledge
+                        </Td>
+                        <Td>{lo.knowledge || '-'}</Td>
+                      </Tr>
+                      <Tr>
+                        <Td fontWeight="bold">Skills</Td>
+                        <Td>{lo.skills || '-'}</Td>
+                      </Tr>
+                      <Tr>
+                        <Td fontWeight="bold">Attitude</Td>
+                        <Td>{lo.attitude || '-'}</Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </Box>
+              );
+            })}
           </Box>
         )}
 
@@ -201,7 +216,6 @@ export default function SyllabusDetailView({ syllabus }: Props) {
         </SimpleGrid>
       </Box>
 
-      {/* Footer Actions */}
       <Box
         bg="rgba(244, 232, 193, 0.45)"
         borderTop="1px solid"
