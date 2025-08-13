@@ -1,15 +1,16 @@
 import { MarkerType } from 'reactflow';
 import { v4 as UUIDv4 } from 'uuid';
 import {
-  AIExerciseGenerated,
+  AIExerciseResponse,
   AIExerciseType,
   AIMaterialGenerated,
+  AIMaterialType,
   AIPlanLessonResponse,
   AnalyzedMaterial,
   EducationLevel,
+  GeneratedActivity,
   LearningObjectives,
   LearningOutcome,
-  MaterialType,
   PlanLessonNode,
   PolyglotCourse,
   PolyglotEdge,
@@ -28,10 +29,13 @@ function shuffleArray<T>(array: T[]) {
   return arr;
 }
 
-const dataFactory: Record<string, (values: AIExerciseGenerated) => any> = {
-  OpenQuestionNode: (values) => ({
+const dataFactory: Record<
+  string,
+  (values: GeneratedActivity, material: string) => any
+> = {
+  OpenQuestionNode: (values, material) => ({
     question: values.assignment,
-    material: values.material,
+    material: material,
     aiQuestion: false,
     possibleAnswer: values.solutions[0],
   }),
@@ -99,35 +103,18 @@ export const generateLessonActivities = async ({
   language,
 }: GenerateLessonActivitiesProp): Promise<PolyglotNode[]> => {
   const handleResponseNewExercise = (response: any, x: number, y: number) => {
-    const exerciseResponse: AIExerciseGenerated = response.data;
-    const _id = UUIDv4();
-    const typeNode =
-      QuestionTypeMap.find((type) => type.key == exerciseResponse.type)
-        ?.nodeType || 'OpenQuestionNode';
-    const data = dataFactory[typeNode]?.(exerciseResponse) || null;
-    generatedNodes.push({
-      _id: _id,
-      type: typeNode,
-      title: exerciseResponse.topic,
-      description: exerciseResponse.topic_explanation,
-      platform: 'WebApp',
-      difficulty: 1,
-      data: data,
-      reactFlow: {
-        id: _id,
-        type: typeNode,
-        position: { x, y },
-        width: 88,
-        height: 46,
-        selected: false,
-        dragging: false,
-        positionAbsolute: { x, y },
-        data: {},
-      },
-    });
-    setFlowNodes((prev) => [
-      ...prev,
-      {
+    const exerciseResponse: AIExerciseResponse = response.data;
+    exerciseResponse.params.map((activity, index) => {
+      const _id = UUIDv4();
+      const typeNode =
+        QuestionTypeMap.find((type) => type.key == activity.type)?.nodeType ||
+        'OpenQuestionNode';
+      const data =
+        dataFactory[typeNode]?.(
+          exerciseResponse.generated_activities[index],
+          exerciseResponse.material
+        ) || null;
+      generatedNodes.push({
         _id: _id,
         type: typeNode,
         title: exerciseResponse.topic,
@@ -146,30 +133,32 @@ export const generateLessonActivities = async ({
           positionAbsolute: { x, y },
           data: {},
         },
-      },
-    ]);
-    console.log('exercise generation');
-    console.log({
-      _id: _id,
-      type: typeNode,
-      title: exerciseResponse.topic,
-      description: exerciseResponse.topic_explanation,
-      platform: 'WebApp',
-      difficulty: 1,
-      data: data,
-      reactFlow: {
-        id: _id,
-        type: typeNode,
-        position: { x, y },
-        width: 88,
-        height: 46,
-        selected: false,
-        dragging: false,
-        positionAbsolute: { x, y },
-        data: {},
-      },
+      });
+      setFlowNodes((prev) => [
+        ...prev,
+        {
+          _id: _id,
+          type: typeNode,
+          title: exerciseResponse.topic,
+          description: exerciseResponse.topic_explanation,
+          platform: 'WebApp',
+          difficulty: 1,
+          data: data,
+          reactFlow: {
+            id: _id,
+            type: typeNode,
+            position: { x, y },
+            width: 88,
+            height: 46,
+            selected: false,
+            dragging: false,
+            positionAbsolute: { x, y },
+            data: {},
+          },
+        },
+      ]);
+      console.log('exercise generation');
     });
-    console.log('________________________');
   };
 
   const generatedNodes: PolyglotNode[] = [];
@@ -177,7 +166,6 @@ export const generateLessonActivities = async ({
   let y = -210;
   const doneTopics: { topic: string; explanation: string }[] = [];
 
-  // Usa for...of per aspettare correttamente
   for (const lNode of lessonNodes) {
     const currentTopic = lNode.topic;
     const explanation =
@@ -218,22 +206,31 @@ export const generateLessonActivities = async ({
           learning_outcome: lNode.learning_outcome,
           duration: lNode.duration,
           language: language,
+          type_of_file: 'md',
           model: 'Gemini',
-        } as MaterialType);
+        } as AIMaterialType);
 
-        const readMaterialGen: AIMaterialGenerated = response.data;
+        console.log(response);
+        console.log('-------------------');
+
+        if (!response) throw 'Error generate';
+
+        const readMaterialGen: AIMaterialGenerated = {
+          type_of_file: 'md',
+          content: response.data,
+        };
         const _id = UUIDv4();
         setFlowNodes((prev) => [
           ...prev,
           {
             _id,
             type: 'ReadMaterialNode',
-            title: readMaterialGen.title,
-            description: readMaterialGen.macro_subject,
+            title: generatedLesson.title,
+            description: generatedLesson.macro_subject,
             difficulty: 1,
             platform: 'WebApp',
             data: {
-              text: readMaterialGen.material,
+              text: readMaterialGen.content,
               link: '',
             },
             reactFlow: {
@@ -252,12 +249,12 @@ export const generateLessonActivities = async ({
         generatedNodes.push({
           _id,
           type: 'ReadMaterialNode',
-          title: readMaterialGen.title,
-          description: readMaterialGen.macro_subject,
+          title: generatedLesson.title,
+          description: generatedLesson.macro_subject,
           difficulty: 1,
           platform: 'WebApp',
           data: {
-            text: readMaterialGen.material,
+            text: readMaterialGen.content,
             link: '',
           },
           reactFlow: {
@@ -272,6 +269,11 @@ export const generateLessonActivities = async ({
             data: {},
           },
         });
+        x += 450;
+        if (x > 1605) {
+          x = -195;
+          y += 195;
+        }
       } catch (error) {
         console.error('Error on material generation:', error);
       }
@@ -292,13 +294,17 @@ export const generateLessonActivities = async ({
         education_level: generatedLesson.education_level,
         learning_outcome,
         material: material,
-        solutions_number: lNode.data.solutions_number || 1,
-        distractors_number: lNode.data.distractors_number || 2,
-        easily_discardable_distractors_number:
-          lNode.data.easily_discardable_distractors_number || 1,
-        type: typeExercise,
+        params: [
+          {
+            solutions_number: lNode.data.solutions_number || 1,
+            distractors_number: lNode.data.distractors_number || 2,
+            easily_discardable_distractors_number:
+              lNode.data.easily_discardable_distractors_number || 1,
+            type: typeExercise,
+          },
+        ],
         language: generatedLesson.language,
-        model: 'Gemini',
+        model: 'Gemini', //add openai //add OpenAI
       } as AIExerciseType);
 
       handleResponseNewExercise(response, x, y);
@@ -311,8 +317,6 @@ export const generateLessonActivities = async ({
       x = -195;
       y += 195;
     }
-
-    console.log(lNode);
   }
 
   // aggiungi nodo finale
@@ -391,6 +395,7 @@ export const generateLessonFlow = async ({
       learning_outcome: analysedMaterial.learning_outcome,
     });
   }
+
   for (let i = 0; i < length; i++) {
     const node = generatedNodes[i];
     const nextNode = generatedNodes[i + 1];
@@ -441,7 +446,8 @@ export const generateLessonFlow = async ({
             sourceMaterial: material,
             learning_outcome: analysedMaterial.learning_outcome,
             education_level: analysedMaterial.education_level,
-            topicsAI: toDoTopics,
+            topicsAI: analysedMaterial.topics,
+            mandatoryTopics: [],
             language: analysedMaterial.language,
             macro_subject: analysedMaterial.macro_subject,
             title: analysedMaterial.title,

@@ -1,14 +1,13 @@
 import axiosCreate, { AxiosInstance, AxiosResponse } from 'axios';
-import { create } from 'domain';
 import {
   AIChatMessage,
   AIDefineSyllabus,
   AIExerciseType,
+  AIMaterialType,
   AIPlanCourse,
   AIPlanLesson,
   AnalyseType,
   ManualProgressInfo,
-  MaterialType,
   PolyglotCourse,
   PolyglotCourseWithFlows,
   PolyglotFlow,
@@ -292,11 +291,8 @@ export const API = {
     );
   },
 
-  generateMaterial: (body: MaterialType): Promise<AxiosResponse> => {
-    return axios.post<{}, AxiosResponse, {}>(
-      `/api/openai/MaterialGenerator`,
-      body
-    );
+  generateMaterial: (body: AIMaterialType): Promise<any> => {
+    return axios.post(`/api/openai/MaterialGenerator`, body);
   },
 
   summarize: (body: SummerizerBody): Promise<AxiosResponse> => {

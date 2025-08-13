@@ -146,7 +146,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
       in_memory: false,
       system_instructions: currentConfig.system_instructions || '',
       resources: [],
-      model: 'Gemini',
+      model: 'Gemini', //add openai
     };
 
     setMessages((prev) => [...prev, userMessage as AIChatResponse]);

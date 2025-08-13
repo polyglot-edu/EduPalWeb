@@ -25,20 +25,15 @@ type Props = {
 
 export default function SyllabusDetailView({ syllabus }: Props) {
   const router = useRouter();
-    console.log('Syllabus Detail View:', syllabus);
-    const cardBg = useColorModeValue('white', 'gray.800');
-    const borderColor = useColorModeValue('gray.200', 'gray.600');
+  console.log('Syllabus Detail View:', syllabus);
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
 
   if (!syllabus) {
     return <Box>No syllabus data available.</Box>;
   }
   return (
-    <Box
-      bg={cardBg}
-      borderRadius="lg"
-      boxShadow="xl"
-      borderColor={borderColor}
-    >
+    <Box bg={cardBg} borderRadius="lg" boxShadow="xl" borderColor={borderColor}>
       <Box p={6}>
         <SyllabusDocxButton syllabus={syllabus} />
 

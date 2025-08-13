@@ -231,34 +231,44 @@ export type AnalyzedMaterial = {
   estimated_duration: number;
 };
 
-export type AIExerciseType = {
-  macro_subject: string;
-  topic: string;
-  education_level: EducationLevel;
-  learning_outcome: LearningOutcome;
-  material: string;
+export type ParamsExercise = {
   solutions_number: number;
   distractors_number: number;
   easily_discardable_distractors_number: number;
   type: string;
-  language: string;
-  model: string;
 };
 
-export type AIExerciseGenerated = {
+export type AIExerciseType = {
   macro_subject: string;
   topic: string;
   topic_explanation: string;
   education_level: EducationLevel;
   learning_outcome: LearningOutcome;
   material: string;
+  params: ParamsExercise[];
+  language: string;
+  model: string;
+};
+
+export type GeneratedActivity = {
   assignment: string;
   plus: string;
   solutions: string[];
   distractors: string[];
   easily_discardable_distractors: string[];
-  type: string;
+};
+
+export type AIExerciseResponse = {
+  macro_subject: string;
+  topic: string;
+  topic_explanation: string;
+  education_level: EducationLevel;
+  learning_outcome: LearningOutcome;
+  material: string;
+  params: ParamsExercise[];
+  generated_activities: GeneratedActivity[];
   language: string;
+  model: string;
 };
 
 export type LOType = {
@@ -268,7 +278,7 @@ export type LOType = {
   Context: string;
 };
 
-export type MaterialType = {
+export type AIMaterialType = {
   title: string;
   macro_subject: string;
   topics: LessonNodeAI[];
@@ -277,18 +287,10 @@ export type MaterialType = {
   duration: number;
   language: string;
   model: string;
+  type_of_file: string;
 };
 
-export type AIMaterialGenerated = {
-  title: string;
-  macro_subject: string;
-  topics: LessonNodeAI[];
-  education_level: EducationLevel;
-  learning_outcome: LearningOutcome;
-  duration: number;
-  material: string;
-  language: string;
-};
+export type AIMaterialGenerated = { type_of_file: string; content: any };
 
 export type SummerizerBody = {
   text: string;
@@ -306,7 +308,7 @@ export type AIPlanCourse = {
   number_of_lessons: number;
   duration_of_lesson: number;
   language: string;
-  model?: string; // opzionale, default "Gemini"
+  model: string; // opzionale, default "Gemini"
 };
 
 export type AIPlanLesson = {

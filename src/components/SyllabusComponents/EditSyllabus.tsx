@@ -1,4 +1,11 @@
-import { Box, Button, Center, Flex, FormLabel, SimpleGrid } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  FormLabel,
+  SimpleGrid,
+} from '@chakra-ui/react';
 import {
   EducationLevel,
   LearningObjectives,

@@ -96,7 +96,6 @@ const StepAIGeneration = ({
   >('course');
 
   useEffect(() => {
-    console.log(chatLessonResponseData);
     const seenTopics = new Set<string>();
     const topics: Topic[] = [];
 
@@ -281,7 +280,7 @@ const StepAIGeneration = ({
               number_of_lessons: numLessons,
               duration_of_lesson: lessonDuration,
               language: language,
-              model: 'Gemini',
+              model: 'Gemini', //add openai
             }}
           />
           <StepHeading
@@ -361,7 +360,7 @@ const StepAIGeneration = ({
               macro_subject: macroSubject,
               education_level: definedSyllabus.educational_level,
               context: context,
-              model: 'Gemini',
+              model: 'Gemini', //add openai
             }}
           />
           <StepHeading
