@@ -1,9 +1,8 @@
-import { Box, Button, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 import { AxiosResponse } from 'axios';
 import { useRef, useState } from 'react';
 import { API } from '../../../data/api';
 import { AnalyzedMaterial } from '../../../types/polyglotElements';
-import InputTextField from '../../Forms/Fields/InputTextField';
 import MarkDownField from '../../Forms/Fields/MarkDownField';
 import StepHeading from '../../UtilityComponents/StepHeading';
 
@@ -23,15 +22,24 @@ const StepContentForm = ({
   const [material, setMaterial] = materialProp;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasAnalysedMaterial, setHasAnalysedMaterial] = useState(false);
+  const [uploadedFile, setFile] = useState<File | null>(null);
+
   const handleFileUpload = () => {
     fileInputRef.current?.click();
   };
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasAnalysedMaterial, setHasAnalysedMaterial] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
 
   const handleAnalyse = async () => {
     setIsLoading(true);
-
+    //if(method=='upload' && file!=null)-> usa file al posto di material //todo
     try {
       const response: AxiosResponse = await API.analyseMaterial({
         text: material,
@@ -54,41 +62,31 @@ const StepContentForm = ({
       />
 
       {method === 'upload' ? (
-        <>
-          <Box
-            border="2px dashed"
-            borderColor="gray.300"
-            borderRadius="xl"
-            p={10}
-            textAlign="center"
-            mb={6}
-          >
-            <Text mb={4}>Drag and drop files or click to browse.</Text>
-            <Text fontSize="sm" color="gray.500">
-              Supported formats: PDF, DOCX, PPTX, TXT
-            </Text>
-            <Button mt={4} onClick={handleFileUpload}>
-              File Upload
-            </Button>
-            <input type="file" ref={fileInputRef} hidden />
-          </Box>
-
-          <Text fontSize="sm" textAlign="center" my={4} color="gray.500">
-            OR
+        <Box
+          border="2px dashed"
+          borderColor="gray.300"
+          borderRadius="xl"
+          p={10}
+          textAlign="center"
+          mb={6}
+          onClick={handleFileUpload}
+          cursor="pointer"
+        >
+          <Text mb={4}>Drag and drop files or click to browse.</Text>
+          <Text fontSize="sm" color="gray.500">
+            Supported formats: PDF, DOCX, PPTX, TXT
           </Text>
-
-          <VStack spacing={3} align="stretch">
-            <Text>Paste the resource URL of the content</Text>
-            <InputTextField
-              label=""
-              value={url}
-              setValue={setUrl}
-              placeholder="Enter URL here"
-              infoTitle="Public URL"
-              infoDescription="Make sure the page is public and doesn’t require a login"
-            />
-          </VStack>
-        </>
+          <Button mt={4} onClick={handleFileUpload}>
+            File Upload
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            hidden
+            onChange={handleFileChange}
+          />
+          {uploadedFile && <Text mt={2}>Selected: {uploadedFile.name}</Text>}
+        </Box>
       ) : method === 'ai' ? (
         <MarkDownField
           label="Material"
@@ -104,7 +102,9 @@ const StepContentForm = ({
         <Button
           colorScheme="blue"
           isLoading={isLoading}
-          isDisabled={hasAnalysedMaterial || material === ''}
+          isDisabled={
+            hasAnalysedMaterial || (material === '' && uploadedFile === null)
+          }
           onClick={handleAnalyse}
         >
           Analyse

@@ -48,9 +48,11 @@ type StepCompleteProps = {
   accessCode?: string;
   img?: string;
   tags: { name: string; color: string }[];
+  model: string;
 };
 
 const StepComplete = ({
+  model,
   generatedLessons,
   sourceMaterial,
   coursesNodes,
@@ -94,6 +96,7 @@ const StepComplete = ({
           analysedMaterial,
           context,
           language,
+          model: model,
         });
         flowsId.push(flowId);
         setCompletedLessons((prev) => [...prev, i]);

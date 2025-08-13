@@ -58,6 +58,7 @@ const CourseCreationStepper = () => {
   const [img, setImg] = useState('');
   const [tags, setTags] = useState<{ name: string; color: string }[]>([]);
 
+  const [model, setModel] = useState<string>('Gemini');
   const [courseNodes, setCourseNodes] = useState<PlanLessonNode[][]>([]);
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -190,6 +191,7 @@ const CourseCreationStepper = () => {
       method={uploadMethod}
     />, // 3 (intermedio)
     <StepAIGeneration
+      ModelState={[model, setModel]}
       key={'ai-generation'}
       language={definedSyllabus?.language ?? ''}
       material={material}
@@ -233,6 +235,7 @@ const CourseCreationStepper = () => {
       tags={tags}
       generatedLessons={generatedLessons}
       coursesNodes={courseNodes}
+      model={model}
     />, // 7
   ];
 

@@ -93,6 +93,7 @@ type GenerateLessonActivitiesProp = {
   lessonNodes: PlanLessonNode[];
   analysedMaterial: AnalyzedMaterial;
   language: string;
+  model: string;
 };
 export const generateLessonActivities = async ({
   material,
@@ -101,6 +102,7 @@ export const generateLessonActivities = async ({
   lessonNodes,
   analysedMaterial,
   language,
+  model,
 }: GenerateLessonActivitiesProp): Promise<PolyglotNode[]> => {
   const handleResponseNewExercise = (response: any, x: number, y: number) => {
     const exerciseResponse: AIExerciseResponse = response.data;
@@ -207,11 +209,8 @@ export const generateLessonActivities = async ({
           duration: lNode.duration,
           language: language,
           type_of_file: 'md',
-          model: 'Gemini',
+          model: model,
         } as AIMaterialType);
-
-        console.log(response);
-        console.log('-------------------');
 
         if (!response) throw 'Error generate';
 
@@ -304,7 +303,7 @@ export const generateLessonActivities = async ({
           },
         ],
         language: generatedLesson.language,
-        model: 'Gemini', //add openai //add OpenAI
+        model: model,
       } as AIExerciseType);
 
       handleResponseNewExercise(response, x, y);
@@ -359,6 +358,7 @@ type GenerateLessonFlowProp = {
   analysedMaterial: AnalyzedMaterial | undefined;
   context: string;
   language: string;
+  model: string;
 };
 export const generateLessonFlow = async ({
   material,
@@ -368,6 +368,7 @@ export const generateLessonFlow = async ({
   analysedMaterial,
   context,
   language,
+  model,
 }: GenerateLessonFlowProp): Promise<string> => {
   if (!analysedMaterial) throw 'AnalyzedMaterial not Found';
   const generatedNodes: PolyglotNode[] = await generateLessonActivities({
@@ -377,6 +378,7 @@ export const generateLessonFlow = async ({
     analysedMaterial,
     setFlowNodes,
     language,
+    model,
   });
   const generatedEdges: PolyglotEdge[] = [];
 

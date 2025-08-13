@@ -109,6 +109,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
   const [input, setInput] = useState('');
   const [genData, setGenData] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
+  const [model, setModel] = useState('Gemini');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -146,7 +147,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
       in_memory: false,
       system_instructions: currentConfig.system_instructions || '',
       resources: [],
-      model: 'Gemini', //add openai
+      model: model,
     };
 
     setMessages((prev) => [...prev, userMessage as AIChatResponse]);

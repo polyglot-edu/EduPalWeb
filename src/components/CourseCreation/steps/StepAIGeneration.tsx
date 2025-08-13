@@ -54,6 +54,7 @@ type StepCoursePlannerProps = {
     PlanLessonNode[][],
     React.Dispatch<React.SetStateAction<PlanLessonNode[][]>>
   ];
+  ModelState: [string, React.Dispatch<React.SetStateAction<string>>];
   context: string;
   title: string;
 };
@@ -69,6 +70,7 @@ const StepAIGeneration = ({
   CoursesNodesProp,
   definedSyllabus,
   selectedTopic,
+  ModelState,
 }: StepCoursePlannerProps) => {
   const [analysedMaterial] = analysedMaterialProp;
   const [plannedCourse, setPlannedCourse] = plannedCourseProp;
@@ -84,7 +86,7 @@ const StepAIGeneration = ({
   const [courseNodes, setCourseNodes] = CoursesNodesProp;
   const [numLessons, setNumberOfLessons] = useState<number>(3);
   const [lessonDuration, setLessonDuration] = useState<number>(60);
-  const [model, setModel] = useState<string>('Gemini');
+  const [model, setModel] = ModelState;
 
   const [chatLessonResponseData, setChatLessonResponseData] =
     useState<any>(undefined);
@@ -280,7 +282,7 @@ const StepAIGeneration = ({
               number_of_lessons: numLessons,
               duration_of_lesson: lessonDuration,
               language: language,
-              model: 'Gemini', //add openai
+              model: model,
             }}
           />
           <StepHeading
@@ -331,6 +333,15 @@ const StepAIGeneration = ({
               setValue={(val) => setLessonDuration(parseInt(val))}
               placeholder="e.g., 45"
             />
+            <EnumField
+              label="Model"
+              value={model}
+              setValue={setModel}
+              options={[
+                { label: 'Gemini', value: 'Gemini' },
+                { label: 'OpenAI', value: 'OpenAI' },
+              ]}
+            />
           </SimpleGrid>
 
           <Box mt={6}>
@@ -360,7 +371,7 @@ const StepAIGeneration = ({
               macro_subject: macroSubject,
               education_level: definedSyllabus.educational_level,
               context: context,
-              model: 'Gemini', //add openai
+              model: model,
             }}
           />
           <StepHeading
