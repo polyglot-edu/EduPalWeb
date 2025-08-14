@@ -6,7 +6,6 @@ import {
   AIMaterialType,
   AIPlanCourse,
   AIPlanLesson,
-  AnalyseType,
   ManualProgressInfo,
   PolyglotCourse,
   PolyglotCourseWithFlows,
@@ -283,12 +282,19 @@ export const API = {
       }
     );
   },
+  
+  analyseMaterial: (body: Record<string, any>): Promise<AxiosResponse> => {
+    const formData = new FormData();
 
-  analyseMaterial: (body: AnalyseType): Promise<AxiosResponse> => {
-    return axios.post<{}, AxiosResponse, {}>(
-      `/api/openai/MaterialAnalyser`,
-      body
-    );
+    Object.entries(body).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    return axios.post(`/api/openai/MaterialAnalyser`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
   },
 
   generateMaterial: (body: AIMaterialType): Promise<any> => {

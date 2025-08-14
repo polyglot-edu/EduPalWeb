@@ -1,5 +1,4 @@
-import { Box, Button, Text } from '@chakra-ui/react';
-import { AxiosResponse } from 'axios';
+import { Box, Button, Text, useToast } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { API } from '../../../data/api';
 import { AnalyzedMaterial } from '../../../types/polyglotElements';
@@ -12,19 +11,22 @@ interface StepContentFormProps {
   >;
   materialProp: [string, React.Dispatch<React.SetStateAction<string>>];
   method: string;
+  model: string;
 }
 
 const StepContentForm = ({
   setAnalysedMaterial,
   materialProp,
   method,
+  model,
 }: StepContentFormProps) => {
   const [material, setMaterial] = materialProp;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasAnalysedMaterial, setHasAnalysedMaterial] = useState(false);
   const [uploadedFile, setFile] = useState<File | null>(null);
+
+  const toast = useToast();
 
   const handleFileUpload = () => {
     fileInputRef.current?.click();
@@ -34,20 +36,45 @@ const StepContentForm = ({
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
+      e.target.value = '';
     }
+  };
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) setFile(droppedFile);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
   };
 
   const handleAnalyse = async () => {
     setIsLoading(true);
-    //if(method=='upload' && file!=null)-> usa file al posto di material //todo
+
     try {
-      const response: AxiosResponse = await API.analyseMaterial({
-        text: material,
+      const response = await API.analyseMaterial({
+        file: method == 'upload' ? uploadedFile : null,
+        url: method == 'ai' ? material : '',
+        model: model,
       });
 
       setAnalysedMaterial(response.data as AnalyzedMaterial);
       setHasAnalysedMaterial(true);
+      toast({
+        title: 'Material analysed successfully.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (error) {
+      toast({
+        title: 'Error analysing material.',
+        description: 'Please try again, or change document.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
       console.error('Error analyzing material:', error);
     } finally {
       setIsLoading(false);
@@ -70,22 +97,40 @@ const StepContentForm = ({
           textAlign="center"
           mb={6}
           onClick={handleFileUpload}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
           cursor="pointer"
         >
-          <Text mb={4}>Drag and drop files or click to browse.</Text>
-          <Text fontSize="sm" color="gray.500">
-            Supported formats: PDF, DOCX, PPTX, TXT
-          </Text>
-          <Button mt={4} onClick={handleFileUpload}>
-            File Upload
-          </Button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            hidden
-            onChange={handleFileChange}
-          />
-          {uploadedFile && <Text mt={2}>Selected: {uploadedFile.name}</Text>}
+          <Box>
+            <Text mb={4}>Drag and drop files or click to browse.</Text>
+            <Text fontSize="sm" color="gray.500">
+              Supported formats: PDF, DOCX, PPTX, TXT
+            </Text>
+            <Button mt={4} onClick={handleFileUpload}>
+              File Upload
+            </Button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              hidden
+              onChange={handleFileChange}
+            />
+          </Box>
+          {uploadedFile && (
+            <Box
+              mt={4}
+              p={2}
+              border="1px solid"
+              borderColor="blue.300"
+              borderRadius="md"
+              display="inline-block"
+            >
+              <Text fontWeight="bold">{uploadedFile.name}</Text>
+              <Text fontSize="sm" color="gray.500">
+                {(uploadedFile.size / 1024).toFixed(2)} KB
+              </Text>
+            </Box>
+          )}
         </Box>
       ) : method === 'ai' ? (
         <MarkDownField

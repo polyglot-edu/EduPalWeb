@@ -183,12 +183,14 @@ const CourseCreationStepper = () => {
     <StepContentUpload
       key={'content-upload'}
       selection={[uploadMethod, setUploadMethod]}
+      ModelState={[model, setModel]}
     />, // 2
     <StepContentForm
       key={'content-form'}
       materialProp={[material, setMaterial]}
       setAnalysedMaterial={setAnalysedMaterial}
       method={uploadMethod}
+      model={model}
     />, // 3 (intermedio)
     <StepAIGeneration
       ModelState={[model, setModel]}

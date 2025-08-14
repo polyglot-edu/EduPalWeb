@@ -217,7 +217,11 @@ export type LessonNodeAI = {
   topics: Topic[];
 };
 
-export type AnalyseType = { text: string; model?: string };
+export type AnalyseType = {
+  file: string;
+  url: string;
+  model?: string;
+};
 
 export type AnalyzedMaterial = {
   title: string;
