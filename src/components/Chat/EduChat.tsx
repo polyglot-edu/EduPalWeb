@@ -24,6 +24,7 @@ import {
   AIPlanCourseResponse,
   AIPlanLessonResponse,
 } from '../../types/polyglotElements';
+import EnumField from '../Forms/Fields/EnumField';
 
 type EduChatProps = {
   usage: Usage;
@@ -195,7 +196,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
 
   return (
     <Box position="fixed" bottom="20px" right="20px" zIndex={999} maxW="sm">
-      {/* Toggle button */}
+      {/* Toggle button */}{' '}
       <IconButton
         aria-label="Toggle chat"
         icon={<HiOutlineChatBubbleLeftRight size="24px" />}
@@ -208,7 +209,6 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
         _hover={{ bg: messagesColorGrey }}
         hidden={isOpen}
       />
-
       {/* Chat box */}
       <Collapse in={isOpen} animateOpacity>
         <Box
@@ -229,6 +229,17 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
             onClick={() => setIsOpen(!isOpen)}
           />
           <VStack spacing={4} align="stretch">
+            <Box hidden={messages.length != 0}>
+              <EnumField
+                label="Model"
+                value={model}
+                setValue={setModel}
+                options={[
+                  { label: 'Gemini', value: 'Gemini' },
+                  { label: 'OpenAI', value: 'OpenAI' },
+                ]}
+              />
+            </Box>
             <Avatar
               name="NOVA"
               src={chatIcon.src}
