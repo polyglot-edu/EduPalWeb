@@ -282,7 +282,7 @@ export const API = {
       }
     );
   },
-  
+
   analyseMaterial: (body: Record<string, any>): Promise<AxiosResponse> => {
     const formData = new FormData();
 
@@ -382,6 +382,21 @@ export const API = {
       body
     );
   },
+
+  chatUploadFile: (chatId: string, body: Record<string, any>): Promise<AxiosResponse> => {
+    const formData = new FormData();
+
+    Object.entries(body).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    return axios.post(`/api/openai/chat/uploadFile/` + chatId, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
   resetChatTeacher: (chatId: string): Promise<AxiosResponse> => {
     return axios.put<{}, AxiosResponse, {}>(
       `/api/openai/chat/teacher/` + chatId

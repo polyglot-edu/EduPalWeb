@@ -9,8 +9,10 @@ import {
   Input,
   Text,
   useColorModeValue,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
@@ -25,6 +27,7 @@ import {
   AIPlanLessonResponse,
 } from '../../types/polyglotElements';
 import EnumField from '../Forms/Fields/EnumField';
+import FileUploadModal from '../UtilityComponents/FileUploadModal';
 
 type EduChatProps = {
   usage: Usage;
@@ -66,13 +69,19 @@ const UsageMapping = [
       'The user is currently planning a specific lesson. Your goal is to help them break down the lesson into clear and teachable parts using the following fields: { topics, learning_outcome, language, macro_subject, title, education_level, context, model }. Prioritize clarity, relevance, and alignment with course goals. If the user shifts to unrelated matters, gently remind them to finish the lesson plan.',
   },
 ];
-type Usage = 'general' | 'define_syllabus' | 'plan_course' | 'plan_lessons';
+type Usage =
+  | 'general'
+  | 'define_syllabus'
+  | 'plan_course'
+  | 'plan_lessons'
+  | 'testing';
 
 type UsageResourceMap = {
   general: {};
   define_syllabus: AIDefineSyllabusResponse;
   plan_course: AIPlanCourseResponse;
   plan_lessons: AIPlanLessonResponse;
+  testing: AIDefineSyllabusResponse | AIPlanCourseResponse | AIPlanLessonResponse;
 };
 
 type InferResource<U extends Usage> = UsageResourceMap[U];
@@ -107,19 +116,37 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<AIChatResponse[]>([]);
   const [plannerMessages, setPlannerMessages] = useState<AIChatResponse[]>([]);
+  const [resources, setResources] = useState<string[]>([]);
   const [input, setInput] = useState('');
   const [genData, setGenData] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
   const [model, setModel] = useState('Gemini');
 
+  const toast = useToast();
+
+  const router = useRouter();
+
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen && messages.length === 0)
-      API.getChatTeacher('685c1412a384900b286d29aa').then((res) => {
-        if (res.data.messages[0])
-          API.resetChatTeacher('685c1412a384900b286d29aa');
+    try {
+      if (isOpen && messages.length === 0)
+        API.getChatTeacher('685c1412a384900b286d29aa').then((res) => {
+          if (res.data.messages[0])
+            API.resetChatTeacher('685c1412a384900b286d29aa');
+        });
+    } catch (error) {
+      toast({
+        title: 'Error starting chat.',
+        description: 'Please try again later.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
       });
+      console.error('Error fetching chat messages:', error);
+    }
   }, [isOpen]);
 
   useEffect(() => {
@@ -136,6 +163,36 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
   if (!currentConfig) {
     return <Text>Invalid usage configuration.</Text>;
   }
+
+  const handleFileUpload = async () => {
+    if (uploadedFile)
+      try {
+        const response = await API.chatUploadFile('685c1412a384900b286d29aa', {
+          file: uploadedFile,
+          db_name: uploadedFile.name,
+        });
+
+        setResources((prev) => [...prev, response.data]);
+        toast({
+          title: 'Material analysed successfully.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        toast({
+          title: 'Error analysing material.',
+          description: 'Please try again, or change document.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+        console.error('Error analyzing material:', error);
+      } finally {
+        setIsLoading(false);
+      }
+  };
+
   const handleUserMessage = async () => {
     setIsLoading(true);
     if (!input.trim()) return;
@@ -147,7 +204,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
       timestamp: new Date(),
       in_memory: false,
       system_instructions: currentConfig.system_instructions || '',
-      resources: [],
+      resources: resources,
       model: model,
     };
 
@@ -265,31 +322,15 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                 <Button
                   size="sm"
                   colorScheme="purple"
-                  onClick={() => setInput('Generate a course title')}
+                  onClick={() => router.push(`/courses/create`)}
                   w="100%"
                 >
-                  📘 Generate a course title
+                  📘 Generate a custom course
                 </Button>
                 <Button
                   size="sm"
                   colorScheme="purple"
-                  onClick={() => setInput('Draft a course description')}
-                  w="100%"
-                >
-                  📝 Draft a course description
-                </Button>
-                <Button
-                  size="sm"
-                  colorScheme="purple"
-                  onClick={() => setInput('Suggest learning objectives')}
-                  w="100%"
-                >
-                  🎯 Suggest learning objectives
-                </Button>
-                <Button
-                  size="sm"
-                  colorScheme="purple"
-                  onClick={() => setInput('Create a syllabus outline')}
+                  onClick={() => router.push(`/syllabus/create`)}
                   w="100%"
                 >
                   📚 Create a syllabus outline
@@ -353,6 +394,14 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleUserMessage();
                 }}
+              />
+              <FileUploadModal
+                isHidden={usage !== 'testing'}
+                FileProp={[uploadedFile, setUploadedFile]}
+                handleUpload={handleFileUpload}
+                title="Upload your document"
+                supportedFormats="PDF, DOCX, PPTX, TXT"
+                colorScheme="purple"
               />
               <IconButton
                 aria-label="Send"
