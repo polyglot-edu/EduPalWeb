@@ -69,19 +69,13 @@ const UsageMapping = [
       'The user is currently planning a specific lesson. Your goal is to help them break down the lesson into clear and teachable parts using the following fields: { topics, learning_outcome, language, macro_subject, title, education_level, context, model }. Prioritize clarity, relevance, and alignment with course goals. If the user shifts to unrelated matters, gently remind them to finish the lesson plan.',
   },
 ];
-type Usage =
-  | 'general'
-  | 'define_syllabus'
-  | 'plan_course'
-  | 'plan_lessons'
-  | 'testing';
+type Usage = 'general' | 'define_syllabus' | 'plan_course' | 'plan_lessons';
 
 type UsageResourceMap = {
   general: {};
   define_syllabus: AIDefineSyllabusResponse;
   plan_course: AIPlanCourseResponse;
   plan_lessons: AIPlanLessonResponse;
-  testing: AIDefineSyllabusResponse | AIPlanCourseResponse | AIPlanLessonResponse;
 };
 
 type InferResource<U extends Usage> = UsageResourceMap[U];
@@ -318,7 +312,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                 inspiring course? {currentConfig.startingMessages}
               </Text>
 
-              <VStack spacing={2} hidden={usage !== 'general'}>
+              <VStack mt={4} spacing={2} hidden={usage !== 'general'}>
                 <Button
                   size="sm"
                   colorScheme="purple"
@@ -396,7 +390,8 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                 }}
               />
               <FileUploadModal
-                isHidden={usage !== 'testing'}
+                isLoadingState={[isLoading, setIsLoading]}
+                isHidden={usage !== 'define_syllabus'}
                 FileProp={[uploadedFile, setUploadedFile]}
                 handleUpload={handleFileUpload}
                 title="Upload your document"

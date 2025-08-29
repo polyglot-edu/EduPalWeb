@@ -24,6 +24,7 @@ interface FileUploadModalProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
   colorScheme?: string;
   isHidden?: boolean;
+  isLoadingState: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 }
 
 const FileUploadModal: React.FC<FileUploadModalProps> = ({
@@ -34,7 +35,9 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
   size = 'lg',
   colorScheme = 'purple',
   isHidden,
+  isLoadingState,
 }) => {
+  const [isLoading, setIsLoading] = isLoadingState;
   const [uploadedFile, setUploadedFile] = FileProp;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +65,7 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
 
   const onAnalyzeClick = () => {
     if (uploadedFile) {
+      setIsLoading(true);
       handleUpload(uploadedFile);
       onClose();
     }
@@ -71,6 +75,7 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({
     <>
       <Flex hidden={isHidden}>
         <IconButton
+          isLoading={isLoading}
           icon={<FaPaperclip />}
           ml={2}
           onClick={onOpen}
