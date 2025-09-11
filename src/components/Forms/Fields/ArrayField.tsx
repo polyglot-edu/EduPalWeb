@@ -76,12 +76,12 @@ const ArrayField = ({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
-            placeholder={placeholder || 'Aggiungi un elemento...'}
+            placeholder={placeholder || 'Add elements...'}
             borderColor={borderColor}
           />
           <IconButton
             icon={<AddIcon />}
-            aria-label="Aggiungi"
+            aria-label="Add"
             colorScheme="purple"
             onClick={addItem}
           />
