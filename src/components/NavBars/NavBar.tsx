@@ -30,7 +30,7 @@ export default function NavBar({ user, onAccessibilityClick }: NavBarProps) {
         py={2}
         height="60px"
       >
-        <HStack spacing={3}>
+        <HStack spacing={3} onClick={() => (window.location.href = '/dashboard')} cursor="pointer">
           <Image src={brandLogo.src} width="30px" alt="EduCreate Logo" />
           {!isMobile && (
             <Text fontWeight="bold" fontSize="xl" color="gray.700">
