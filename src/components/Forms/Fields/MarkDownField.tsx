@@ -55,7 +55,7 @@ const MarkDownField = ({
             view: {
               menu: true,
               md: true,
-              html: true,
+              html: false,
             },
             containerStyle: {
               width: '100%',
