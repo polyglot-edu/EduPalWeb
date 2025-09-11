@@ -257,7 +257,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
         mb={isOpen ? 4 : 0}
         onClick={() => setIsOpen(!isOpen)}
         bg={'purple.500'}
-        _hover={{ bg: messagesColorGrey }}
+        _hover={{ bg: 'purple.600' }}
         hidden={isOpen}
       />
       {/* Chat box */}
@@ -315,7 +315,8 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
               <VStack mt={4} spacing={2} hidden={usage !== 'general'}>
                 <Button
                   size="sm"
-                  colorScheme="purple"
+                  bgColor="purple.300"
+                  textColor={'white'}
                   onClick={() => router.push(`/courses/create`)}
                   w="100%"
                 >
@@ -323,7 +324,8 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                 </Button>
                 <Button
                   size="sm"
-                  colorScheme="purple"
+                  bgColor="purple.300"
+                  textColor={'white'}
                   onClick={() => router.push(`/syllabus/create`)}
                   w="100%"
                 >
@@ -376,6 +378,28 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                     </Box>
                   </Flex>
                 ))}
+                <Flex hidden={!isLoading}>
+                  <Avatar
+                    name="NOVA"
+                    src={chatIcon.src}
+                    size="sm"
+                    verticalAlign={'middle'}
+                    float={'left'}
+                    
+                  />
+                  <Box
+                    bg={messagesColorPurple}
+                    color={messagesColorWhiteBlack}
+                    px={3}
+                    py={2}
+                    maxW='50px'
+                    borderRadius="md"
+                    boxShadow="sm"
+                    textAlign={'left'}
+                  >
+                    ...
+                  </Box>
+                </Flex>
               </VStack>
               <div ref={messagesEndRef} />
             </Box>
