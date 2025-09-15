@@ -1,3 +1,4 @@
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { AddIcon, RepeatIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -21,6 +22,7 @@ import {
 import { GetServerSideProps } from 'next';
 import { useEffect, useMemo, useState } from 'react';
 import CourseCardSemplified from '../../components/Card/CourseCardSimplified';
+import Layout from '../../components/Layout/LayoutPages';
 import CreateCourseModal from '../../components/Modals/CreateCourseModal';
 import { API, APIV2 } from '../../data/api';
 import cardImage from '../../public/collaborative_icon.png';
@@ -223,6 +225,13 @@ const FlowsListWorkadventure = ({ accessToken }: FlowIndexProps) => {
     onOpen: cfOnOpen,
   } = useDisclosure();
 
+  const { isOpen, onToggle } = useDisclosure({ defaultIsOpen: true });
+  const { user } = useUser();
+
+  const handleNavigate = (route: string) => {
+    console.log('Navigate to:', route);
+  };
+
   useEffect(() => {
     API.loadFlowList().then((resp) => {
       setFlows(resp.data);
@@ -236,9 +245,15 @@ const FlowsListWorkadventure = ({ accessToken }: FlowIndexProps) => {
   if (!users) return;
   return (
     <>
-      <Box px="10%" paddingBottom={'10px'}>
-        <Heading py="3%">Learners doing your Learning paths</Heading>
-        {/*
+      <Layout
+        user={user}
+        handleNavigate={handleNavigate}
+        isOpen={isOpen}
+        onToggle={onToggle}
+      >
+        <Box px="10%" paddingBottom={'10px'}>
+          <Heading py="3%">Learners doing your Learning paths</Heading>
+          {/*
           <SearchBar
             inputValue={searchValue}
             setInputValue={setSearchValue}
@@ -246,85 +261,89 @@ const FlowsListWorkadventure = ({ accessToken }: FlowIndexProps) => {
             placeholder="Search learning paths..."
           />
         */}
-        <Tabs>
-          <TabList>
-            <Tab>All</Tab>
-          </TabList>
+          <Tabs>
+            <TabList>
+              <Tab>All</Tab>
+            </TabList>
 
-          <TabPanels>
-            <TabPanel alignItems={'center'}>
-              <Heading py="3%">Accessible Courses</Heading>
-              {courses.length ? (
-                courses.map((course) => {
-                  console.log(course.flows.length);
-                  return (
-                    <Box key={course._id} paddingBottom={'5px'}>
-                      <CourseCardSemplified
-                        canDelete={true}
-                        course={course}
-                        openChildren={() => {
-                          if (course._id != showCourse)
-                            setShowCourse(course._id ?? '');
-                          else setShowCourse('');
-                        }}
-                        API={API}
-                        setCourses={setCourses}
-                      />
-                      <Box key={course._id} hidden={course._id != showCourse}>
-                        {course.flows.length ? (
-                          course.flows.map((flow: PolyglotFlow) => (
-                            <Box key={flow._id} marginTop={'5px'} width={'90%'}>
-                              <SimpleFlowCard
-                                key={flow._id}
-                                flow={flow}
-                                py={1}
-                                setSelected={setFlowId}
-                                setUsers={setUsers}
-                              />
+            <TabPanels>
+              <TabPanel alignItems={'center'}>
+                <Heading py="3%">Accessible Courses</Heading>
+                {courses.length ? (
+                  courses.map((course) => {
+                    console.log(course.flows.length);
+                    return (
+                      <Box key={course._id} paddingBottom={'5px'}>
+                        <CourseCardSemplified
+                          canDelete={true}
+                          course={course}
+                          openChildren={() => {
+                            if (course._id != showCourse)
+                              setShowCourse(course._id ?? '');
+                            else setShowCourse('');
+                          }}
+                          API={API}
+                          setCourses={setCourses}
+                        />
+                        <Box key={course._id} hidden={course._id != showCourse}>
+                          {course.flows.length ? (
+                            course.flows.map((flow: PolyglotFlow) => (
                               <Box
-                                style={{
-                                  padding: '5px',
-                                  flexWrap: 'wrap',
-                                  justifyContent: 'space-evenly',
-                                  display: 'flex',
-                                }}
-                                hidden={flowId != flow._id}
+                                key={flow._id}
+                                marginTop={'5px'}
+                                width={'90%'}
                               >
-                                {users.length ? (
-                                  users.map((user, id) => (
-                                    <UserCard
-                                      key={id}
-                                      user={user}
-                                      setUser={setUsers}
-                                      py={1}
-                                      px={1}
-                                    />
-                                  ))
-                                ) : (
-                                  <Heading size={'md'} textAlign="center">
-                                    No Learner found! Look in another flow ;)
-                                  </Heading>
-                                )}
+                                <SimpleFlowCard
+                                  key={flow._id}
+                                  flow={flow}
+                                  py={1}
+                                  setSelected={setFlowId}
+                                  setUsers={setUsers}
+                                />
+                                <Box
+                                  style={{
+                                    padding: '5px',
+                                    flexWrap: 'wrap',
+                                    justifyContent: 'space-evenly',
+                                    display: 'flex',
+                                  }}
+                                  hidden={flowId != flow._id}
+                                >
+                                  {users.length ? (
+                                    users.map((user, id) => (
+                                      <UserCard
+                                        key={id}
+                                        user={user}
+                                        setUser={setUsers}
+                                        py={1}
+                                        px={1}
+                                      />
+                                    ))
+                                  ) : (
+                                    <Heading size={'md'} textAlign="center">
+                                      No Learner found! Look in another flow ;)
+                                    </Heading>
+                                  )}
+                                </Box>
                               </Box>
-                            </Box>
-                          ))
-                        ) : (
-                          <Heading size={'md'} textAlign="center">
-                            You have created 0 Learning paths! <br />
-                            Go create one ;)
-                          </Heading>
-                        )}
+                            ))
+                          ) : (
+                            <Heading size={'md'} textAlign="center">
+                              You have created 0 Learning paths! <br />
+                              Go create one ;)
+                            </Heading>
+                          )}
+                        </Box>
                       </Box>
-                    </Box>
-                  );
-                })
-              ) : (
-                <Heading size={'md'} textAlign="center">
-                  There are 0 courses yet! <br />
-                  Create one ;)
-                </Heading>
-              )}
-              {/* disabled to show only courses-> decomment if we want to show also single Learning paths
+                    );
+                  })
+                ) : (
+                  <Heading size={'md'} textAlign="center">
+                    There are 0 courses yet! <br />
+                    Create one ;)
+                  </Heading>
+                )}
+                {/* disabled to show only courses-> decomment if we want to show also single Learning paths
                 <Box>
                   <Heading py="3%">Single Learning Paths</Heading>
                   {flows.length ? (
@@ -366,29 +385,30 @@ const FlowsListWorkadventure = ({ accessToken }: FlowIndexProps) => {
                   )}
                 </Box>
               */}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-        <IconButton
-          aria-label="Create Course"
-          position={'fixed'}
-          right={10}
-          bottom={10}
-          isRound={true}
-          h={12}
-          w={12}
-          bg={'blue.400'}
-          _hover={{ bg: 'blue.600' }}
-          icon={<AddIcon fontSize={'xl'} color="white" />}
-          onClick={cfOnOpen}
-        />
-        <CreateCourseModal
-          isOpen={cfOpen}
-          onClose={cfOnClose}
-          API={API}
-          setCourses={setCourses}
-        />
-      </Box>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+          <IconButton
+            aria-label="Create Course"
+            position={'fixed'}
+            right={10}
+            bottom={10}
+            isRound={true}
+            h={12}
+            w={12}
+            bg={'blue.400'}
+            _hover={{ bg: 'blue.600' }}
+            icon={<AddIcon fontSize={'xl'} color="white" />}
+            onClick={cfOnOpen}
+          />
+          <CreateCourseModal
+            isOpen={cfOpen}
+            onClose={cfOnClose}
+            API={API}
+            setCourses={setCourses}
+          />
+        </Box>
+      </Layout>
     </>
   );
 };

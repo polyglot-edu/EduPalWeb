@@ -13,9 +13,8 @@ import { MdCheckCircle, MdGroup, MdSchool, MdStar } from 'react-icons/md';
 import AnalyticsCard from '../../components/Card/AnalyticsCard';
 import CourseCard from '../../components/Card/CourseCard';
 import EduChat from '../../components/Chat/EduChat';
-import NavBar from '../../components/NavBars/NavBar';
+import Layout from '../../components/Layout/LayoutPages';
 import SearchBar from '../../components/SearchBar/SearchBar';
-import MainSideBar from '../../components/Sidebar/MainSidebar';
 import { APIV2 } from '../../data/api';
 import {
   EducationLevel,
@@ -147,17 +146,12 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
   }, [user, searchValue, API, currentTab]);
 
   return (
-    <>
-      <NavBar
-        user={user}
-        onAccessibilityClick={() => console.log('Access clicked')}
-      />
-      <MainSideBar
-        onNavigate={handleNavigate}
-        isOpen={isOpen}
-        onToggle={onToggle}
-      />
-
+    <Layout
+      user={user}
+      handleNavigate={handleNavigate}
+      isOpen={isOpen}
+      onToggle={onToggle}
+    >
       <Box
         flex="1"
         p={6}
@@ -228,7 +222,7 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
           ))}
         </SimpleGrid>
       </Box>
-    </>
+    </Layout>
   );
 };
 
