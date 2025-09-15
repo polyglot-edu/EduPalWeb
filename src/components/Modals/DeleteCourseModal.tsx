@@ -8,44 +8,51 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 
-export type ModaTemplateProps = {
+export type DeleteFlowModalProps = {
   isOpen: boolean;
   onClose: () => void;
   courseId: string;
-  deleteFunc: (flowId: string) => Promise<void>;
+  deleteFunc: (courseId: string) => Promise<void>;
+  title?: string;
 };
 
-const DeleteFlowModal = ({
+const DeleteCourseModal = ({
   isOpen,
   onClose,
   courseId,
   deleteFunc,
-}: ModaTemplateProps) => {
+  title = 'this course',
+}: DeleteFlowModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete Course</ModalHeader>
+        <ModalHeader>Delete "{title}"</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text>
-            Are you sure? <br /> This action is irreversable!
-          </Text>
+          <VStack align="start" spacing={3}>
+            <Text>
+              You are about to permanently delete <strong>"{title}"</strong>.
+            </Text>
+            <Text>
+              This will remove <strong>all associated data and components</strong> of this course and <strong>cannot be undone</strong>.
+            </Text>
+            <Text>
+              Please confirm that you want to proceed.
+            </Text>
+          </VStack>
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            colorScheme="blue"
-            onClick={async () => {
-              onClose();
-            }}
-          >
+          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button
             colorScheme="red"
+            ml="auto"
             onClick={async () => {
               onClose();
               await deleteFunc(courseId);
@@ -59,4 +66,4 @@ const DeleteFlowModal = ({
   );
 };
 
-export default DeleteFlowModal;
+export default DeleteCourseModal;

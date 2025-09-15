@@ -176,6 +176,7 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
           onClose={dOnClose}
           deleteFunc={deleteCourse}
           courseId={courseId ?? ''}
+          title={course?.title ?? ''}
         />
         <SaveCourseModal
           isOpen={sOpen}

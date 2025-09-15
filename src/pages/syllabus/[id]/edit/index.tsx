@@ -141,6 +141,7 @@ export default function EditSyllabusPage({
             onClose={dOnClose}
             deleteFunc={deleteSyllabus}
             syllabusId={syllabusId ?? ''}
+            title={syllabus.title}
           />
           <SaveSyllabusModal
             isOpen={sOpen}
