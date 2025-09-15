@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading } from '@chakra-ui/react';
+import { Box, Flex, Heading } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineFolderOpen } from 'react-icons/ai';
 import { BsStars } from 'react-icons/bs';
@@ -107,11 +107,13 @@ const CourseCreationStepper = () => {
       generalsSubject={[generalSubject, setGeneralSubject]}
       definedSyllabusState={[definedSyllabus, setDefinedSyllabus]}
       selectedTopicState={[selectedTopic, setSelectedTopic]}
+      nextStep={nextStep}
     />, // 0
     <StepCourseContent
       key={'course-details'}
+      nextStep={nextStep}
+      prevStep={prevStep}
       classContextState={[context, setContext]}
-      selectedTopicState={[selectedTopic, setSelectedTopic]}
       durationState={[duration, setDuration]}
       prerequisitesState={[
         definedSyllabus?.prerequisites ?? [],
@@ -167,25 +169,20 @@ const CourseCreationStepper = () => {
                 : val,
           })),
       ]}
-      descriptionState={[
-        definedSyllabus?.description ?? '',
-        (val: React.SetStateAction<string>) =>
-          setDefinedSyllabus((prev) => ({
-            ...prev!,
-            description:
-              typeof val === 'function' ? val(prev?.description ?? '') : val,
-          })),
-      ]}
       imgState={[img, setImg]}
       tagsState={[tags, setTags]}
     />, // 1 (intermedio)
 
     <StepContentUpload
+      nextStep={nextStep}
+      prevStep={prevStep}
       key={'content-upload'}
       selection={[uploadMethod, setUploadMethod]}
       ModelState={[model, setModel]}
     />, // 2
     <StepContentForm
+      nextStep={nextStep}
+      prevStep={prevStep}
       key={'content-form'}
       materialProp={[material, setMaterial]}
       setAnalysedMaterial={setAnalysedMaterial}
@@ -193,6 +190,8 @@ const CourseCreationStepper = () => {
       model={model}
     />, // 3 (intermedio)
     <StepAIGeneration
+      nextStep={nextStep}
+      prevStep={prevStep}
       ModelState={[model, setModel]}
       key={'ai-generation'}
       language={definedSyllabus?.language ?? ''}
@@ -206,8 +205,14 @@ const CourseCreationStepper = () => {
       title={definedSyllabus?.title ?? ''}
       CoursesNodesProp={[courseNodes, setCourseNodes]}
     />, // 4
-    <StepGamification key={'gamification'} />, // 5
+    <StepGamification
+      key={'gamification'}
+      nextStep={nextStep}
+      prevStep={prevStep}
+    />, // 5
     <StepPublishing
+      nextStep={nextStep}
+      prevStep={prevStep}
       key={'publishing'}
       publishMethod={[publishMethod, setPublishMethod]}
       accessCode={[accessCode, setAccessCode]}
@@ -290,24 +295,6 @@ const CourseCreationStepper = () => {
           <div ref={containerStartRef} />
           {stepComponents[step]}
         </Box>
-
-        <Flex mt={8} justify="space-between" py={2} hidden={step === 7}>
-          <Box flex="1" display="flex" justifyContent="center">
-            <Button onClick={() => (step === 0 ? router.back() : prevStep())}>
-              {step === 0 ? 'Cancel' : 'Back'}
-            </Button>
-          </Box>
-          <Box flex="1" display="flex" justifyContent="center"></Box>
-          <Box flex="1" display="flex" justifyContent="center">
-            <Button
-              colorScheme="purple"
-              onClick={nextStep}
-              isDisabled={nextDisable()}
-            >
-              Next
-            </Button>
-          </Box>
-        </Flex>
       </Box>
     </Flex>
   );

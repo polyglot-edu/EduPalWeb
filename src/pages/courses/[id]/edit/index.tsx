@@ -12,10 +12,9 @@ import {
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import CourseEditor from '../../../../components/CourseComponents/CourseEditor';
+import Layout from '../../../../components/Layout/LayoutPages';
 import DeleteCourseModal from '../../../../components/Modals/DeleteCourseModal';
 import SaveCourseModal from '../../../../components/Modals/SaveCourseModal';
-import NavBar from '../../../../components/NavBars/NavBar';
-import MainSideBar from '../../../../components/Sidebar/MainSidebar';
 import { APIV2 } from '../../../../data/api';
 import {
   PolyglotCourse,
@@ -122,16 +121,12 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
   }
 
   return (
-    <>
-      <NavBar
-        user={user}
-        onAccessibilityClick={() => console.log('Access clicked')}
-      />
-      <MainSideBar
-        onNavigate={handleNavigate}
-        isOpen={isOpen}
-        onToggle={onToggle}
-      />
+    <Layout
+      user={user}
+      handleNavigate={handleNavigate}
+      isOpen={isOpen}
+      onToggle={onToggle}
+    >
       <Box
         flex="1"
         p={6}
@@ -181,6 +176,7 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
           onClose={dOnClose}
           deleteFunc={deleteCourse}
           courseId={courseId ?? ''}
+          title={course?.title ?? ''}
         />
         <SaveCourseModal
           isOpen={sOpen}
@@ -189,6 +185,6 @@ export default function CourseEditPage({ accessToken }: CourseEditPageProps) {
           courseId={courseId ?? ''}
         />
       </Box>
-    </>
+    </Layout>
   );
 }

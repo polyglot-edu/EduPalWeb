@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
 import { FiGrid, FiUpload, FiZap } from 'react-icons/fi';
 import EnumField from '../../Forms/Fields/EnumField';
 import StepHeading from '../../UtilityComponents/StepHeading';
@@ -6,11 +6,15 @@ import StepHeading from '../../UtilityComponents/StepHeading';
 interface StepContentUploadProps {
   selection: [string, React.Dispatch<React.SetStateAction<string>>];
   ModelState: [string, React.Dispatch<React.SetStateAction<string>>];
+  nextStep: () => void;
+  prevStep: () => void;
 }
 
 const StepContentUpload = ({
   selection,
   ModelState,
+  nextStep,
+  prevStep,
 }: StepContentUploadProps) => {
   const [selected, setSelected] = selection;
   const [model, setModel] = ModelState;
@@ -91,6 +95,17 @@ const StepContentUpload = ({
           { label: 'OpenAI', value: 'OpenAI' },
         ]}
       />
+      <Flex mt={8} justify="space-between" py={2}>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button onClick={() => prevStep()}>Back</Button>
+        </Box>
+        <Box flex="1" display="flex" justifyContent="center"></Box>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button colorScheme="purple" onClick={nextStep}>
+            Next
+          </Button>
+        </Box>
+      </Flex>
     </Box>
   );
 };

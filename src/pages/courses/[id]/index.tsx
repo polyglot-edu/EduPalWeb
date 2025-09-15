@@ -7,6 +7,7 @@ import NavBar from '../../../components/NavBars/NavBar';
 import MainSideBar from '../../../components/Sidebar/MainSidebar';
 import { APIV2 } from '../../../data/api';
 import { PolyglotCourseWithFlows } from '../../../types/polyglotElements';
+import Layout from '../../../components/Layout/LayoutPages';
 
 type DashboardIndexPageProps = {
   accessToken: string | undefined;
@@ -48,16 +49,13 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
     );
 
   return (
-    <>
-      <NavBar
-        user={user}
-        onAccessibilityClick={() => console.log('Access clicked')}
-      />
-      <MainSideBar
-        onNavigate={handleNavigate}
-        isOpen={isOpen}
-        onToggle={onToggle}
-      />
+    
+        <Layout
+          user={user}
+          handleNavigate={handleNavigate}
+          isOpen={isOpen}
+          onToggle={onToggle}
+        >
 
       <Box
         flex="1"
@@ -74,7 +72,7 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
           <CourseCardView key={course._id} course={course} />
         </Flex>
       </Box>
-    </>
+    </Layout>
   );
 };
 

@@ -6,7 +6,9 @@ import {
   SimpleGrid,
   useToast,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { v4 as UUIDv4 } from 'uuid';
 import { API } from '../../../data/api';
 import {
   AIDefineSyllabusResponse,
@@ -37,6 +39,7 @@ type StepCourseDetailsProps = {
       React.SetStateAction<{ topic: SyllabusTopic; index: number } | undefined>
     >
   ];
+  nextStep: () => void;
 };
 
 const StepDefineSyllabus = ({
@@ -44,8 +47,10 @@ const StepDefineSyllabus = ({
   additionalInformationState,
   definedSyllabusState,
   selectedTopicState,
+  nextStep,
 }: StepCourseDetailsProps) => {
   const toast = useToast();
+  const router = useRouter();
   const [generalSubject, setGeneralSubject] = generalsSubject;
   const [selectedTopic, setSelectedTopic] = selectedTopicState;
   const [eduLevel, setEduLevel] = useState<EducationLevel>(
@@ -109,6 +114,73 @@ const StepDefineSyllabus = ({
       .finally(() => setIsLoadingSyllabus(false));
   };
 
+  const handleCreateDraft = () => {
+    if (!definedSyllabus) {
+      toast({
+        title: 'Please define the syllabus first!',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'bottom-left',
+      });
+      return;
+    }
+
+    API.createNewPolyglotSyllabus({
+      _id: UUIDv4(),
+      subjectArea: definedSyllabus.general_subject,
+      educational_level: definedSyllabus.educational_level,
+      additional_information: definedSyllabus.additional_information,
+      title: definedSyllabus.title,
+      description: definedSyllabus.description,
+      goals: definedSyllabus.goals,
+      topics: definedSyllabus.topics,
+      prerequisites: definedSyllabus.prerequisites,
+      language: definedSyllabus.language,
+      author: { _id: 'guest', username: 'guest' },
+      lastUpdate: new Date(),
+      academicYear: '',
+      courseCode: '',
+      courseOfStudy: '',
+      semester: '',
+      credits: 6,
+      teachingHours: 40,
+      disciplinarySector: '',
+      teachingMethods: [],
+      assessmentMethods: [],
+      referenceMaterials: [],
+      studyRegulation: '',
+      curriculumPath: '',
+      studentPartition: '',
+      integratedCourseUnit: '',
+      courseType: '',
+      department: '',
+      courseYear: '1',
+    })
+      .then((res) => {
+        if (res.status === 201) {
+          toast({
+            title: 'Syllabus created successfully!',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+            position: 'bottom-left',
+          });
+          router.push('/syllabus/' + res.data._id);
+        }
+      })
+      .catch((err) => {
+        toast({
+          title: 'Error creating syllabus',
+          description: 'Error creating syllabus: ' + err.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: 'bottom-left',
+        });
+      });
+  };
+
   return (
     <Box>
       <Box hidden={definedSyllabus != undefined}>
@@ -162,16 +234,6 @@ const StepDefineSyllabus = ({
             infoDescription="Provide more details about the course you want to create to help centralize and define its syllabus."
             infoPlacement="right"
           />
-        </Box>
-        <Box mt={6}>
-          <Button
-            colorScheme="teal"
-            onClick={handleDefineSyllabus}
-            isLoading={isLoadingSyllabus}
-            isDisabled={definedSyllabus != undefined}
-          >
-            Define Syllabus
-          </Button>
         </Box>
       </Box>
 
@@ -241,7 +303,8 @@ const StepDefineSyllabus = ({
               setDefinedSyllabus({ ...definedSyllabus, description: val })
             }
           />
-          <FormLabel>
+          
+          <FormLabel pt={4} pb={1}>
             Choose the specific topic you want to explore. You can, also, edit
             it or create a new one
           </FormLabel>
@@ -252,43 +315,44 @@ const StepDefineSyllabus = ({
             }
             selectedTopicState={[selectedTopic, setSelectedTopic]}
           />
-          <Flex
-            gap={6}
-            direction={'row'}
-            wrap={{ base: 'wrap', md: 'nowrap' }}
-            justify="space-between"
-          >
-            <Box w={{ base: '100%', md: '48%' }}>
-              <ArrayField
-                label="Goals"
-                value={definedSyllabus.goals}
-                setValue={(val) =>
-                  setDefinedSyllabus({
-                    ...definedSyllabus,
-                    goals: val,
-                  })
-                }
-              />
-            </Box>
-            <Box w={{ base: '100%', md: '48%' }}>
-              <ArrayField
-                label="Prerequisites"
-                value={definedSyllabus.prerequisites}
-                setValue={(val) =>
-                  setDefinedSyllabus({
-                    ...definedSyllabus,
-                    prerequisites: val,
-                  })
-                }
-              />
-            </Box>
-          </Flex>
         </Box>
       )}
       <EduChat
         usage="define_syllabus"
         responseDataState={[definedSyllabus, setDefinedSyllabus]}
       />
+      <Flex mt={8} justify="space-between" py={2}>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button onClick={() => router.back()}>Cancel</Button>
+        </Box>
+        <Box flex="1" display="flex" justifyContent="center"></Box>
+        <Box flex="1" display="flex" justifyContent="center">
+          {definedSyllabus == undefined ? (
+            <Button
+              colorScheme="teal"
+              onClick={handleDefineSyllabus}
+              isLoading={isLoadingSyllabus}
+              isDisabled={definedSyllabus != undefined}
+            >
+              Define Syllabus
+            </Button>
+          ) : (
+            <Box display="flex" gap={4}>
+              <Button
+                colorScheme="teal"
+                bgColor={'teal.300'}
+                onClick={handleCreateDraft}
+                isLoading={isLoadingSyllabus}
+              >
+                Save as Draft
+              </Button>
+              <Button pl="4" colorScheme="purple" onClick={nextStep}>
+                Next
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </Flex>
     </Box>
   );
 };

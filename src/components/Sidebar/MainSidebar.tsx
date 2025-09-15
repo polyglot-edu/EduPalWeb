@@ -120,14 +120,15 @@ export const MainSideBar = ({ onNavigate, isOpen, onToggle }: SidebarProps) => {
   return (
     <Box
       position="fixed"
+      top="64px" 
       left="0"
       w={isOpen ? '250px' : '60px'}
       bg="white"
-      height="calc(100vh - 60px)"
+      height="calc(100vh - 64px)"
       transition="width 0.2s"
       boxShadow="md"
-      overflowY="auto"
-      zIndex={1000}
+      overflowY="hidden"
+      zIndex={100}
     >
       <Flex p={4} justify="space-between" align="center">
         <Text
@@ -171,7 +172,7 @@ export const MainSideBar = ({ onNavigate, isOpen, onToggle }: SidebarProps) => {
                   onClick={() =>
                     item.active
                       ? router.push(item.route)
-                      : console.log('go to: ' + item.route)
+                      : console.log(item.route)
                   }
                   size="sm"
                   fontWeight="normal"

@@ -1,4 +1,4 @@
-import { Box, Button, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useToast } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { API } from '../../../data/api';
 import { AnalyzedMaterial } from '../../../types/polyglotElements';
@@ -12,6 +12,8 @@ interface StepContentFormProps {
   materialProp: [string, React.Dispatch<React.SetStateAction<string>>];
   method: string;
   model: string;
+  nextStep: () => void;
+  prevStep: () => void;
 }
 
 const StepContentForm = ({
@@ -19,6 +21,8 @@ const StepContentForm = ({
   materialProp,
   method,
   model,
+  nextStep,
+  prevStep,
 }: StepContentFormProps) => {
   const [material, setMaterial] = materialProp;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,6 +65,7 @@ const StepContentForm = ({
 
       setAnalysedMaterial(response.data as AnalyzedMaterial);
       setHasAnalysedMaterial(true);
+      nextStep();
       toast({
         title: 'Material analysed successfully.',
         status: 'success',
@@ -143,18 +148,24 @@ const StepContentForm = ({
         />
       ) : null}
 
-      <Box mt={6}>
-        <Button
-          colorScheme="blue"
-          isLoading={isLoading}
-          isDisabled={
-            hasAnalysedMaterial || (material === '' && uploadedFile === null)
-          }
-          onClick={handleAnalyse}
-        >
-          Analyse
-        </Button>
-      </Box>
+      <Flex mt={8} justify="space-between" py={2}>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button onClick={() => prevStep()}>Back</Button>
+        </Box>
+        <Box flex="1" display="flex" justifyContent="center"></Box>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button
+            colorScheme="blue"
+            isLoading={isLoading}
+            isDisabled={
+              hasAnalysedMaterial || (material === '' && uploadedFile === null)
+            }
+            onClick={handleAnalyse}
+          >
+            Analyse
+          </Button>
+        </Box>
+      </Flex>
     </Box>
   );
 };

@@ -2,10 +2,8 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { Box, Flex, Heading, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import NavBar from '../../../components/NavBars/NavBar';
-import MainSideBar from '../../../components/Sidebar/MainSidebar';
+import Layout from '../../../components/Layout/LayoutPages';
 import SyllabusDetailView from '../../../components/SyllabusComponents/SyllabusDetailView';
-import SyllabusDocxButton from '../../../components/SyllabusComponents/SyllabusDocxButtonGen';
 import { APIV2 } from '../../../data/api';
 import { PolyglotSyllabus } from '../../../types/polyglotElements';
 
@@ -49,17 +47,12 @@ const SyllabusDashboard = ({ accessToken }: DashboardIndexPageProps) => {
     );
 
   return (
-    <>
-      <NavBar
-        user={user}
-        onAccessibilityClick={() => console.log('Access clicked')}
-      />
-      <MainSideBar
-        onNavigate={handleNavigate}
-        isOpen={isOpen}
-        onToggle={onToggle}
-      />
-
+    <Layout
+      user={user}
+      handleNavigate={handleNavigate}
+      isOpen={isOpen}
+      onToggle={onToggle}
+    >
       <Box
         flex="1"
         p={6}
@@ -75,7 +68,7 @@ const SyllabusDashboard = ({ accessToken }: DashboardIndexPageProps) => {
           <SyllabusDetailView syllabus={syllabus} />
         </Flex>
       </Box>
-    </>
+    </Layout>
   );
 };
 

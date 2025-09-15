@@ -57,6 +57,8 @@ type StepCoursePlannerProps = {
   ModelState: [string, React.Dispatch<React.SetStateAction<string>>];
   context: string;
   title: string;
+  nextStep: () => void;
+  prevStep: () => void;
 };
 
 const StepAIGeneration = ({
@@ -71,6 +73,8 @@ const StepAIGeneration = ({
   definedSyllabus,
   selectedTopic,
   ModelState,
+  nextStep,
+  prevStep,
 }: StepCoursePlannerProps) => {
   const [analysedMaterial] = analysedMaterialProp;
   const [plannedCourse, setPlannedCourse] = plannedCourseProp;
@@ -234,32 +238,42 @@ const StepAIGeneration = ({
   const handlePlanLesson = () => {
     setCurrentStep('generating');
     generatedLessons.length = 0;
-    lessons.forEach(async (lesson, index) => {
-      const response = await API.planLesson({
-        topics: lesson?.topics || [],
-        learning_outcome: lesson.learning_outcome,
-        language: language || definedSyllabus?.language || 'English',
-        macro_subject: macroSubject,
-        title: lesson.title,
-        education_level: definedSyllabus.educational_level,
-        context: context,
-        model: model || 'Gemini',
+    try {
+      lessons.forEach(async (lesson, index) => {
+        const response = await API.planLesson({
+          topics: lesson?.topics || [],
+          learning_outcome: lesson.learning_outcome,
+          language: language || definedSyllabus?.language || 'English',
+          macro_subject: macroSubject,
+          title: lesson.title,
+          education_level: definedSyllabus.educational_level,
+          context: context,
+          model: model || 'Gemini',
+        });
+        setGeneratedLessons((prev) => [
+          ...prev,
+          {
+            ...(response.data as AIPlanLessonResponse),
+            data: extractAssignmentsWithTopicInfo(lesson),
+          },
+        ]);
       });
-      setGeneratedLessons((prev) => [
-        ...prev,
-        {
-          ...(response.data as AIPlanLessonResponse),
-          data: extractAssignmentsWithTopicInfo(lesson),
-        },
-      ]);
-    });
 
-    toast({
-      title: 'Lessons saved successfully!',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
+      toast({
+        title: 'Lessons saved successfully!',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error during lesson creation.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      console.log(error);
+    }
   };
 
   return (
@@ -343,17 +357,6 @@ const StepAIGeneration = ({
               ]}
             />
           </SimpleGrid>
-
-          <Box mt={6}>
-            <Button
-              colorScheme="teal"
-              onClick={handlePlanCourse}
-              isLoading={isPlanCourseLoading}
-              isDisabled={!analysedMaterial}
-            >
-              Next: Plan Lessons
-            </Button>
-          </Box>
         </>
       )}
       {currentStep === 'lessons' && (
@@ -390,15 +393,6 @@ const StepAIGeneration = ({
               />
             ))}
           </VStack>
-
-          <Box mt={6} display="flex" justifyContent="space-between">
-            <Button variant="outline" onClick={() => setCurrentStep('course')}>
-              ← Back to Course
-            </Button>
-            <Button colorScheme="teal" onClick={handlePlanLesson}>
-              Save Lesson Plan
-            </Button>
-          </Box>
         </>
       )}
       {currentStep === 'generating' &&
@@ -453,6 +447,46 @@ const StepAIGeneration = ({
             </VStack>
           </>
         )}
+      <Flex mt={8} justify="space-between" py={2}>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button hidden={currentStep !== 'course'} onClick={() => prevStep()}>
+            Back
+          </Button>
+          <Button
+            hidden={currentStep !== 'lessons'}
+            variant="outline"
+            onClick={() => setCurrentStep('course')}
+          >
+            ← Back to Course
+          </Button>
+        </Box>
+        <Box flex="1" display="flex" justifyContent="center"></Box>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button
+            hidden={currentStep !== 'course'}
+            colorScheme="teal"
+            onClick={handlePlanCourse}
+            isLoading={isPlanCourseLoading}
+            isDisabled={!analysedMaterial}
+          >
+            Next: Plan Lessons
+          </Button>
+          <Button
+            hidden={currentStep !== 'lessons'}
+            colorScheme="teal"
+            onClick={handlePlanLesson}
+          >
+            Save Lesson Plan
+          </Button>
+          <Button
+            hidden={currentStep !== 'generating'}
+            colorScheme="purple"
+            onClick={nextStep}
+          >
+            Next
+          </Button>
+        </Box>
+      </Flex>
     </Box>
   );
 };

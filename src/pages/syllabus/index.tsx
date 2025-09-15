@@ -16,6 +16,7 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import MainSideBar from '../../components/Sidebar/MainSidebar';
 import { API } from '../../data/api';
 import { PolyglotSyllabus } from '../../types/polyglotElements';
+import Layout from '../../components/Layout/LayoutPages';
 
 const SyllabusDashboard = () => {
   const router = useRouter();
@@ -50,18 +51,13 @@ const SyllabusDashboard = () => {
   );
 
   return (
-    <>
-      <NavBar
-        user={user}
-        onAccessibilityClick={() => {
-          console.log('access');
-        }}
-      />
-      <MainSideBar
-        onNavigate={handleNavigate}
-        isOpen={isOpen}
-        onToggle={onToggle}
-      />
+    
+        <Layout
+          user={user}
+          handleNavigate={handleNavigate}
+          isOpen={isOpen}
+          onToggle={onToggle}
+        >
 
       <Box
         flex="1"
@@ -101,7 +97,7 @@ const SyllabusDashboard = () => {
           ))}
         </SimpleGrid>
       </Box>
-    </>
+    </Layout>
   );
 };
 
