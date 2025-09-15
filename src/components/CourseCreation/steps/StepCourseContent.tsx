@@ -1,8 +1,7 @@
 import {
   Box,
-  Center,
+  Button,
   Flex,
-  FormLabel,
   Image,
   SimpleGrid,
   Text,
@@ -10,16 +9,13 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import {
-  EducationLevel,
   LearningObjectives,
   SyllabusTopic,
 } from '../../../types/polyglotElements';
 import ArrayField from '../../Forms/Fields/ArrayField';
 import EnumField from '../../Forms/Fields/EnumField';
 import InputTextField from '../../Forms/Fields/InputTextField';
-import MarkDownField from '../../Forms/Fields/MarkDownField';
 import TagsField from '../../Forms/Fields/TagsField';
-import TextField from '../../Forms/Fields/TextField';
 import StepHeading from '../../UtilityComponents/StepHeading';
 
 type Tag = {
@@ -28,12 +24,6 @@ type Tag = {
 };
 
 type StepCourseContentProps = {
-  selectedTopicState: [
-    { topic: SyllabusTopic; index: number } | undefined,
-    React.Dispatch<
-      React.SetStateAction<{ topic: SyllabusTopic; index: number } | undefined>
-    >
-  ];
   durationState: [string, React.Dispatch<React.SetStateAction<string>>];
   prerequisitesState: [
     string[],
@@ -44,13 +34,13 @@ type StepCourseContentProps = {
   classContextState: [string, React.Dispatch<React.SetStateAction<string>>];
   titleState: [string, React.Dispatch<React.SetStateAction<string>>];
   subjectAreaState: [string, React.Dispatch<React.SetStateAction<string>>];
-  descriptionState: [string, React.Dispatch<React.SetStateAction<string>>];
   imgState: [string, React.Dispatch<React.SetStateAction<string>>];
   tagsState: [Tag[], React.Dispatch<React.SetStateAction<Tag[]>>];
+  nextStep: () => void;
+  prevStep: () => void;
 };
 
 const StepCourseContent = ({
-  selectedTopicState,
   durationState,
   prerequisitesState,
   goalsState,
@@ -58,11 +48,11 @@ const StepCourseContent = ({
   classContextState,
   titleState,
   subjectAreaState,
-  descriptionState,
   imgState,
   tagsState,
+  nextStep,
+  prevStep,
 }: StepCourseContentProps) => {
-  const [selectedTopic, setSelectedTopic] = selectedTopicState;
   const [duration, setDuration] = durationState;
   const [classContext, setClassContext] = classContextState;
   const [prerequisites, setPrerequisites] = prerequisitesState;
@@ -70,7 +60,6 @@ const StepCourseContent = ({
   const [targetAudience, setTargetAudience] = targetAudienceState;
   const [title, setTitle] = titleState;
   const [subjectArea, setSubjectArea] = subjectAreaState;
-  const [description, setDescription] = descriptionState;
   const [img, setImg] = imgState;
   const [tags, setTags] = tagsState;
 
@@ -79,22 +68,6 @@ const StepCourseContent = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imgError, setImgError] = useState(false);
 
-  const updateTopicField = (
-    field: keyof SyllabusTopic | keyof LearningObjectives,
-    value: string
-  ) => {
-    if (!selectedTopic) return;
-    const updatedTopic = selectedTopic.topic;
-    if (field === 'macro_topic' || field === 'details') {
-      updatedTopic[field] = value;
-    } else {
-      updatedTopic.learning_objectives = {
-        ...updatedTopic.learning_objectives,
-        [field]: value,
-      };
-    }
-    setSelectedTopic({ topic: updatedTopic, index: selectedTopic.index });
-  };
 
   return (
     <Box>
@@ -184,57 +157,6 @@ const StepCourseContent = ({
           />
         </Box>
       </Flex>
-      <Box width="100%" mt={6}>
-        <MarkDownField
-          label="Description"
-          value={description}
-          setValue={setDescription}
-          infoTitle="Description"
-          infoDescription="Provide a clear summary of the learning path. Markdown supported."
-          infoPlacement="right"
-        />
-      </Box>
-      <Box pt={'10px'}>
-        <Center>
-          <FormLabel>Course Topic</FormLabel>
-        </Center>
-        <InputTextField
-          label="Macro Topic"
-          value={selectedTopic?.topic.macro_topic || ''}
-          setValue={(val) => updateTopicField('macro_topic', val)}
-          height="2rem"
-        />
-        <InputTextField
-          label="Details"
-          value={selectedTopic?.topic.details || ''}
-          setValue={(val) => updateTopicField('details', val)}
-          height="2rem"
-        />
-        <FormLabel>Learning Objective</FormLabel>
-        <SimpleGrid columns={{ base: 3, md: 3 }} spacing={4} mb={4}>
-          <TextField
-            label="Knowledge"
-            isTextArea
-            value={selectedTopic?.topic.learning_objectives.knowledge || ''}
-            setValue={(val) => updateTopicField('knowledge', val)}
-            height="2rem"
-          />
-          <TextField
-            label="Skills"
-            isTextArea
-            value={selectedTopic?.topic.learning_objectives.skills || ''}
-            setValue={(val) => updateTopicField('skills', val)}
-            height="2rem"
-          />
-          <TextField
-            label="Attitude"
-            isTextArea
-            value={selectedTopic?.topic.learning_objectives.attitude || ''}
-            setValue={(val) => updateTopicField('attitude', val)}
-            height="2rem"
-          />
-        </SimpleGrid>
-      </Box>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
         <InputTextField
           label="Duration"
@@ -302,6 +224,17 @@ const StepCourseContent = ({
             value={prerequisites}
             setValue={(val) => setPrerequisites(val)}
           />
+        </Box>
+      </Flex>
+      <Flex mt={8} justify="space-between" py={2}>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button onClick={() => prevStep()}>Back</Button>
+        </Box>
+        <Box flex="1" display="flex" justifyContent="center"></Box>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button colorScheme="purple" onClick={nextStep}>
+            Next
+          </Button>
         </Box>
       </Flex>
     </Box>

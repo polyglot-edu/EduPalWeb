@@ -18,6 +18,8 @@ interface StepPublishingProps {
   publishMethod: [string, React.Dispatch<React.SetStateAction<string>>];
   accessCode: [string, React.Dispatch<React.SetStateAction<string>>];
   materialMethod: string;
+  nextStep: () => void;
+  prevStep: () => void;
 }
 
 function makeCode(length: number) {
@@ -35,6 +37,8 @@ const StepPublishing = ({
   publishMethod,
   accessCode,
   materialMethod,
+  nextStep,
+  prevStep,
 }: StepPublishingProps) => {
   const [visibility, setVisibility] = publishMethod;
   const [code, setAccessCode] = accessCode;
@@ -136,6 +140,17 @@ const StepPublishing = ({
           https://edupal.io/courses/join/{code}
         </Text>
       </Box>
+      <Flex mt={8} justify="space-between" py={2}>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button onClick={() => prevStep()}>Back</Button>
+        </Box>
+        <Box flex="1" display="flex" justifyContent="center"></Box>
+        <Box flex="1" display="flex" justifyContent="center">
+          <Button colorScheme="purple" onClick={nextStep}>
+            Next
+          </Button>
+        </Box>
+      </Flex>
     </Box>
   );
 };

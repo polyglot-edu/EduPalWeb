@@ -78,11 +78,13 @@ const SyllabusTopicsFieldMultiple = ({
             borderWidth="1px"
             borderRadius="md"
             p={3}
-            bg={isSelected ? 'purple.100' : 'gray.50'}
+            bg={isSelected ? 'purple.50' : 'gray.50'}
             _hover={{
-              bg: isSelected ? 'purple.200' : 'gray.200',
+              bg: isSelected ? 'purple.50' : 'gray.200',
               cursor: 'pointer',
             }}
+            borderColor={isSelected ? 'grey.500' : ''}
+            border={isSelected ? '1px dashed grey' : '0px solid'}
             onClick={() =>
               setSelectedTopic((prev) =>
                 prev.includes(index)
