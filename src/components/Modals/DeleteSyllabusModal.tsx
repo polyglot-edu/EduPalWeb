@@ -30,12 +30,12 @@ const DeleteSyllabusModal = ({
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete "{title}"</ModalHeader>
+        <ModalHeader>Delete {title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack align="start" spacing={3}>
             <Text>
-              You are about to permanently delete <strong>"{title}"</strong>.
+              You are about to permanently delete <strong>{title}</strong>.
             </Text>
             <Text>
               This will remove <strong>all associated data and components</strong> of this syllabus and <strong>cannot be undone</strong>.
