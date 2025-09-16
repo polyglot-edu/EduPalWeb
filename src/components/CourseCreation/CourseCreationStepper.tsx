@@ -10,7 +10,6 @@ import { TbLock } from 'react-icons/tb';
 import StepProgressBar from '../UtilityComponents/StepProgressBar';
 
 import { HamburgerIcon } from '@chakra-ui/icons';
-import { useRouter } from 'next/router';
 import { IconType } from 'react-icons';
 import {
   AIDefineSyllabusResponse,
@@ -32,8 +31,6 @@ import StepGamification from './steps/StepGamification';
 import StepPublishing from './steps/StepPublishing';
 
 const CourseCreationStepper = () => {
-  const router = useRouter();
-
   const [step, setStep] = useState(0);
   const [progressStep, setProgressStep] = useState(0);
   const [generalSubject, setGeneralSubject] = useState('');
@@ -261,7 +258,7 @@ const CourseCreationStepper = () => {
   }
 
   return (
-    <Flex direction="column" w="100%" h="100%" bg="purple.50" p={6}>
+    <>
       <Heading as="h2" size="lg" mb={4} textAlign="left">
         Create New Course
       </Heading>
@@ -296,7 +293,7 @@ const CourseCreationStepper = () => {
           {stepComponents[step]}
         </Box>
       </Box>
-    </Flex>
+    </>
   );
 };
 

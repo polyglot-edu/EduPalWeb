@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, CloseIcon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -6,15 +6,16 @@ import {
   Collapse,
   Flex,
   IconButton,
-  Input,
   Text,
+  Textarea,
+  Tooltip,
   useColorModeValue,
   useToast,
   VStack,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { FaPaperPlane } from 'react-icons/fa';
+import { FaCopy, FaPaperPlane } from 'react-icons/fa';
 import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 import ReactMarkdown from 'react-markdown';
 import { API } from '../../data/api';
@@ -26,6 +27,7 @@ import {
   AIPlanCourseResponse,
   AIPlanLessonResponse,
 } from '../../types/polyglotElements';
+import ChakraTextareaAutosize from '../Forms/Fields/ChakraTextAreaAutosize';
 import EnumField from '../Forms/Fields/EnumField';
 import FileUploadModal from '../UtilityComponents/FileUploadModal';
 
@@ -112,8 +114,8 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
   const [plannerMessages, setPlannerMessages] = useState<AIChatResponse[]>([]);
   const [resources, setResources] = useState<string[]>([]);
   const [input, setInput] = useState('');
-  const [genData, setGenData] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
+  const [isTextOpen, setTextIsOpen] = useState(false);
   const [model, setModel] = useState('Gemini');
 
   const toast = useToast();
@@ -154,6 +156,15 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
   const messagesColorPurple = useColorModeValue('purple.100', 'purple.800');
   const messagesColorWhiteBlack = useColorModeValue('black', 'white');
 
+  const [dots, setDots] = useState('.');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots((prev) => (prev.length === 3 ? '.' : prev + '.'));
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
   if (!currentConfig) {
     return <Text>Invalid usage configuration.</Text>;
   }
@@ -173,6 +184,14 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
           duration: 3000,
           isClosable: true,
         });
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: '✅ Material analysed.',
+          } as AIChatResponse,
+        ]);
+        setUploadedFile(null);
       } catch (error) {
         toast({
           title: 'Error analysing material.',
@@ -182,6 +201,13 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
           isClosable: true,
         });
         console.error('Error analyzing material:', error);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: '❌ Material analysis failed.',
+          } as AIChatResponse,
+        ]);
       } finally {
         setIsLoading(false);
       }
@@ -211,18 +237,22 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
           userContext + `\n\n${formatKnownDataForModel(knownData || '')}`,
       } as AIChatMessage);
       const data = res.data as AIChatResponse[];
+      //look for "tool" message
+      let genData:any = undefined;
+      const toolMessage = data.find((msg) => msg.role === 'tool');
+      if (toolMessage) {
+        const typedContent = JSON.parse(toolMessage.content) as InferResource<
+          typeof usage
+        >;
+        genData = typedContent;
+      }
 
       data.forEach((msg) => {
         if (msg.role === 'planner' || msg.role === 'grounding') {
           setPlannerMessages((prev) => [...prev, msg]);
-        } else if (msg.role === 'tool') {
-          const typedContent = JSON.parse(msg.content) as InferResource<
-            typeof usage
-          >;
-          setGenData(typedContent);
         } else if (msg.role === 'assistant') {
           //assistant
-          setMessages((prev) => [...prev, msg]);
+          setMessages((prev) => [...prev, { ...msg, toolResponse: genData }]);
         }
       });
     } catch (err) {
@@ -237,49 +267,91 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
     }
   };
 
-  const insertDatas = () => {
-    if (genData) {
-      setResponseData(genData);
+  const insertDatas = (generatedData: any) => {
+    if (generatedData) {
+      setResponseData(generatedData);
       setIsOpen(false);
-      setGenData(undefined);
+      setTextIsOpen(false);
     }
   };
 
   return (
     <Box position="fixed" bottom="20px" right="20px" zIndex={999} maxW="sm">
-      {/* Toggle button */}{' '}
-      <IconButton
-        aria-label="Toggle chat"
-        icon={<HiOutlineChatBubbleLeftRight size="24px" />}
-        colorScheme="purple"
-        borderRadius="full"
-        boxShadow="md"
-        mb={isOpen ? 4 : 0}
-        onClick={() => setIsOpen(!isOpen)}
-        bg={'purple.500'}
-        _hover={{ bg: 'purple.600' }}
-        hidden={isOpen}
-      />
+      {/* Toggle button or quick writing box */}
+      {!isOpen ? (
+        <Flex
+          align="center"
+          gap={2}
+          bgColor={isTextOpen ? 'purple.50' : ''}
+          p={3}
+          borderRadius={isTextOpen ? 'lg' : ''}
+          boxShadow={isTextOpen ? 'md' : ''}
+        >
+          <Textarea
+            onClick={() => {
+              setIsOpen(true);
+              setTextIsOpen(true);
+            }}
+            hidden={!isTextOpen}
+            placeholder="Write here..."
+            size="sm"
+            resize="none"
+            minH="40px"
+            maxH="120px"
+            overflowY="auto"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleUserMessage()}
+          />
+          <IconButton
+            aria-label="Open chat"
+            icon={
+              !isTextOpen ? (
+                <HiOutlineChatBubbleLeftRight size="24px" />
+              ) : (
+                <CloseIcon />
+              )
+            }
+            colorScheme={'purple'}
+            borderRadius="full"
+            boxShadow="md"
+            onClick={() => {
+              if (isTextOpen) setTextIsOpen(false);
+              else if (!isOpen) {
+                setIsOpen(true);
+                setTextIsOpen(true);
+              }
+            }}
+            bg={'purple.500'}
+            _hover={{ bg: 'purple.600' }}
+          />
+        </Flex>
+      ) : null}
+
       {/* Chat box */}
       <Collapse in={isOpen} animateOpacity>
         <Box
           borderWidth="1px"
           borderRadius="lg"
-          p={4}
+          p={6}
           bg={messagesColorGrey2}
           boxShadow="xl"
+          position="relative"
         >
-          <IconButton
-            aria-label="Toggle chat"
-            position="absolute"
-            left={1}
-            top={1}
-            icon={<ChevronDownIcon />}
-            size="sm"
-            backgroundColor="transparent"
-            onClick={() => setIsOpen(!isOpen)}
-          />
-          <VStack spacing={4} align="stretch">
+          <Tooltip label="Close Chat" placement="right">
+            <IconButton
+              aria-label="Toggle chat"
+              position="absolute"
+              right={2}
+              top={2}
+              icon={<ChevronDownIcon />}
+              size="sm"
+              backgroundColor="transparent"
+              onClick={() => setIsOpen(!isOpen)}
+            />
+          </Tooltip>
+
+          <VStack spacing={5} align="stretch">
             <Box hidden={messages.length != 0}>
               <EnumField
                 label="Model"
@@ -291,27 +363,35 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                 ]}
               />
             </Box>
+
             <Avatar
               name="NOVA"
               src={chatIcon.src}
               size="lg"
               alignSelf="center"
             />
+
             <Flex align="center" gap={3} alignSelf="center">
               <Box textAlign="center">
-                <Text fontWeight="bold">Hola! I am NOVA.</Text>
+                <Text fontWeight="bold">Hello! I am NOVA.</Text>
                 <Text fontSize="sm" color="gray.500">
                   Your AI teaching assistant for {currentConfig.title}
                 </Text>
               </Box>
             </Flex>
 
-            <Box maxH="300px" overflowY="auto" px={2} py={1} alignSelf="center">
-              <Text fontSize="sm" textAlign="center">
+            <Box
+              maxH="350px"
+              overflowY="auto"
+              px={3}
+              py={2}
+              alignSelf="center"
+              w="100%"
+            >
+              <Text fontSize="sm" textAlign="center" mb={4}>
                 Hi, I&apos;m NOVA, your EduPal AI companion! Ready to build an
                 inspiring course? {currentConfig.startingMessages}
               </Text>
-
               <VStack mt={4} spacing={2} hidden={usage !== 'general'}>
                 <Button
                   size="sm"
@@ -333,117 +413,153 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                 </Button>
               </VStack>
 
-              <VStack spacing={2} pt={4} align="stretch">
+              <VStack spacing={3} pt={2} align="stretch">
                 {messages.map((msg, idx) => (
-                  <Flex
-                    key={idx}
-                    justify={msg.role === 'user' ? 'flex-end' : 'flex-start'}
-                    w="100%"
-                  >
-                    <Box
-                      bg={
-                        msg.role === 'user'
-                          ? messagesColorGrey
-                          : messagesColorPurple
-                      }
-                      color={messagesColorWhiteBlack}
-                      px={3}
-                      py={2}
-                      borderRadius="md"
-                      maxW="80%"
-                      boxShadow="sm"
-                      textAlign={msg.role === 'user' ? 'right' : 'left'}
+                  <>
+                    <Flex
+                      key={idx}
+                      justify={msg.role === 'user' ? 'flex-end' : 'flex-start'}
+                      w="100%"
                     >
-                      <ReactMarkdown
-                        components={{
-                          p: (props) => (
-                            <Text
-                              fontSize="sm"
-                              whiteSpace="pre-wrap"
-                              {...props}
-                            />
-                          ),
-                          strong: (props) => (
-                            <Text
-                              as="strong"
-                              fontWeight="bold"
-                              display="inline"
-                              {...props}
-                            />
-                          ),
-                        }}
+                      <Avatar
+                        name="NOVA"
+                        src={chatIcon.src}
+                        size="sm"
+                        hidden={msg.role === 'user'}
+                      />
+                      <Box
+                        bg={
+                          msg.role === 'user'
+                            ? messagesColorGrey
+                            : messagesColorPurple
+                        }
+                        color={messagesColorWhiteBlack}
+                        px={4}
+                        py={3}
+                        borderRadius="md"
+                        maxW="85%"
+                        boxShadow="sm"
+                        textAlign={msg.role === 'user' ? 'right' : 'left'}
                       >
-                        {msg.content}
-                      </ReactMarkdown>
-                    </Box>
-                  </Flex>
+                        <ReactMarkdown
+                          components={{
+                            p: (props) => (
+                              <Text
+                                fontSize="sm"
+                                whiteSpace="pre-wrap"
+                                {...props}
+                              />
+                            ),
+                            strong: (props) => (
+                              <Text
+                                as="strong"
+                                fontWeight="bold"
+                                display="inline"
+                                {...props}
+                              />
+                            ),
+                            code: ({ children }) => (
+                              <Text
+                                as="span"
+                                fontFamily="mono"
+                                fontSize="sm"
+                                whiteSpace="pre-wrap"
+                              >
+                                {children}
+                              </Text>
+                            ),
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+
+                        {/* Copy + Insert buttons */}
+                        {msg.role === 'assistant' && (
+                          <Flex gap={2} mt={2} justify="flex-end">
+                            <IconButton
+                              aria-label="Copy"
+                              icon={<FaCopy />}
+                              size="sm"
+                              onClick={() =>
+                                navigator.clipboard.writeText(msg.content)
+                              }
+                            />
+                            <Button
+                              hidden={msg.toolResponse === undefined}
+                              size="sm"
+                              backgroundColor="purple.200"
+                              onClick={() => insertDatas(msg.toolResponse)}
+                              maxW="80%"
+                              alignSelf="center"
+                            >
+                              📝 Insert Data
+                            </Button>
+                          </Flex>
+                        )}
+                      </Box>
+                    </Flex>
+                  </>
                 ))}
+
                 <Flex hidden={!isLoading}>
-                  <Avatar
-                    name="NOVA"
-                    src={chatIcon.src}
-                    size="sm"
-                    verticalAlign={'middle'}
-                    float={'left'}
-                    
-                  />
+                  <Avatar name="NOVA" src={chatIcon.src} size="sm" />
                   <Box
                     bg={messagesColorPurple}
                     color={messagesColorWhiteBlack}
                     px={3}
                     py={2}
-                    maxW='50px'
+                    ml={2}
                     borderRadius="md"
                     boxShadow="sm"
-                    textAlign={'left'}
+                    fontWeight="bold"
                   >
-                    ...
+                    {dots}
                   </Box>
                 </Flex>
               </VStack>
               <div ref={messagesEndRef} />
             </Box>
 
-            <Flex mt={2} alignSelf="center" w="100%" maxW="80%">
-              <Input
-                placeholder="Ask anything..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleUserMessage();
-                }}
-              />
-              <FileUploadModal
-                isLoadingState={[isLoading, setIsLoading]}
-                isHidden={usage !== 'define_syllabus'}
-                FileProp={[uploadedFile, setUploadedFile]}
-                handleUpload={handleFileUpload}
-                title="Upload your document"
-                supportedFormats="PDF, DOCX, PPTX, TXT"
-                colorScheme="purple"
-              />
-              <IconButton
-                aria-label="Send"
-                icon={<FaPaperPlane />}
-                colorScheme="purple"
-                ml={2}
-                isLoading={isLoading}
-                onClick={handleUserMessage}
-              />
-            </Flex>
-
-            {/* Bottone Insert Data */}
-            <Button
-              hidden={genData === undefined}
-              size="sm"
-              backgroundColor="purple.200"
-              onClick={() => insertDatas()}
+            {/* Dynamic textarea */}
+            <Flex
+              direction="column"
               w="100%"
-              maxW="80%"
-              alignSelf="center"
+              mt={2}
+              p={2}
+              borderRadius="md"
+              border="1px solid"
+              borderColor="gray.300"
+              bg={messagesColorGrey2}
             >
-              📝 Insert Generated Data
-            </Button>
+              <Box>
+                <ChakraTextareaAutosize
+                  input={input}
+                  setInput={setInput}
+                  handleUserMessage={handleUserMessage}
+                />
+              </Box>
+              <Flex justify="space-between" align="center" mb={1}>
+                <FileUploadModal
+                  buttonSize="xs"
+                  isLoadingState={[isLoading, setIsLoading]}
+                  isHidden={usage !== 'define_syllabus'}
+                  FileProp={[uploadedFile, setUploadedFile]}
+                  handleUpload={handleFileUpload}
+                  title="Upload your document"
+                  supportedFormats="PDF, DOCX, PPTX, TXT"
+                  colorScheme="blue"
+                />
+
+                <IconButton
+                  size="xs"
+                  aria-label="Send"
+                  icon={<FaPaperPlane />}
+                  colorScheme="purple"
+                  isLoading={isLoading}
+                  onClick={handleUserMessage}
+                />
+              </Flex>
+            </Flex>
           </VStack>
         </Box>
       </Collapse>

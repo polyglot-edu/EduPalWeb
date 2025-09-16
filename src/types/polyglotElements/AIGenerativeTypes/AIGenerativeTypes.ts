@@ -404,4 +404,5 @@ export type AIChatResponse = {
   in_memory: boolean;
   system_instructions?: string;
   resources: any[];
+  toolResponse?: any;
 };

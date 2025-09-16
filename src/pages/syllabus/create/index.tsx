@@ -212,11 +212,13 @@ export default function SyllabusCreatePage() {
       handleNavigate={handleNavigate}
     >
       <Box
-        ref={containerStartRef}
         flex="1"
-        overflow="auto"
         p={6}
-        bg="white"
+        bg="purple.50"
+        transition="margin-left 0.2s"
+        ml={isOpen ? '250px' : '60px'}
+        ref={containerStartRef}
+        overflow="auto"
         borderRadius="md"
         boxShadow="md"
       >

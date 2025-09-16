@@ -28,7 +28,7 @@ export default function CourseCreatePage() {
       <Box
         flex="1"
         p={6}
-        bg="gray.50"
+        bg="purple.50"
         transition="margin-left 0.2s"
         ml={isOpen ? '250px' : '60px'}
       >
