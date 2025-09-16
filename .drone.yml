@@ -23,21 +23,22 @@ globals:
       - push
 
 steps:
-  - name: Build and push image to Docker # building the encore docker image
+  - name: Build and push image to Docker
     image: plugins/docker
     settings:
-      repo: docker.polyglot-edu.com/polyglot-edu/node-editor # must be lowercase #TO BE CHANGED
-      registry: docker.polyglot-edu.com #TO BE CHANGED
+      repo: docker.polyglot-edu.com/polyglot-edu/edupalweb
+      registry: docker.polyglot-edu.com
       dockerfile: ./Dockerfile
       tags: ['${DRONE_BRANCH}']
       build_args:
-        - 'DEPLOY_URL=polyglot-edu.com' #TO BE CHANGED
+        - 'DEPLOY_URL=polyglot-edu.com'
         - 'BACK_URL=https://polyglot-api.polyglot-edu.com'
         - 'TEST_MODE=true'
       <<: *docker_creds
     when:
       <<: *condition
-  - name: Deploy Production # deploy to kubernetes using a Helm chart
+
+  - name: Deploy Production
     image: pelotech/drone-helm3
     environment:
       CFORIGIN:
@@ -59,7 +60,7 @@ steps:
         - 'url=polyglot-edu.com' #TO BE CHANGED
         - 'cfOriginKey=$CFORIGIN'
         - 'dockerconfigjson=$DOCKERCONFIG'
-        - 'image.repository=docker.polyglot-edu.com/polyglot-edu/node-editor' #TO BE CHANGED
+        - 'image.repository=docker.polyglot-edu.com/polyglot-edu/edupalweb'
         - 'image.tag=${DRONE_BRANCH}'
         - 'env.authSecret=$AUTH0_SECRET'
         - 'env.authIssuerUrl=$AUTH0_ISSUER_BASE_URL'
@@ -73,15 +74,18 @@ steps:
       force_upgrade: true
       skip_tls_verify: true
       create_namespace: true
+      timeout: 600s
+      atomic: false
     depends_on:
       - Build and push image to Docker
     when:
       <<: *condition
       branch:
         include:
-          - dev #remove it later
+          - dev
           - main
-  - name: Deploy Development # deploy to kubernetes using a Helm chart
+
+  - name: Deploy Development
     image: pelotech/drone-helm3
     environment:
       CFORIGIN:
@@ -103,7 +107,7 @@ steps:
         - 'url=${DRONE_BRANCH}-dashboard.polyglot-edu.com' #TO BE CHANGED
         - 'cfOriginKey=$CFORIGIN'
         - 'dockerconfigjson=$DOCKERCONFIG'
-        - 'image.repository=docker.polyglot-edu.com/polyglot-edu/node-editor' #TO BE CHANGED
+        - 'image.repository=docker.polyglot-edu.com/polyglot-edu/edupalweb'
         - 'image.tag=${DRONE_BRANCH}'
         - 'env.authSecret=$AUTH0_SECRET'
         - 'env.authIssuerUrl=$AUTH0_ISSUER_BASE_URL'
@@ -117,11 +121,13 @@ steps:
       force_upgrade: true
       skip_tls_verify: true
       create_namespace: true
+      timeout: 600s
+      atomic: false
     depends_on:
       - Build and push image to Docker
     when:
       <<: *condition
       branch:
         exclude:
-          - dev #remove it later
+          - dev
           - main
