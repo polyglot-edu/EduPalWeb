@@ -156,10 +156,6 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
   const messagesColorPurple = useColorModeValue('purple.100', 'purple.800');
   const messagesColorWhiteBlack = useColorModeValue('black', 'white');
 
-  if (!currentConfig) {
-    return <Text>Invalid usage configuration.</Text>;
-  }
-
   const [dots, setDots] = useState('.');
 
   useEffect(() => {
@@ -168,6 +164,10 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
     }, 500);
     return () => clearInterval(interval);
   }, []);
+
+  if (!currentConfig) {
+    return <Text>Invalid usage configuration.</Text>;
+  }
 
   const handleFileUpload = async () => {
     if (uploadedFile)
@@ -238,7 +238,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
       } as AIChatMessage);
       const data = res.data as AIChatResponse[];
       //look for "tool" message
-      let genData = undefined;
+      let genData:any = undefined;
       const toolMessage = data.find((msg) => msg.role === 'tool');
       if (toolMessage) {
         const typedContent = JSON.parse(toolMessage.content) as InferResource<
