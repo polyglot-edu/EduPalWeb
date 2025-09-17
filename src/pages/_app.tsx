@@ -5,11 +5,13 @@ import '../components/Card.css';
 import '../styles/globals.css';
 
 import { UserProvider } from '@auth0/nextjs-auth0/client';
-import { background, ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { withProse } from '@nikolovlazar/chakra-ui-prose';
 import { Analytics } from '@vercel/analytics/react';
 import type { AppProps } from 'next/app';
+import { AppWrapper } from '../components/Layout/AppWrapper';
+import { LoadingProvider } from '../components/Layout/GlobalLoading';
 import reportWebVitals from '../reportWebVitals';
 
 const theme = extendTheme(
@@ -47,8 +49,10 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <UserProvider>
       <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-        <Analytics />
+        <LoadingProvider>
+          <AppWrapper Component={Component} pageProps={pageProps} />
+          <Analytics />
+        </LoadingProvider>
       </ChakraProvider>
     </UserProvider>
   );
