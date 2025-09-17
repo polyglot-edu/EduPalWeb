@@ -23,7 +23,6 @@ import MarkDownField from '../../Forms/Fields/MarkDownField';
 import SyllabusTopicsField from '../../Forms/Fields/SyllabusTopicsField';
 import SelectSyllabusModal from '../../Modals/SelectSyllabusModal';
 import StepHeading from '../../UtilityComponents/StepHeading';
-import { set } from 'mongoose';
 
 type StepCourseDetailsProps = {
   generalsSubject: [string, React.Dispatch<React.SetStateAction<string>>];
