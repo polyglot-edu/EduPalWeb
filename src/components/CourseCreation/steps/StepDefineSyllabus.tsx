@@ -4,10 +4,11 @@ import {
   Flex,
   FormLabel,
   SimpleGrid,
+  useDisclosure,
   useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 as UUIDv4 } from 'uuid';
 import { API } from '../../../data/api';
 import {
@@ -16,12 +17,13 @@ import {
   SyllabusTopic,
 } from '../../../types/polyglotElements';
 import EduChat from '../../Chat/EduChat';
-import ArrayField from '../../Forms/Fields/ArrayField';
 import EnumField from '../../Forms/Fields/EnumField';
 import InputTextField from '../../Forms/Fields/InputTextField';
 import MarkDownField from '../../Forms/Fields/MarkDownField';
 import SyllabusTopicsField from '../../Forms/Fields/SyllabusTopicsField';
+import SelectSyllabusModal from '../../Modals/SelectSyllabusModal';
 import StepHeading from '../../UtilityComponents/StepHeading';
+import { set } from 'mongoose';
 
 type StepCourseDetailsProps = {
   generalsSubject: [string, React.Dispatch<React.SetStateAction<string>>];
@@ -61,6 +63,7 @@ const StepDefineSyllabus = ({
     additionalInformationState;
 
   const [isLoadingSyllabus, setIsLoadingSyllabus] = useState(false);
+  const {isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose}= useDisclosure();
 
   const [definedSyllabus, setDefinedSyllabus] = definedSyllabusState;
 
@@ -70,7 +73,14 @@ const StepDefineSyllabus = ({
       value,
     })
   );
-
+  
+  useEffect(() => {
+    const data = localStorage.getItem("syllabus");
+    if (data) {
+      setDefinedSyllabus(JSON.parse(data) as AIDefineSyllabusResponse);
+    }
+  }, []);
+  
   const handleDefineSyllabus = () => {
     if (!generalSubject || generalSubject == '') {
       toast({
@@ -235,6 +245,11 @@ const StepDefineSyllabus = ({
             infoPlacement="right"
           />
         </Box>
+        <SelectSyllabusModal
+          isOpen={isModalOpen}
+          onClose={onModalClose}
+          onSelect={setDefinedSyllabus}
+        />
       </Box>
 
       {definedSyllabus && (
@@ -303,7 +318,7 @@ const StepDefineSyllabus = ({
               setDefinedSyllabus({ ...definedSyllabus, description: val })
             }
           />
-          
+
           <FormLabel pt={4} pb={1}>
             Choose the specific topic you want to explore. You can, also, edit
             it or create a new one
@@ -328,14 +343,23 @@ const StepDefineSyllabus = ({
         <Box flex="1" display="flex" justifyContent="center"></Box>
         <Box flex="1" display="flex" justifyContent="center">
           {definedSyllabus == undefined ? (
-            <Button
-              colorScheme="teal"
-              onClick={handleDefineSyllabus}
-              isLoading={isLoadingSyllabus}
-              isDisabled={definedSyllabus != undefined}
-            >
-              Define Syllabus
-            </Button>
+            <Box display="flex" gap={4}>
+              <Button
+                colorScheme="teal"
+                bgColor={'teal.300'}
+                onClick={onModalOpen}
+              >
+                Choose syllabus
+              </Button>
+              <Button
+                colorScheme="teal"
+                onClick={handleDefineSyllabus}
+                isLoading={isLoadingSyllabus}
+                isDisabled={definedSyllabus != undefined}
+              >
+                Define Syllabus
+              </Button>
+            </Box>
           ) : (
             <Box display="flex" gap={4}>
               <Button

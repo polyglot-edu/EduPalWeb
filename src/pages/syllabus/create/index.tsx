@@ -236,110 +236,152 @@ export default function SyllabusCreatePage() {
                   title="Define Syllabus"
                   subtitle="Provide basic information about your syllabus."
                 />
-                <InputTextField
-                  label="General Subject"
-                  placeholder="Enter syllabus subject."
-                  value={subjectArea}
-                  setValue={setSubjectArea}
-                />
-                <EnumField
-                  label="Educational Level"
-                  value={definedSyllabus.educational_level}
-                  setValue={(val: string) =>
-                    setDefinedSyllabus({
-                      ...definedSyllabus,
-                      educational_level: val as EducationLevel,
-                    })
-                  }
-                  options={educationOptions}
-                />
-                <EnumField
-                  label="Language"
-                  value={definedSyllabus.language}
-                  setValue={(val: string) =>
-                    setDefinedSyllabus({ ...definedSyllabus, language: val })
-                  }
-                  options={[
-                    { label: 'English', value: 'english' },
-                    { label: 'Italiano', value: 'italian' },
-                    { label: 'Français', value: 'french' },
-                    { label: 'Español', value: 'spanish' },
-                    { label: 'Deutsch', value: 'german' },
-                  ]}
-                />
-                <MarkDownField
-                  label="Additional Information"
-                  value={additionalInformation}
-                  setValue={setAdditionalInformation}
-                />
-                <Button
+                <Box
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                  p={4}
                   mt={4}
-                  colorScheme="teal"
-                  onClick={handleDefineSyllabus}
-                  isLoading={isLoadingSyllabus}
+                  mb={2}
+                  textAlign="center"
+                  py={2}
                 >
-                  Define Syllabus
-                </Button>
-                <EduChat
-                  usage="define_syllabus"
-                  responseDataState={[definedSyllabus, setDefinedSyllabus]}
-                />
+                  <InputTextField
+                    label="General Subject"
+                    placeholder="Enter syllabus subject."
+                    value={subjectArea}
+                    setValue={setSubjectArea}
+                  />
+                  <EnumField
+                    label="Educational Level"
+                    value={definedSyllabus.educational_level}
+                    setValue={(val: string) =>
+                      setDefinedSyllabus({
+                        ...definedSyllabus,
+                        educational_level: val as EducationLevel,
+                      })
+                    }
+                    options={educationOptions}
+                  />
+                  <EnumField
+                    label="Language"
+                    value={definedSyllabus.language}
+                    setValue={(val: string) =>
+                      setDefinedSyllabus({ ...definedSyllabus, language: val })
+                    }
+                    options={[
+                      { label: 'English', value: 'english' },
+                      { label: 'Italiano', value: 'italian' },
+                      { label: 'Français', value: 'french' },
+                      { label: 'Español', value: 'spanish' },
+                      { label: 'Deutsch', value: 'german' },
+                    ]}
+                  />
+                  <MarkDownField
+                    label="Additional Information"
+                    value={additionalInformation}
+                    setValue={setAdditionalInformation}
+                  />
+                  <Button
+                    mt={4}
+                    colorScheme="teal"
+                    onClick={handleDefineSyllabus}
+                    isLoading={isLoadingSyllabus}
+                  >
+                    Define Syllabus
+                  </Button>
+                  <EduChat
+                    usage="define_syllabus"
+                    responseDataState={[definedSyllabus, setDefinedSyllabus]}
+                  />
+                </Box>
               </>
             ) : (
               <>
                 <StepHeading
-                  title="Edit Complete Syllabus Topic"
-                  subtitle="You can now complete or adjust the topic of your syllabus."
+                  title="Select the Topics to include on your syllabus"
+                  subtitle="You can choose which topics you want in your syllabus, you can adjust them or review later."
                 />
-                <SyllabusTopicsFieldMultiple
-                  topics={definedSyllabus.topics}
-                  updateTopics={(val: any) =>
-                    setDefinedSyllabus({ ...definedSyllabus, topics: val })
-                  }
-                  selectedTopicState={[selectedTopic, setSelectedTopic]}
-                />
-                <Flex gap={4} mt={4}>
-                  <Button colorScheme="teal" onClick={() => setAiHelp(false)}>
-                    Confirm
-                  </Button>
-                </Flex>
+                <Box
+                  bg="white"
+                  borderRadius="md"
+                  boxShadow="md"
+                  p={4}
+                  mt={4}
+                  mb={2}
+                  textAlign="center"
+                  py={2}
+                >
+                  <SyllabusTopicsFieldMultiple
+                    topics={definedSyllabus.topics}
+                    updateTopics={(val: any) =>
+                      setDefinedSyllabus({ ...definedSyllabus, topics: val })
+                    }
+                    selectedTopicState={[selectedTopic, setSelectedTopic]}
+                  />
+                  <Flex gap={4} mt={4}>
+                    <Button colorScheme="teal" onClick={() => setAiHelp(false)}>
+                      Confirm
+                    </Button>
+                  </Flex>
+                </Box>
               </>
             )}
           </Box>
         )}
 
         {!aiHelp && (
-          <EditSyllabus
-            definedSyllabus={definedSyllabus}
-            selectedTopicState={[selectedTopic, setSelectedTopic]}
-            setDefinedSyllabus={setDefinedSyllabus}
-            academicYearState={[academicYear, setAcademicYear]}
-            courseCodeState={[courseCode, setCourseCode]}
-            courseOfStudyState={[courseOfStudy, setCourseOfStudy]}
-            semesterState={[semester, setSemester]}
-            creditsState={[credits, setCredits]}
-            teachingHoursState={[teachingHours, setTeachingHours]}
-            disciplinarySectorState={[
-              disciplinarySector,
-              setDisciplinarySector,
-            ]}
-            teachingMethodsState={[teachingMethods, setTeachingMethods]}
-            assessmentMethodsState={[assessmentMethods, setAssessmentMethods]}
-            referenceMaterialsState={[
-              referenceMaterials,
-              setReferenceMaterials,
-            ]}
-            studyregulationState={[studyRegulation, setStudyregulation]}
-            courseYearState={[courseYear, setCourseYear]}
-            curriculumPathState={[curriculumPath, setCurriculumPath]}
-            studentPartitionState={[studentPartition, setStudentPartition]}
-            integratedCourseUnitState={[
-              integratedCourseUnit,
-              setIntegratedCourseUnit,
-            ]}
-            courseTypeState={[courseType, setCourseType]}
-            departmentState={[department, setDepartment]}
-          />
+          <>
+            <StepHeading
+              title="Edit Full Syllabus"
+              subtitle="Modify the entire syllabus and fill in institutional metadata."
+            />
+            <Box
+              bg="white"
+              borderRadius="md"
+              boxShadow="md"
+              p={4}
+              mt={4}
+              mb={2}
+              textAlign="center"
+              py={2}
+            >
+              <EditSyllabus
+                definedSyllabus={definedSyllabus}
+                selectedTopicState={[selectedTopic, setSelectedTopic]}
+                setDefinedSyllabus={setDefinedSyllabus}
+                academicYearState={[academicYear, setAcademicYear]}
+                courseCodeState={[courseCode, setCourseCode]}
+                courseOfStudyState={[courseOfStudy, setCourseOfStudy]}
+                semesterState={[semester, setSemester]}
+                creditsState={[credits, setCredits]}
+                teachingHoursState={[teachingHours, setTeachingHours]}
+                disciplinarySectorState={[
+                  disciplinarySector,
+                  setDisciplinarySector,
+                ]}
+                teachingMethodsState={[teachingMethods, setTeachingMethods]}
+                assessmentMethodsState={[
+                  assessmentMethods,
+                  setAssessmentMethods,
+                ]}
+                referenceMaterialsState={[
+                  referenceMaterials,
+                  setReferenceMaterials,
+                ]}
+                studyregulationState={[studyRegulation, setStudyregulation]}
+                courseYearState={[courseYear, setCourseYear]}
+                curriculumPathState={[curriculumPath, setCurriculumPath]}
+                studentPartitionState={[studentPartition, setStudentPartition]}
+                integratedCourseUnitState={[
+                  integratedCourseUnit,
+                  setIntegratedCourseUnit,
+                ]}
+                courseTypeState={[courseType, setCourseType]}
+                departmentState={[department, setDepartment]}
+              />
+            </Box>
+          </>
         )}
 
         {!aiHelp && (

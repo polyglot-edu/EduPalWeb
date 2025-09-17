@@ -145,11 +145,6 @@ export default function EditSyllabus({
 
   return (
     <Box>
-      <StepHeading
-        title="Edit Full Syllabus"
-        subtitle="Modify the entire syllabus and fill in institutional metadata."
-      />
-
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
         <TextField
           label="Title"

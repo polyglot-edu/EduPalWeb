@@ -16,7 +16,10 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { MdEdit, MdVisibility } from 'react-icons/md';
-import { PolyglotSyllabus } from '../../types/polyglotElements';
+import {
+  AIDefineSyllabusResponse,
+  PolyglotSyllabus,
+} from '../../types/polyglotElements';
 import SyllabusDocxButton from './SyllabusDocxButtonGen';
 
 type Props = {
@@ -29,6 +32,23 @@ export default function SyllabusDetailView({ syllabus }: Props) {
   const cardBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
+  function convertToSyllabusResponse(syllabus: PolyglotSyllabus) {
+    localStorage.setItem(
+      'syllabus',
+      JSON.stringify({
+        general_subject: syllabus.subjectArea || '',
+        educational_level: syllabus.educational_level,
+        additional_information: syllabus.additional_information,
+        title: syllabus.title,
+        description: syllabus.description,
+        goals: syllabus.goals,
+        topics: syllabus.topics,
+        prerequisites: syllabus.prerequisites,
+        language: syllabus.language,
+      } as AIDefineSyllabusResponse)
+    );
+  }
+
   if (!syllabus) {
     return <Box>No syllabus data available.</Box>;
   }
@@ -36,9 +56,20 @@ export default function SyllabusDetailView({ syllabus }: Props) {
     <Box bg={cardBg} borderRadius="lg" boxShadow="xl" borderColor={borderColor}>
       <Box p={6}>
         <SyllabusDocxButton syllabus={syllabus} />
-
+        <Button
+          float="right"
+          colorScheme="teal"
+          mr={2}
+          size="sm"
+          onClick={() => {
+            convertToSyllabusResponse(syllabus);
+            router.push('/courses/create');
+          }}
+        >
+          Create course
+        </Button>
         <Heading size="lg" mb={1}>
-          {syllabus.title || 'Untitled Course'}
+          {syllabus.title || 'Untitled Syllabus'}
         </Heading>
         <Text fontSize="md" color="gray.600" mb={4}>
           {syllabus.description || 'No description provided.'}
