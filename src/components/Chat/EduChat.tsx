@@ -6,6 +6,7 @@ import {
   Collapse,
   Flex,
   IconButton,
+  Spacer,
   Text,
   Textarea,
   Tooltip,
@@ -52,7 +53,7 @@ const UsageMapping = [
     startingMessages:
       'You’re working on the syllabus for your course. Let’s define the subject, level, and other key details together. What is your course about?',
     system_instructions:
-      'The user is working on generating a course syllabus. Focus on helping them complete the necessary fields: { general_subject, additional_information, education_level, language?, model? }. Guide the conversation toward completing these inputs. If the user diverts to unrelated topics, kindly prompt them to finish the syllabus first, as it is required to proceed with course creation.',
+      'USER GOAL: Generate a syllabus for a course.\nTASK: Fill in fields to allow an API call to the syllabus generator. Extract values for these fields from user messages and guide the conversation toward completing the remaining ones.\nFIELDS: {"general_subject": {"type": "string", "description": "The general broad subject of the syllabus (e.g., "History of the Roman Empire", "The geography of Europe")"}, "education_level": {"type": "string", "description": "The education level of the target audience", "enum": ["ELEMENTARY", "MIDDLE_SCHOOL", "HIGH_SCHOOL", "COLLEGE", "GRADUATE", "PROFESSIONAL"]}, "additional_information": {"type": "string", "description": "Additional information about the syllabus (specific sub-topics, learning outcomes, etc.)"}, "language": {"type": "string", "description": "The language of the syllabus", "default": "English"}}\n\nUSER MESSAGE: "{MESSAGE_INJECTION_HERE}"\n\nNOTE: Keep the conversation focused on completing the syllabus until all fields have been assigned values. Avoid going off-topic.',
   },
   {
     usage: 'plan_course',
@@ -60,7 +61,7 @@ const UsageMapping = [
     startingMessages:
       'Let’s design the full course! I can help you structure lessons, define objectives, and set durations. Do you already have a course title or subject in mind?',
     system_instructions:
-      'The user is designing a complete course. Assist them in structuring the course by collecting and refining the following fields: { title, macro_subject, education_level, learning_objectives, number_of_lessons, duration_of_lesson, language, model? }. Encourage clarity and coherence across components. If the user asks about something else, steer them back to completing the course plan.',
+      'USER GOAL: generate course plan.\nTASK: Fill in fields to allow API call to course planner. Extract values for these fields from user messages and guide the conversation toward completing the remaining ones.\nFIELDS: {"title": {"type": "string", "description": "the title of the course that will be generated"}, "macro_subject": {"type": "string", "description": "the macro subject of the course"}, "education_level": {"type": "string", "description": "The education level of the target audience.", "enum": ["elementary", "middle school", "high school", "college", "graduate", "professional"]}, "learning_objectives": {"type": "object", "description": "This must be a JSON object with **exactly three string fields**: \'knowledge\', \'skills\', and \'attitude\'. Do NOT use a list.", "properties": {"knowledge": {"type": "string", "description": "the knowledge that the learner should acquire during the course"}, "skills": {"type": "string", "description": "The skills that the learner should have at the end of the course."}, "attitude": {"type": "string", "description": "The attitude that the learner should develop during the course."}}, "required": ["knowledge", "skills", "attitude"]}, "number_of_lessons": {"type": "integer", "description": "the number of lessons in the course"}, "duration_of_lesson": {"type": "integer", "description": "the duration (in minutes) of each lesson"}, "language": {"type": "string", "description": "the language of the course, defaults to English"}}\n\nUSER MESSAGE: "{MESSAGE_INJECTION_HERE}"\n\nNOTE: Keep the conversation about completing the course plan until all fields can be associated with a value. Avoid going off-topic. Encourage clarity and coherence across components.',
   },
   {
     usage: 'plan_lessons',
@@ -68,7 +69,7 @@ const UsageMapping = [
     startingMessages:
       'We’re planning a specific lesson. I can help break down topics, outcomes, and structure. What’s the focus of this lesson?',
     system_instructions:
-      'The user is currently planning a specific lesson. Your goal is to help them break down the lesson into clear and teachable parts using the following fields: { topics, learning_outcome, language, macro_subject, title, education_level, context, model }. Prioritize clarity, relevance, and alignment with course goals. If the user shifts to unrelated matters, gently remind them to finish the lesson plan.',
+      'USER GOAL: generate lesson plan.\nTASK: Fill in fields to allow API call to lesson planner. Extract values for these fields from user messages and guide the conversation toward completing the remaining ones.\nFIELDS: {"topics": {"type": "array", "description": "a list of topics to be covered in the lesson.", "items": {"type": "object", "properties": {"topic": {"type": "string", "description": "the topic of the lesson"}, "explanation": {"type": "string", "description": "a brief explanation of the topic and how it should be covered in the lesson"}}}}, "learning_outcome": {"type": "string", "enum": ["DECLARATIVE", "UNDERSTANDING", "PROCEDURAL", "METACOGNITIVE", "SCHEMATIC", "TRANSFORMATIVE"], "description": "The type of learning outcome", "enumDescriptions": ["the ability to recall or recognize simple facts and definitions", "the ability to explain concepts and principles, and recognize how different ideas are related", "the ability to apply knowledge and perform operations in practical contexts", "the ability to assess your own understanding, identify gaps in knowledge, and strategize ways to close those gaps", "the ability to synthesize and organize concepts into a framework that allows for advanced problem-solving and prediction", "the ability to generate new knowledge, challenge existing paradigms, and make significant contributions to the field"]}, "language": {"type": "string", "description": "the language of the lesson, defaults to English"}, "macro_subject": {"type": "string", "description": "the macro subject of the lesson (for example, "Mathematics", "Science", etc.)"}, "title": {"type": "string", "description": "the title of the lesson"}, "education_level": {"type": "string", "description": "The education level of the target audience", "enum": ["ELEMENTARY", "MIDDLE_SCHOOL", "HIGH_SCHOOL", "COLLEGE", "GRADUATE", "PROFESSIONAL"]}, "context": {"type": "string", "description": "the audience context, it is used to tailor the suggestions for the learning activity to the specific audience"}}\n\nUSER MESSAGE: "{MESSAGE_INJECTION_HERE}"\n\nNOTE: Keep the conversation about completing the lesson plan until all fields can be associated with a value. Avoid going off-topic. Prioritize clarity, relevance, and alignment with course goals.',
   },
 ];
 type Usage = 'general' | 'define_syllabus' | 'plan_course' | 'plan_lessons';
@@ -170,6 +171,8 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
   }
 
   const handleFileUpload = async () => {
+    //TODO: INTEGRATE CHAGES FILIPPO
+
     if (uploadedFile)
       try {
         const response = await API.chatUploadFile('685c1412a384900b286d29aa', {
@@ -538,17 +541,20 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
                   handleUserMessage={handleUserMessage}
                 />
               </Box>
-              <Flex justify="space-between" align="center" mb={1}>
-                <FileUploadModal
-                  buttonSize="xs"
-                  isLoadingState={[isLoading, setIsLoading]}
-                  isHidden={usage !== 'define_syllabus'}
-                  FileProp={[uploadedFile, setUploadedFile]}
-                  handleUpload={handleFileUpload}
-                  title="Upload your document"
-                  supportedFormats="PDF, DOCX, PPTX, TXT"
-                  colorScheme="blue"
-                />
+              <Flex align="center" mb={1}>
+                {usage === 'define_syllabus' && (
+                  <FileUploadModal
+                    buttonSize="xs"
+                    isLoadingState={[isLoading, setIsLoading]}
+                    FileProp={[uploadedFile, setUploadedFile]}
+                    handleUpload={handleFileUpload}
+                    title="Upload your document"
+                    supportedFormats="PDF, DOCX, PPTX, TXT"
+                    colorScheme="blue"
+                  />
+                )}
+
+                <Spacer />
 
                 <IconButton
                   size="xs"
