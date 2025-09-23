@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useLoading } from './GlobalLoading';
 import type { NextComponentType, NextPageContext } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useLoading } from './GlobalLoading';
 
 type AppWrapperProps = {
   Component: NextComponentType<NextPageContext, any, any>;

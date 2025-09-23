@@ -238,7 +238,7 @@ const EduChat = ({ usage, responseDataState, knownData }: EduChatProps) => {
       } as AIChatMessage);
       const data = res.data as AIChatResponse[];
       //look for "tool" message
-      let genData:any = undefined;
+      let genData: any = undefined;
       const toolMessage = data.find((msg) => msg.role === 'tool');
       if (toolMessage) {
         const typedContent = JSON.parse(toolMessage.content) as InferResource<

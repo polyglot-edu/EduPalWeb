@@ -38,11 +38,11 @@ const DeleteSyllabusModal = ({
               You are about to permanently delete <strong>{title}</strong>.
             </Text>
             <Text>
-              This will remove <strong>all associated data and components</strong> of this syllabus and <strong>cannot be undone</strong>.
+              This will remove{' '}
+              <strong>all associated data and components</strong> of this
+              syllabus and <strong>cannot be undone</strong>.
             </Text>
-            <Text>
-              Please confirm that you want to proceed.
-            </Text>
+            <Text>Please confirm that you want to proceed.</Text>
           </VStack>
         </ModalBody>
 

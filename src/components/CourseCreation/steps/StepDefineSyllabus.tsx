@@ -62,7 +62,11 @@ const StepDefineSyllabus = ({
     additionalInformationState;
 
   const [isLoadingSyllabus, setIsLoadingSyllabus] = useState(false);
-  const {isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose}= useDisclosure();
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onClose: onModalClose,
+  } = useDisclosure();
 
   const [definedSyllabus, setDefinedSyllabus] = definedSyllabusState;
 
@@ -72,14 +76,14 @@ const StepDefineSyllabus = ({
       value,
     })
   );
-  
+
   useEffect(() => {
-    const data = localStorage.getItem("syllabus");
-    if (data) {
+    const data = localStorage.getItem('syllabus');
+    if (data != null && data != 'undefined') {
       setDefinedSyllabus(JSON.parse(data) as AIDefineSyllabusResponse);
     }
   }, []);
-  
+
   const handleDefineSyllabus = () => {
     if (!generalSubject || generalSubject == '') {
       toast({
@@ -337,7 +341,18 @@ const StepDefineSyllabus = ({
       />
       <Flex mt={8} justify="space-between" py={2}>
         <Box flex="1" display="flex" justifyContent="center">
-          <Button onClick={() => router.back()}>Cancel</Button>
+          <Button
+            onClick={() => {
+              if (definedSyllabus) {
+                localStorage.setItem('syllabus', JSON.stringify(undefined));
+                setDefinedSyllabus(undefined);
+              } else {
+                router.back();
+              }
+            }}
+          >
+            Cancel
+          </Button>
         </Box>
         <Box flex="1" display="flex" justifyContent="center"></Box>
         <Box flex="1" display="flex" justifyContent="center">

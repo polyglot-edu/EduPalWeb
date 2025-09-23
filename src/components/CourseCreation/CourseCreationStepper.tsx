@@ -1,4 +1,4 @@
-import { Box, Flex, Heading } from '@chakra-ui/react';
+import { Box, Heading } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlineFolderOpen } from 'react-icons/ai';
 import { BsStars } from 'react-icons/bs';
@@ -37,7 +37,7 @@ const CourseCreationStepper = () => {
   const [additionalInfo, setAdditionalInfo] = useState('');
   const [definedSyllabus, setDefinedSyllabus] =
     useState<AIDefineSyllabusResponse>();
-  const [uploadMethod, setUploadMethod] = useState('');
+  const [uploadMethod, setUploadMethod] = useState('ai');
   const [duration, setDuration] = useState('');
   const [context, setContext] = useState('');
   const [publishMethod, setPublishMethod] = useState('public');

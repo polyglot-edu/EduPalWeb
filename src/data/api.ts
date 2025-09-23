@@ -383,7 +383,10 @@ export const API = {
     );
   },
 
-  chatUploadFile: (chatId: string, body: Record<string, any>): Promise<AxiosResponse> => {
+  chatUploadFile: (
+    chatId: string,
+    body: Record<string, any>
+  ): Promise<AxiosResponse> => {
     const formData = new FormData();
 
     Object.entries(body).forEach(([key, value]) => {

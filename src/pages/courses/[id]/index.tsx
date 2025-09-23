@@ -3,11 +3,11 @@ import { Box, Flex, Heading, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { CourseCardView } from '../../../components/CourseComponents/CourseListView';
+import Layout from '../../../components/Layout/LayoutPages';
 import NavBar from '../../../components/NavBars/NavBar';
 import MainSideBar from '../../../components/Sidebar/MainSidebar';
 import { APIV2 } from '../../../data/api';
 import { PolyglotCourseWithFlows } from '../../../types/polyglotElements';
-import Layout from '../../../components/Layout/LayoutPages';
 
 type DashboardIndexPageProps = {
   accessToken: string | undefined;
@@ -49,14 +49,12 @@ const CourseDashboard = ({ accessToken }: DashboardIndexPageProps) => {
     );
 
   return (
-    
-        <Layout
-          user={user}
-          handleNavigate={handleNavigate}
-          isOpen={isOpen}
-          onToggle={onToggle}
-        >
-
+    <Layout
+      user={user}
+      handleNavigate={handleNavigate}
+      isOpen={isOpen}
+      onToggle={onToggle}
+    >
       <Box
         flex="1"
         p={6}

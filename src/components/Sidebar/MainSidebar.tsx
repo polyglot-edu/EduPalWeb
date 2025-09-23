@@ -120,7 +120,7 @@ export const MainSideBar = ({ onNavigate, isOpen, onToggle }: SidebarProps) => {
   return (
     <Box
       position="fixed"
-      top="64px" 
+      top="64px"
       left="0"
       w={isOpen ? '250px' : '60px'}
       bg="white"

@@ -11,12 +11,12 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import SyllabusCard from '../../components/Card/SyllabusCard';
 import EduChat from '../../components/Chat/EduChat';
+import Layout from '../../components/Layout/LayoutPages';
 import NavBar from '../../components/NavBars/NavBar';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import MainSideBar from '../../components/Sidebar/MainSidebar';
 import { API } from '../../data/api';
 import { PolyglotSyllabus } from '../../types/polyglotElements';
-import Layout from '../../components/Layout/LayoutPages';
 
 const SyllabusDashboard = () => {
   const router = useRouter();
@@ -51,14 +51,12 @@ const SyllabusDashboard = () => {
   );
 
   return (
-    
-        <Layout
-          user={user}
-          handleNavigate={handleNavigate}
-          isOpen={isOpen}
-          onToggle={onToggle}
-        >
-
+    <Layout
+      user={user}
+      handleNavigate={handleNavigate}
+      isOpen={isOpen}
+      onToggle={onToggle}
+    >
       <Box
         flex="1"
         p={6}

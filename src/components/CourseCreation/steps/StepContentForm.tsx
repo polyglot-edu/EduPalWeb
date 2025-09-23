@@ -75,11 +75,14 @@ const StepContentForm = ({
     } catch (error) {
       toast({
         title: 'Error analysing material.',
-        description: 'Please try again, or change document.',
+        description: 'Please try again, or change document. Error: ',
         status: 'error',
         duration: 3000,
         isClosable: true,
       });
+      console.log('__________________________________________________');
+      console.log(error);
+      console.log('__________________________________________________');
       console.error('Error analyzing material:', error);
     } finally {
       setIsLoading(false);
@@ -153,9 +156,9 @@ const StepContentForm = ({
           <Button onClick={() => prevStep()}>Back</Button>
         </Box>
         <Box flex="1" display="flex" justifyContent="center"></Box>
-        <Box flex="1" display="flex" justifyContent="center">
+        <Box flex="1" display="flex" justifyContent="center" gap={4}>
           <Button
-            colorScheme="blue"
+            colorScheme="teal"
             isLoading={isLoading}
             isDisabled={
               hasAnalysedMaterial || (material === '' && uploadedFile === null)
@@ -163,6 +166,9 @@ const StepContentForm = ({
             onClick={handleAnalyse}
           >
             Analyse
+          </Button>
+          <Button pl="4" colorScheme="purple" onClick={nextStep}>
+            Next
           </Button>
         </Box>
       </Flex>

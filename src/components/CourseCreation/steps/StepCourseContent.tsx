@@ -68,7 +68,6 @@ const StepCourseContent = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [imgError, setImgError] = useState(false);
 
-
   return (
     <Box>
       <StepHeading
