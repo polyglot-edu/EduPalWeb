@@ -85,9 +85,6 @@ const StepContentForm = ({
         isClosable: true,
       });
 
-      console.log('__________________________________________________');
-      console.log(error);
-      console.log('__________________________________________________');
       console.error('Error analyzing material:', error);
     } finally {
       setIsLoading(false);
@@ -103,12 +100,11 @@ const StepContentForm = ({
 
       {method === 'upload' ? (
         <>
-          <Box mr={-4}>
+          <Box mr={0} hidden={errorCounter < 2}>
             <Button
-            mt={-8}
+              mt={-10}
               float="right"
               colorScheme="teal"
-              hidden={errorCounter > 2}
               onClick={() => setMethod('ai')}
               size={'sm'}
             >
@@ -158,14 +154,21 @@ const StepContentForm = ({
           </Box>
         </>
       ) : method === 'ai' ? (
-        <MarkDownField
-          label="Material"
-          value={material}
-          setValue={setMaterial}
-          infoTitle="Material to analyse"
-          infoDescription="Provide your custom material you want to base your course on."
-          infoPlacement="right"
-        />
+        <>
+          <Text textAlign={'left'} fontSize="sm" color="gray.600">
+            Paste your plain text or a URL here. The system will use it to
+            provide you a coherent material for the course.
+          </Text>
+
+          <MarkDownField
+            label="Material"
+            value={material}
+            setValue={setMaterial}
+            infoTitle="Material to analyse"
+            infoDescription="Provide your custom material you want to base your course on."
+            infoPlacement="right"
+          />
+        </>
       ) : null}
 
       <Flex mt={8} justify="space-between" py={2}>
