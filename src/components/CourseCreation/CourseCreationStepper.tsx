@@ -183,7 +183,7 @@ const CourseCreationStepper = () => {
       key={'content-form'}
       materialProp={[material, setMaterial]}
       setAnalysedMaterial={setAnalysedMaterial}
-      method={uploadMethod}
+      methodProp={[uploadMethod, setUploadMethod]}
       model={model}
     />, // 3 (intermedio)
     <StepAIGeneration

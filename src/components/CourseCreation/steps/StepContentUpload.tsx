@@ -80,7 +80,7 @@ const StepContentUpload = ({
             <Icon as={FiZap} boxSize={6} />
             <Text fontWeight="bold">Generate with AI</Text>
             <Text fontSize="sm" color="gray.600">
-              Let AI create course content based on your specifications
+              Let AI create course content based on your plain text or URL.
             </Text>
           </VStack>
         </Box>

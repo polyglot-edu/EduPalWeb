@@ -10,7 +10,7 @@ interface StepContentFormProps {
     React.SetStateAction<AnalyzedMaterial | undefined>
   >;
   materialProp: [string, React.Dispatch<React.SetStateAction<string>>];
-  method: string;
+  methodProp: [string, React.Dispatch<React.SetStateAction<string>>];
   model: string;
   nextStep: () => void;
   prevStep: () => void;
@@ -19,16 +19,18 @@ interface StepContentFormProps {
 const StepContentForm = ({
   setAnalysedMaterial,
   materialProp,
-  method,
+  methodProp,
   model,
   nextStep,
   prevStep,
 }: StepContentFormProps) => {
+  const [method, setMethod] = methodProp;
   const [material, setMaterial] = materialProp;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasAnalysedMaterial, setHasAnalysedMaterial] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [errorCounter, setErrorCounter] = useState(0);
 
   const toast = useToast();
 
@@ -73,13 +75,16 @@ const StepContentForm = ({
         isClosable: true,
       });
     } catch (error) {
+      setErrorCounter((prev) => prev + 1);
       toast({
         title: 'Error analysing material.',
-        description: 'Please try again, or change document. Error: ',
+        description:
+          'Please try again or upload a different document. If the issue continues, try generating your material with "Generate with AI".',
         status: 'error',
         duration: 3000,
         isClosable: true,
       });
+
       console.log('__________________________________________________');
       console.log(error);
       console.log('__________________________________________________');
@@ -92,24 +97,36 @@ const StepContentForm = ({
   return (
     <Box p={8}>
       <StepHeading
-        title="Content Upload"
-        subtitle="Upload and organize your materials"
+        title="Analyse Content"
+        subtitle="Upload and analyse your material to create a course."
       />
 
       {method === 'upload' ? (
-        <Box
-          border="2px dashed"
-          borderColor="gray.300"
-          borderRadius="xl"
-          p={10}
-          textAlign="center"
-          mb={6}
-          onClick={handleFileUpload}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          cursor="pointer"
-        >
-          <Box>
+        <>
+          <Box mr={-4}>
+            <Button
+            mt={-8}
+              float="right"
+              colorScheme="teal"
+              hidden={errorCounter > 2}
+              onClick={() => setMethod('ai')}
+              size={'sm'}
+            >
+              Generate with AI
+            </Button>
+          </Box>
+          <Box
+            border="2px dashed"
+            borderColor="gray.300"
+            borderRadius="xl"
+            p={10}
+            textAlign="center"
+            mb={6}
+            onClick={handleFileUpload}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            cursor="pointer"
+          >
             <Text mb={4}>Drag and drop files or click to browse.</Text>
             <Text fontSize="sm" color="gray.500">
               Supported formats: PDF, DOCX, PPTX, TXT
@@ -123,23 +140,23 @@ const StepContentForm = ({
               hidden
               onChange={handleFileChange}
             />
+            {uploadedFile && (
+              <Box
+                mt={4}
+                p={2}
+                border="1px solid"
+                borderColor="blue.300"
+                borderRadius="md"
+                display="inline-block"
+              >
+                <Text fontWeight="bold">{uploadedFile.name}</Text>
+                <Text fontSize="sm" color="gray.500">
+                  {(uploadedFile.size / 1024).toFixed(2)} KB
+                </Text>
+              </Box>
+            )}
           </Box>
-          {uploadedFile && (
-            <Box
-              mt={4}
-              p={2}
-              border="1px solid"
-              borderColor="blue.300"
-              borderRadius="md"
-              display="inline-block"
-            >
-              <Text fontWeight="bold">{uploadedFile.name}</Text>
-              <Text fontSize="sm" color="gray.500">
-                {(uploadedFile.size / 1024).toFixed(2)} KB
-              </Text>
-            </Box>
-          )}
-        </Box>
+        </>
       ) : method === 'ai' ? (
         <MarkDownField
           label="Material"
