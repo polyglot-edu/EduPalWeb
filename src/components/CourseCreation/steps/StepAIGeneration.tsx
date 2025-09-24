@@ -76,7 +76,7 @@ const StepAIGeneration = ({
   nextStep,
   prevStep,
 }: StepCoursePlannerProps) => {
-  const [analysedMaterial] = analysedMaterialProp;
+  const [analysedMaterial, setAnalysedMaterial] = analysedMaterialProp;
   const [plannedCourse, setPlannedCourse] = plannedCourseProp;
   const [isPlanCourseLoading, setIsPlanCourseLoading] = useState(false);
   const toast = useToast();
@@ -133,6 +133,7 @@ const StepAIGeneration = ({
     ]);
   }, [chatLessonResponseData]);
 
+  console.log(analysedMaterial)
   useEffect(() => {
     console.log(plannedCourse);
     if (plannedCourse) {

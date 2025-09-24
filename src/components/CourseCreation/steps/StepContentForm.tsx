@@ -6,9 +6,10 @@ import MarkDownField from '../../Forms/Fields/MarkDownField';
 import StepHeading from '../../UtilityComponents/StepHeading';
 
 interface StepContentFormProps {
-  setAnalysedMaterial: React.Dispatch<
-    React.SetStateAction<AnalyzedMaterial | undefined>
-  >;
+  analysedMaterialProp: [
+    AnalyzedMaterial | undefined,
+    React.Dispatch<React.SetStateAction<AnalyzedMaterial | undefined>>
+  ];
   materialProp: [string, React.Dispatch<React.SetStateAction<string>>];
   methodProp: [string, React.Dispatch<React.SetStateAction<string>>];
   model: string;
@@ -17,13 +18,14 @@ interface StepContentFormProps {
 }
 
 const StepContentForm = ({
-  setAnalysedMaterial,
+  analysedMaterialProp,
   materialProp,
   methodProp,
   model,
   nextStep,
   prevStep,
 }: StepContentFormProps) => {
+  const [analysedMaterial, setAnalysedMaterial] = analysedMaterialProp;
   const [method, setMethod] = methodProp;
   const [material, setMaterial] = materialProp;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -187,7 +189,12 @@ const StepContentForm = ({
           >
             Analyse
           </Button>
-          <Button pl="4" colorScheme="purple" onClick={nextStep}>
+          <Button
+            pl="4"
+            colorScheme="purple"
+            hidden={analysedMaterial===undefined}
+            onClick={nextStep}
+          >
             Next
           </Button>
         </Box>

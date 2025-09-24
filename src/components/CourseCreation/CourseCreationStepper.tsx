@@ -182,7 +182,7 @@ const CourseCreationStepper = () => {
       prevStep={prevStep}
       key={'content-form'}
       materialProp={[material, setMaterial]}
-      setAnalysedMaterial={setAnalysedMaterial}
+      analysedMaterialProp={[analysedMaterial, setAnalysedMaterial]}
       methodProp={[uploadMethod, setUploadMethod]}
       model={model}
     />, // 3 (intermedio)

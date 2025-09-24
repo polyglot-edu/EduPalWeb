@@ -4,6 +4,7 @@ import {
   Flex,
   FormLabel,
   SimpleGrid,
+  Tooltip,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
@@ -384,9 +385,21 @@ const StepDefineSyllabus = ({
               >
                 Save as Draft
               </Button>
-              <Button pl="4" colorScheme="purple" onClick={nextStep}>
-                Next
-              </Button>
+              <Tooltip
+                label={
+                  selectedTopic == undefined ? 'Select one topic' : 'Next step'
+                }
+                placement="left"
+              >
+                <Button
+                  pl="4"
+                  colorScheme="purple"
+                  onClick={nextStep}
+                  isDisabled={selectedTopic == undefined}
+                >
+                  Next
+                </Button>
+              </Tooltip>
             </Box>
           )}
         </Box>
