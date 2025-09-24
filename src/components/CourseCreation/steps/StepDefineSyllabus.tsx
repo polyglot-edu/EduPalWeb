@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   FormLabel,
+  Heading,
   SimpleGrid,
   Tooltip,
   useDisclosure,
@@ -323,9 +324,11 @@ const StepDefineSyllabus = ({
             }
           />
 
-          <FormLabel pt={4} pb={1}>
-            Choose the specific topic you want to explore. You can, also, edit
-            it or create a new one
+          <FormLabel pt={2}>
+            <Heading size={'sm'}>
+              Choose the specific topic you want to explore. You can, also, edit
+              it or create a new one
+            </Heading>
           </FormLabel>
           <SyllabusTopicsField
             topics={definedSyllabus.topics}
